@@ -6,7 +6,7 @@ cmake_minimum_required (VERSION 3.8)
 set(CIMG_H_PATH ${PROJECT_SOURCE_DIR})
 
 # Add source to this project's executable.
-add_executable (SpriteExtractor "SpriteExtractor.cpp" "SpriteExtractor.h")
+add_executable (SpriteExtractor "SpriteExtractor.cpp")
 
 if(NOT WIN32)
   FIND_PACKAGE(X11)
@@ -40,6 +40,23 @@ endif()
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CIMG_CFLAGS}")
 
 include_directories( ${PROJECT_SOURCE_DIR} )
+
+add_definitions(-DIMGUI_USER_CONFIG=\"custom-imconfig.h\")
+
+target_sources(SpriteExtractor PRIVATE "imgui-sfml/imgui-SFML.cpp")
+target_include_directories(SpriteExtractor PRIVATE . "imgui-sfml")
+
+find_package(SFML 2 REQUIRED COMPONENTS graphics window system)
+if(SFML_FOUND)
+    target_link_libraries(SpriteExtractor sfml-graphics sfml-window sfml-system)
+endif()
+
+find_package(imgui REQUIRED)
+target_link_libraries(SpriteExtractor imgui::imgui )
+
+find_package(OpenGL REQUIRED)
+include_directories(${OPENGL_INCLUDE_DIRS})
+target_link_libraries(SpriteExtractor ${OPENGL_LIBRARIES})
 
 target_link_libraries(SpriteExtractor ${SYSTEM_LIBS})
 

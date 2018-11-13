@@ -11,3 +11,6 @@ CTestTestfile.cmake
 # Visual Studio
 .vs
 CMakeSettings.json
+
+# ImGui
+imgui.ini

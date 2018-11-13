@@ -3,7 +3,12 @@
 
 #include "SpriteExtractor.h"
 #include "CImg.h"
+#include "imgui-SFML.h"
+
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Event.hpp>
 #include <vector>
+#include <imgui.h>
 
 using Image = cimg_library::CImg<unsigned char>;
 
@@ -153,14 +158,11 @@ BBox FindSprite(const int initialRow, const int initialColumn, const Image& img,
     return box;
 }
 
-int main()
+void SearchSprites()
 {
     Image img("test.png");
-    //img.display();
 
     const Color<> purple(128, 0, 255);
-
-    //bool found = false;
 
     std::vector<BBox> sprites;
 
@@ -205,7 +207,39 @@ int main()
     }
 
     img.display();
+}
 
-    getchar();
+int main()
+{
+    sf::RenderWindow window(sf::VideoMode(640, 480), "Sprite Extractor");
+    ImGui::SFML::Init(window);
+
+    sf::Clock deltaClock;
+    while (window.isOpen())
+    {
+        sf::Event event;
+        while (window.pollEvent(event)) 
+        {
+            ImGui::SFML::ProcessEvent(event);
+
+            if (event.type == sf::Event::Closed)
+            {
+                window.close();
+            }
+
+            ImGui::SFML::Update(window, deltaClock.restart());
+
+            ImGui::ShowTestWindow();
+
+            ImGui::Begin("Hello, world!");
+            ImGui::Button("Look at this pretty button");
+            ImGui::End();
+
+            window.clear();
+            ImGui::SFML::Render(window);
+            window.display();
+        }
+    }
+
     return 0;
 }

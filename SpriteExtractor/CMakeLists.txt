@@ -33,8 +33,9 @@ if (NOT WIN32)
 endif()
 
 if( WIN32)
-  SET( SYSTEM_LIBS  ${SYSTEM_LIBS}  gdi32 )
+  SET( SYSTEM_LIBS  ${SYSTEM_LIBS}  gdi32)
   set_target_properties(SpriteExtractor PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+  target_sources(SpriteExtractor PRIVATE "Platform/WindowsPlatform.cpp")
 endif()
 
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CIMG_CFLAGS}")

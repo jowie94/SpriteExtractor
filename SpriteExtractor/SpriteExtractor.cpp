@@ -5,102 +5,12 @@
 #include "CImg.h"
 #include "imgui-SFML.h"
 
+#include "Platform/GenericPlatform.h"
+
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
 #include <vector>
 #include <imgui.h>
-
-#include <shlwapi.h>
-
-HRESULT BasicFileOpen()
-{
-    // CoCreate the File Open Dialog object.
-    IFileOpenDialog *pfd = NULL;
-    HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog,
-        NULL,
-        CLSCTX_INPROC_SERVER,
-        IID_PPV_ARGS(&pfd));
-
-    COMDLG_FILTERSPEC img[] =
-    {
-        { L"Images", L"*.png;*.jpg" },
-        { L"All", L"*.*" }
-    };
-         
-    if (SUCCEEDED(hr))
-    {
-        // Create an event handling object, and hook it up to the dialog.
-        //IFileDialogEvents *pfde = NULL;
-        //hr = CDialogEventHandler_CreateInstance(IID_PPV_ARGS(&pfde));
-        if (SUCCEEDED(hr))
-        {
-            // Hook up the event handler.
-            DWORD dwCookie;
-            //hr = pfd->Advise(pfde, &dwCookie);
-            if (SUCCEEDED(hr))
-            {
-                // Set the options on the dialog.
-                DWORD dwFlags;
-
-                // Before setting, always get the options first in order 
-                // not to override existing options.
-                hr = pfd->GetOptions(&dwFlags);
-                if (SUCCEEDED(hr))
-                {
-                    // In this case, get shell items only for file system items.
-                    hr = pfd->SetOptions(dwFlags | FOS_FORCEFILESYSTEM);
-                    if (SUCCEEDED(hr))
-                    {
-                        // Set the file types to display only. 
-                        // Notice that this is a 1-based array.
-                        hr = pfd->SetFileTypes(ARRAYSIZE(img), img);
-                        if (SUCCEEDED(hr))
-                        {
-                            // Set the selected file type index to Word Docs for this example.
-                            //hr = pfd->SetFileTypeIndex(INDEX_IMAGES);
-                            if (SUCCEEDED(hr))
-                            {
-                                // Set the default extension to be ".doc" file.
-                                //hr = pfd->SetDefaultExtension(L"doc;docx");
-                                if (SUCCEEDED(hr))
-                                {
-                                    // Show the dialog
-                                    hr = pfd->Show(NULL);
-                                    if (SUCCEEDED(hr))
-                                    {
-                                        // Obtain the result once the user clicks 
-                                        // the 'Open' button.
-                                        // The result is an IShellItem object.
-                                        IShellItem *psiResult;
-                                        hr = pfd->GetResult(&psiResult);
-                                        if (SUCCEEDED(hr))
-                                        {
-                                            // We are just going to print out the 
-                                            // name of the file for sample sake.
-                                            PWSTR pszFilePath = NULL;
-                                            hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH,
-                                                &pszFilePath);
-                                            if (SUCCEEDED(hr))
-                                            {
-                                                CoTaskMemFree(pszFilePath);
-                                            }
-                                            psiResult->Release();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                // Unhook the event handler.
-                //pfd->Unadvise(dwCookie);
-            }
-            //pfde->Release();
-        }
-        pfd->Release();
-    }
-    return hr;
-}
 
 using Image = cimg_library::CImg<unsigned char>;
 
@@ -303,6 +213,12 @@ void SearchSprites()
 
 int main()
 {
+    static std::vector<Platform::FileFilter> imgFilter =
+    {
+        { "Images", "*.png;*.jpg" },
+        { "All", "*.*" }
+    };
+
     sf::RenderWindow window(sf::VideoMode(640, 480), "Sprite Extractor");
     ImGui::SFML::Init(window);
 
@@ -329,7 +245,9 @@ int main()
 
             if (button)
             {
-                BasicFileOpen();
+                std::string file;
+                Platform::ShowOpenFileDialogue("Choose an sprite sheet image", file, imgFilter);
+                std::cout << file << std::endl;
             }
 
             ImGui::End();

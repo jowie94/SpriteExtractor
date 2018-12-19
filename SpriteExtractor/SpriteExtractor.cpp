@@ -3,14 +3,8 @@
 
 #include "SpriteExtractor.h"
 #include "CImg.h"
-#include "imgui-SFML.h"
 
-#include "Platform/GenericPlatform.h"
-
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Window/Event.hpp>
 #include <vector>
-#include <imgui.h>
 
 using Image = cimg_library::CImg<unsigned char>;
 
@@ -209,55 +203,4 @@ void SearchSprites()
     }
 
     img.display();
-}
-
-int main()
-{
-    static std::vector<Platform::FileFilter> imgFilter =
-    {
-        { "Images", "*.png;*.jpg" },
-        { "All", "*.*" }
-    };
-
-    sf::RenderWindow window(sf::VideoMode(640, 480), "Sprite Extractor");
-    ImGui::SFML::Init(window);
-
-    sf::Clock deltaClock;
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event)) 
-        {
-            ImGui::SFML::ProcessEvent(event);
-
-            if (event.type == sf::Event::Closed)
-            {
-                window.close();
-            }
-
-            ImGui::SFML::Update(window, deltaClock.restart());
-
-            ImGui::ShowTestWindow();
-
-            ImGui::Begin("Hello, world!");
-
-            const bool button = ImGui::Button("Look at this pretty button");
-
-            if (button)
-            {
-                std::string file;
-                Platform::ShowOpenFileDialogue("Choose an sprite sheet image", file, imgFilter);
-                std::cout << file << std::endl;
-            }
-
-            ImGui::End();
-
-
-            window.clear();
-            ImGui::SFML::Render(window);
-            window.display();
-        }
-    }
-
-    return 0;
 }

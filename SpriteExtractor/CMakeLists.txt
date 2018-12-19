@@ -7,7 +7,7 @@ set(CIMG_H_PATH ${PROJECT_SOURCE_DIR})
 set(CMAKE_CXX_STANDARD 14)
 
 # Add source to this project's executable.
-add_executable (SpriteExtractor "SpriteExtractor.cpp")
+add_executable (SpriteExtractor "main.cpp" "SpriteExtractor.cpp")
 
 if(NOT WIN32)
   #FIND_PACKAGE(X11)

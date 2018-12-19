@@ -50,7 +50,7 @@ namespace Platform
 bool Platform::ShowOpenFileDialogue(const std::string& title, std::string& out, const std::vector<FileFilter>& filters)
 {
     IFileOpenDialog* pfd = nullptr;
-    HRESULT result = CoCreateInstance(CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pfd));
+    HRESULT result = CoCreateInstance(__uuidof(FileOpenDialog), NULL, CLSCTX_ALL, IID_PPV_ARGS(&pfd));
 
     if (FAILED(result))
     {
@@ -95,7 +95,7 @@ bool Platform::ShowOpenFileDialogue(const std::string& title, std::string& out, 
     }
 
     // Show the dialog
-    result = pfd->Show(nullptr);
+    result = pfd->Show(NULL);
 
     if (FAILED(result))
     {

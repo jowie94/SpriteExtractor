@@ -38,6 +38,7 @@ if(APPLE)
   set(PLATFORM_SOURCES ${PLATFORM_SOURCES} "Platform/MacPlatform.mm")
   set(BUILD_SHARED_LIBS TRUE)
   set_source_files_properties(${PLATFORM_SOURCES} PROPERTIES COMPILE_FLAGS "-x objective-c++")
+  set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} "-ObjC")
 endif(APPLE)
 
 if(WIN32)

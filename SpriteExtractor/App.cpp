@@ -26,7 +26,7 @@ void App::Loop()
 {
     //ImGui::ShowTestWindow();
 
-    ImGui::Begin("", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
+    ImGui::Begin("", nullptr, ImGuiWindowFlags_NoTitleBar);
 
     ImGui::Text("File: %s", selectedFile.c_str());
 

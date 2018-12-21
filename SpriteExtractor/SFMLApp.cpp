@@ -12,7 +12,7 @@
 
 void SFMLApp::Run()
 {
-    sf::RenderWindow window(sf::VideoMode(1024, 768), "Sprite Extractor");
+    sf::RenderWindow window(sf::VideoMode(1366, 768), "Sprite Extractor");
     ImGui::SFML::Init(window);
 
 #ifdef __APPLE__

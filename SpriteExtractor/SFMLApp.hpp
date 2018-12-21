@@ -1,3 +1,5 @@
+#pragma once
+
 #include "App.hpp"
 
 class SFMLApp : public App

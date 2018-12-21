@@ -13,11 +13,20 @@ namespace AppConst
     };
 }
 
+namespace ImGui
+{
+    void Image(const ImageResource& image)
+    {
+        ImVec2 imgSize(image.size.x, image.size.y);
+        ImGui::Image((void*)(intptr_t)image.resourceId, imgSize);
+    }
+}
+
 void App::Loop()
 {
     //ImGui::ShowTestWindow();
 
-    ImGui::Begin("");
+    ImGui::Begin("", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoTitleBar);
 
     ImGui::Text("File: %s", selectedFile.c_str());
 
@@ -29,7 +38,13 @@ void App::Loop()
         if (Platform::ShowOpenFileDialogue("Choose an sprite sheet image", file, AppConst::kImgFilter))
         {
             selectedFile = file;
+            openedFile = OpenImage(selectedFile);
         }
+    }
+
+    if (openedFile && openedFile->isValid())
+    {
+        ImGui::Image(*openedFile);
     }
 
     ImGui::End();

@@ -5,7 +5,10 @@
 #include <imgui.h>
 
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Window/Event.hpp>
+
+#include <memory>
 
 void SFMLApp::Run()
 {
@@ -38,4 +41,32 @@ void SFMLApp::Run()
             window.display();
         }
     }
+}
+
+template<typename T>
+Vec2<T> sfmlVecToVec(const sf::Vector2<T>& rhs)
+{
+    return Vec2<T>(rhs.x, rhs.y);
+}
+
+class SFMLImageResource : public ImageResource
+{
+public:
+    SFMLImageResource(const std::string& filename)
+    {
+        texture.loadFromFile(filename);
+        resourceId = texture.getNativeHandle();
+        size = sfmlVecToVec(texture.getSize());
+    }
+
+private:
+    sf::Texture texture;
+};
+
+std::unique_ptr<ImageResource> SFMLApp::OpenImage(const std::string& path)
+{
+//     sf::Texture sfmlImage;
+//     bool result = sfmlImage.loadFromFile(path);
+
+    return std::make_unique<SFMLImageResource>(path);
 }

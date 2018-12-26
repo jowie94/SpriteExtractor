@@ -17,7 +17,7 @@ namespace ImGui
 {
     void Image(const ITextureResource& image)
     {
-        ImVec2 imgSize(image.size.x, image.size.y);
+        ImVec2 imgSize(static_cast<float>(image.size.x), static_cast<float>(image.size.y));
         ImGui::Image((void*)(intptr_t)image.resourceId, imgSize);
     }
 }

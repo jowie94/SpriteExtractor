@@ -1,3 +1,0 @@
-[submodule "SpriteExtractor/imgui-sfml"]
-	path = SpriteExtractor/imgui-sfml
-	url = git@github.com:eliasdaler/imgui-sfml.git

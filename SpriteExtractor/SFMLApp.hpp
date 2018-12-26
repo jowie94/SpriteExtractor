@@ -8,5 +8,5 @@ public:
     void Run() override;
 
 protected:
-    std::unique_ptr<ImageResource> OpenImage(const std::string& path) override;
+    std::unique_ptr<IImage> OpenImage(const std::string& path) override;
 };

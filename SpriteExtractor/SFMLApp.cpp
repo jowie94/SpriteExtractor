@@ -49,10 +49,22 @@ Vec2<T> sfmlVecToVec(const sf::Vector2<T>& rhs)
     return Vec2<T>(rhs.x, rhs.y);
 }
 
-class SFMLImageResource : public ImageResource
+Color sfmlColorToColor(const sf::Color& color)
+{
+    return Color(color.r, color.g, color.b, color.a);
+}
+
+class SFMLTextureResource : public ITextureResource
 {
 public:
-    SFMLImageResource(const std::string& filename)
+    SFMLTextureResource(const sf::Image& image)
+    {
+        texture.loadFromImage(image);
+        resourceId = texture.getNativeHandle();
+        size = sfmlVecToVec(texture.getSize());
+    }
+
+    SFMLTextureResource(const std::string& filename)
     {
         texture.loadFromFile(filename);
         resourceId = texture.getNativeHandle();
@@ -63,10 +75,34 @@ private:
     sf::Texture texture;
 };
 
-std::unique_ptr<ImageResource> SFMLApp::OpenImage(const std::string& path)
+class SFMLImage : public IImage
 {
-//     sf::Texture sfmlImage;
-//     bool result = sfmlImage.loadFromFile(path);
+public:
+    SFMLImage(const std::string& filename)
+    {
+        image.loadFromFile(filename);
+    }
 
-    return std::make_unique<SFMLImageResource>(path);
+    ImageSize Size() const override
+    {
+        return sfmlVecToVec(image.getSize());
+    }
+
+    std::unique_ptr<ITextureResource> GetTextureResource() const override
+    {
+        return std::make_unique<SFMLTextureResource>(image);
+    }
+
+    Color GetPixel(unsigned int x, unsigned int y) const override
+    {
+        return sfmlColorToColor(image.getPixel(x, y));
+    }
+
+private:
+    sf::Image image;
+};
+
+std::unique_ptr<IImage> SFMLApp::OpenImage(const std::string& path)
+{
+    return std::make_unique<SFMLImage>(path);
 }

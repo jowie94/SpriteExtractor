@@ -15,7 +15,7 @@ namespace AppConst
 
 namespace ImGui
 {
-    void Image(const ImageResource& image)
+    void Image(const ITextureResource& image)
     {
         ImVec2 imgSize(image.size.x, image.size.y);
         ImGui::Image((void*)(intptr_t)image.resourceId, imgSize);
@@ -38,13 +38,14 @@ void App::Loop()
         if (Platform::ShowOpenFileDialogue("Choose an sprite sheet image", file, AppConst::kImgFilter))
         {
             selectedFile = file;
-            openedFile = OpenImage(selectedFile);
+            openedImage = OpenImage(selectedFile);
+            textureResource = openedImage->GetTextureResource();
         }
     }
 
-    if (openedFile && openedFile->isValid())
+    if (openedImage)
     {
-        ImGui::Image(*openedFile);
+        ImGui::Image(*textureResource);
     }
 
     ImGui::End();

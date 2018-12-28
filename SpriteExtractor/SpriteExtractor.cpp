@@ -5,6 +5,7 @@
 #include "CImg.h"
 
 #include <vector>
+#include <iostream>
 
 using Image = cimg_library::CImg<unsigned char>;
 

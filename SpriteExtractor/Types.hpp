@@ -1,6 +1,8 @@
 #pragma once
 
 #include <memory>
+#include <utility>
+#include <cassert>
 
 template<class T>
 struct Vec2
@@ -53,4 +55,73 @@ public:
     virtual std::unique_ptr<ITextureResource> GetTextureResource() const = 0;
 
     virtual Color GetPixel(unsigned int x, unsigned int y) const = 0;
+};
+
+template<typename T>
+class Matrix
+{
+public:
+    using MatrixSize = std::pair<size_t, size_t>;
+
+    Matrix(const MatrixSize& size_)
+        : size(size_)
+        , data(new T[](size.first * size.second))
+    {
+        assert(size.first != 0 || size.second != 0 && "Invalid size");
+    }
+
+    Matrix(const MatrixSize& size_, const T& initialValue)
+        : size(size_)
+        , data(new T[](size.first * size.second))
+    {
+        assert(size.first != 0 || size.second != 0 && "Invalid size");
+
+        for (size_t i = 0; i < size.first * size.second; ++i)
+        {
+            data[i] = initialValue;
+        }
+    }
+
+    Matrix(const Matrix& other)
+        : size(other.size)
+        , data(new T[](size.first * size.second))
+    {
+        memcpy(data, other.data, size.first * size.second);
+    }
+
+    Matrix(Matrix&& other) noexcept
+        : size(other.size)
+        , data(other.data)
+    {
+        other.size = std::make_pair(0, 0);
+        other.data = nullptr;
+    }
+
+    ~Matrix()
+    {
+        delete[] data;
+    }
+
+    const T& At(size_t i, size_t j) const
+    {
+        assert(0 <= i && i < size.first && "Invalid i coordinate (column)");
+        assert(0 <= j && j < size.second && "Invalid j coordinate (row)");
+        return data[i * size.second + j];
+    }
+
+    T& At(size_t i, size_t j)
+    {
+        assert(0 <= i && i < size.first && "Invalid i coordinate (column)");
+        assert(0 <= j && j < size.second && "Invalid j coordinate (row)");
+        return data[i * size.second + j];
+    }
+
+    const MatrixSize& Size() const
+    {
+        return size;
+    }
+
+private:
+    MatrixSize size;
+    T* data;
 };

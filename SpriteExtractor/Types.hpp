@@ -20,23 +20,33 @@ struct Vec2
     T y = 0;
 };
 
-struct Color
+struct Color final
 {
     using channel_t = unsigned char;
     Color()
     {}
 
-    Color(channel_t r_, channel_t g_, channel_t b_, channel_t a_ = 255)
-        : r(r_)
-        , g(g_)
-        , b(b_)
-        , a(a_)
+    Color(channel_t r, channel_t g, channel_t b, channel_t a = 255)
+        : R(r)
+        , G(g)
+        , B(b)
+        , A(a)
     {}
 
-    channel_t r = 0;
-    channel_t g = 0;
-    channel_t b = 0;
-    channel_t a = 0;
+    channel_t R = 0;
+    channel_t G = 0;
+    channel_t B = 0;
+    channel_t A = 0;
+
+    bool operator==(const Color& other) const
+    {
+        return R == other.R && G == other.G && B == other.B && A == other.A;
+    }
+
+    bool operator!=(const Color& other) const
+    {
+        return !operator==(other);
+    }
 };
 
 using ImageSize = Vec2<unsigned int>;
@@ -65,14 +75,14 @@ public:
 
     Matrix(const MatrixSize& size_)
         : size(size_)
-        , data(new T[](size.first * size.second))
+        , data(new T[size.first * size.second])
     {
         assert(size.first != 0 || size.second != 0 && "Invalid size");
     }
 
     Matrix(const MatrixSize& size_, const T& initialValue)
         : size(size_)
-        , data(new T[](size.first * size.second))
+        , data(new T[size.first * size.second])
     {
         assert(size.first != 0 || size.second != 0 && "Invalid size");
 
@@ -84,7 +94,7 @@ public:
 
     Matrix(const Matrix& other)
         : size(other.size)
-        , data(new T[](size.first * size.second))
+        , data(new T[size.first * size.second])
     {
         memcpy(data, other.data, size.first * size.second);
     }
@@ -124,4 +134,19 @@ public:
 private:
     MatrixSize size;
     T* data;
+};
+
+struct BBox
+{
+    int X = 0;
+    int Y = 0;
+    int Width = 0;
+    int Height = 0;
+
+    bool ContainsPoint(int x, int y) const
+    {
+        int mX = X + Width;
+        int mY = Y + Height;
+        return X <= x && x <= mX && Y <= y && y <= mY;
+    }
 };

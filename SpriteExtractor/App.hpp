@@ -4,6 +4,7 @@
 #include <imgui.h>
 
 #include "Types.hpp"
+#include "SpriteExtractor.h"
 
 class App
 {
@@ -24,11 +25,14 @@ private:
     void DrawRightPanel();
 
     void OnSelectFile();
+    void OnSearchSprites();
 
     std::string selectedFile;
     std::unique_ptr<IImage> openedImage;
     std::unique_ptr<ITextureResource> textureResource;
 
+    Color alphaColor;
     ImVec2 imageWindowSize;
     float imageScale;
+    SpriteExtractor::SpriteList foundSprites;
 };

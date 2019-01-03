@@ -9,47 +9,6 @@
 
 using Image = cimg_library::CImg<unsigned char>;
 
-template<typename T = unsigned char>
-struct Color
-{
-    Color(T R_ = 0, T G_ = 0, T B_ = 0, T A_ = 0)
-    : R(R_)
-    , G(G_)
-    , B(B_)
-    , A(A_)
-    {}
-
-    T R = 0;
-    T G = 0;
-    T B = 0;
-    T A = 0;
-
-    bool operator==(const Color& other) const
-    {
-        return R == other.R && G == other.G && B == other.B && A == other.A;
-    }
-
-    bool operator!=(const Color& other) const
-    {
-        return !operator==(other);
-    }
-};
-
-struct BBox
-{
-    int X = 0;
-    int Y = 0;
-    int Width = 0;
-    int Height = 0;
-
-    bool ContainsPoint(int x, int y) const
-    {
-        int mX = X + Width;
-        int mY = Y + Height;
-        return X <= x && x <= mX && Y <= y && y <= mY;
-    }
-};
-
 std::ostream& operator<<(std::ostream& os, const BBox& box)
 {
     os << "(X: " << box.X << ", Y: " << box.Y << ", W: " << box.Width << ", H:" << box.Height << ")";
@@ -57,7 +16,7 @@ std::ostream& operator<<(std::ostream& os, const BBox& box)
     return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const Color<>& color)
+std::ostream& operator<<(std::ostream& os, const Color& color)
 {
     os << "(" << (int)color.R << "," << (int)color.G << "," << (int)color.B << "," << (int)color.A << ")";
 
@@ -74,13 +33,13 @@ void PrintColor(unsigned int r, unsigned int g, unsigned int b)
     std::cout << "(" << r << "," << g << "," << b << ")" << std::endl;
 }
 
-Color<> ExtractColor(const Image& img, int x, int y)
+Color ExtractColor(const Image& img, int x, int y)
 {
     const unsigned char& r = img(x, y, 0, 0);
     const unsigned char& g = img(x, y, 0, 1);
     const unsigned char& b = img(x, y, 0, 2);
 
-    return Color<>(r, g, b);
+    return Color(r, g, b);
 }
 
 bool IsPointInList(const std::vector<BBox>& boxes, int x, int y)
@@ -96,7 +55,63 @@ bool IsPointInList(const std::vector<BBox>& boxes, int x, int y)
     return false;
 }
 
-BBox FindSprite(const int initialRow, const int initialColumn, const Image& img, const Color<>& filterColor)
+BBox FindSprite(size_t initialRow, size_t initialColumn, const Matrix<bool>& img)
+{
+    BBox box;
+    box.X = initialColumn;
+    box.Y = initialRow;
+
+    size_t minColumn = initialColumn;
+    size_t maxColumn = initialColumn;
+    size_t maxRow = initialRow;
+
+    const Matrix<bool>::MatrixSize& size = img.Size();
+    for (size_t y = initialRow; y < size.second; ++y)
+    {
+        bool pixelFound = false;
+
+        for (size_t x = initialColumn; x >= 0; --x)
+        {
+            if (img.At(x, y))
+            {
+                minColumn = std::min(minColumn, x);
+                pixelFound = true;
+            }
+            else if (x < minColumn)
+            {
+                break;
+            }
+        }
+
+        for (size_t x = initialColumn; x < size.first; ++x)
+        {
+            if (img.At(x, y))
+            {
+                maxColumn = std::max(maxColumn, x);
+                pixelFound = true;
+            }
+            else if (x > maxColumn)
+            {
+                break;
+            }
+        }
+
+        if (!pixelFound)
+        {
+            break;
+        }
+
+        maxRow = y;
+    }
+
+    box.X = minColumn;
+    box.Width = maxColumn - box.X;
+    box.Height = maxRow - box.Y;
+
+    return box;
+}
+
+BBox FindSprite(const int initialRow, const int initialColumn, const Image& img, const Color& filterColor)
 {
     BBox box;
     box.X = initialColumn;
@@ -112,7 +127,7 @@ BBox FindSprite(const int initialRow, const int initialColumn, const Image& img,
 
         for (int x = initialColumn; x >= 0; --x)
         {
-            Color<> pixelColor = ExtractColor(img, x, y);
+            Color pixelColor = ExtractColor(img, x, y);
 
             if (pixelColor != filterColor)
             {
@@ -127,7 +142,7 @@ BBox FindSprite(const int initialRow, const int initialColumn, const Image& img,
 
         for (int x = initialColumn; x < img.width(); ++x)
         {
-            Color<> pixelColor = ExtractColor(img, x, y);
+            Color pixelColor = ExtractColor(img, x, y);
 
             if (pixelColor != filterColor)
             {
@@ -159,7 +174,7 @@ void SearchSprites()
 {
     Image img("test.png");
 
-    const Color<> purple(128, 0, 255);
+    const Color purple(128, 0, 255);
 
     std::vector<BBox> sprites;
 
@@ -171,7 +186,7 @@ void SearchSprites()
         for (int j = 0; j < img.width(); ++j)
         {
 
-            Color<> color = ExtractColor(img, j, i);
+            Color color = ExtractColor(img, j, i);
 
             if (purple != color && !IsPointInList(sprites, j, i))
             {
@@ -204,4 +219,49 @@ void SearchSprites()
     }
 
     img.display();
+}
+
+Matrix<bool> SpriteExtractor::GenerateMatrix(const ImageAccessor& callbacks, const Color& filterColor, const void* image)
+{
+    assert(callbacks.GetWidth);
+    assert(callbacks.GetHeight);
+    assert(callbacks.GetColor);
+
+    size_t width = callbacks.GetWidth(image);
+    size_t height = callbacks.GetHeight(image);
+
+    Matrix<bool> matrix(std::make_pair(width, height));
+
+    for (size_t y = 0; y < height; ++y)
+    {
+        for (size_t x = 0; x < width; ++x)
+        {
+            matrix.At(x, y) = callbacks.GetColor(x, y, image) != filterColor;
+        }
+    }
+
+    return matrix;
+}
+
+SpriteExtractor::SpriteList SpriteExtractor::FindSprites(const Matrix<bool>& image)
+{
+    SpriteList list;
+
+    Matrix<bool>::MatrixSize size = image.Size();
+    for (size_t row = 0; row < size.second; ++row)
+    {
+        for (size_t column = 0; column < size.first; ++column)
+        {
+            if (image.At(column, row) && !IsPointInList(list, column, row))
+            {
+                BBox sprite = FindSprite(row, column, image);
+
+                column = sprite.X + sprite.Width; // Skip to the next sprite
+
+                list.emplace_back(sprite);
+            }
+        }
+    }
+
+    return list;
 }

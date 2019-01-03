@@ -95,8 +95,15 @@ void App::DrawImageContainer()
     imageWindowSize = ImGui::GetWindowSize();
     if (openedImage)
     {
-        //ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
+        ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
         ImGui::Image(*textureResource, ImVec2(textureResource->size.x * imageScale, textureResource->size.y * imageScale));
+
+        for (const auto& sprite : foundSprites)
+        {
+            ImVec2 rectPos(cursorScreenPos.x + sprite.X * imageScale, cursorScreenPos.y + sprite.Y * imageScale);
+            ImVec2 maxRect(rectPos.x + ((sprite.Width + 1.0f) * imageScale), rectPos.y + (sprite.Height + 1.0f) * imageScale);
+            ImGui::GetWindowDrawList()->AddRect(rectPos, maxRect, ImColor(255, 0, 0));
+        }
 
         /*ImVec2 rectPos(cursorScreenPos.x + 50.0f * imageScale, cursorScreenPos.y + 80.0f * imageScale);
         ImGui::GetWindowDrawList()->AddRect(rectPos, ImVec2((rectPos.x) + 120.0f * imageScale, (rectPos.y) + 120.0f * imageScale), ImColor(255, 0, 0));*/
@@ -139,6 +146,12 @@ void App::DrawRightPanel()
     {
         OnSelectFile();
     }*/
+
+    if (ImGui::Button("Search Sprites"))
+    {
+        alphaColor = Color(128, 0, 255);
+        OnSearchSprites();
+    }
 }
 
 void App::OnSelectFile()
@@ -149,5 +162,28 @@ void App::OnSelectFile()
         textureResource = openedImage->GetTextureResource();
 
         imageScale = AppConst::CalculateImageScale(*textureResource, imageWindowSize);
+
+        foundSprites.clear();
     }
+}
+
+void App::OnSearchSprites()
+{
+    SpriteExtractor::ImageAccessor callbacks;
+    callbacks.GetWidth = [](const void* image)
+    {
+        return static_cast<const IImage*>(image)->Size().x;
+    };
+    callbacks.GetHeight = [](const void* image)
+    {
+        return static_cast<const IImage*>(image)->Size().y;
+    };
+    callbacks.GetColor = [](size_t x, size_t y, const void* image)
+    {
+        return static_cast<const IImage*>(image)->GetPixel(x, y);
+    };
+
+    Matrix<bool> imageMatrix = SpriteExtractor::GenerateMatrix(callbacks, alphaColor, static_cast<const void*>(openedImage.get()));
+
+    foundSprites = SpriteExtractor::FindSprites(imageMatrix);
 }

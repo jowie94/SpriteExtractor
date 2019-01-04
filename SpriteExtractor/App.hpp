@@ -5,6 +5,8 @@
 
 #include "Types.hpp"
 #include "SpriteExtractor.h"
+#include <mutex>
+#include <atomic>
 
 class App
 {
@@ -34,5 +36,11 @@ private:
     Color alphaColor;
     ImVec2 imageWindowSize;
     float imageScale;
+
+    std::mutex foundSpritesMutex;
     SpriteExtractor::SpriteList foundSprites;
+
+    std::atomic<bool> isSearchingSprites = false;
+    std::atomic<bool> spritesProcessed = false;
+    std::thread searchSpritesThread;
 };

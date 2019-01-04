@@ -38,12 +38,21 @@ namespace ImGui
 
 void App::Loop()
 {
+    bool wasSearchingSprites = false;
+    if (spritesProcessed && searchSpritesThread.joinable())
+    {
+        wasSearchingSprites = true;
+        isSearchingSprites = false;
+        searchSpritesThread.join();
+    }
+
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
 
     ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
     ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+
     ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar);
 
     if (ImGui::BeginMenuBar())
@@ -60,6 +69,18 @@ void App::Loop()
 
     ImGui::BeginChild("Right", ImVec2(300.0f, -30.0f));
     DrawRightPanel();
+
+    if (ImGui::BeginPopupModal("Searching Sprites", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize))
+    {
+        ImGui::Text("Searching sprites");
+        if (wasSearchingSprites)
+        {
+            ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::EndPopup();
+    }
+
     ImGui::EndChild();
 
     ImGui::Separator();
@@ -80,7 +101,7 @@ void App::DrawFileMenu()
 {
     if (ImGui::BeginMenu("File"))
     {
-        if (ImGui::MenuItem("Open File"/*, "Ctrl + O"*/))
+        if (ImGui::MenuItem("Open File", nullptr, false, !isSearchingSprites))
         {
             OnSelectFile();
         }
@@ -98,6 +119,7 @@ void App::DrawImageContainer()
         ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
         ImGui::Image(*textureResource, ImVec2(textureResource->size.x * imageScale, textureResource->size.y * imageScale));
 
+        std::lock_guard<std::mutex> spritesLock(foundSpritesMutex);
         for (const auto& sprite : foundSprites)
         {
             ImVec2 rectPos(cursorScreenPos.x + sprite.X * imageScale, cursorScreenPos.y + sprite.Y * imageScale);
@@ -169,6 +191,11 @@ void App::OnSelectFile()
 
 void App::OnSearchSprites()
 {
+    {
+        std::lock_guard<std::mutex> spriteList(foundSpritesMutex);
+        foundSprites.clear();
+    }
+
     SpriteExtractor::ImageAccessor callbacks;
     callbacks.GetWidth = [](const void* image)
     {
@@ -183,7 +210,20 @@ void App::OnSearchSprites()
         return static_cast<const IImage*>(image)->GetPixel(x, y);
     };
 
-    Matrix<bool> imageMatrix = SpriteExtractor::GenerateMatrix(callbacks, alphaColor, static_cast<const void*>(openedImage.get()));
+    auto findSprites = [this, callbacks]()
+    {
+        Matrix<bool> imageMatrix = SpriteExtractor::GenerateMatrix(callbacks, alphaColor, static_cast<const void*>(openedImage.get()));
 
-    foundSprites = SpriteExtractor::FindSprites(imageMatrix);
+        SpriteExtractor::SpriteList tmp = SpriteExtractor::FindSprites(imageMatrix);
+
+        std::lock_guard<std::mutex> spriteList(foundSpritesMutex);
+        foundSprites.swap(tmp);
+        
+        spritesProcessed = true;
+    };
+
+    isSearchingSprites = true;
+    spritesProcessed = false;
+    ImGui::OpenPopup("Searching Sprites");
+    searchSpritesThread = std::thread(findSprites);
 }

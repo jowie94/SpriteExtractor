@@ -68,31 +68,31 @@ BBox FindSprite(size_t initialRow, size_t initialColumn, const Matrix<bool>& img
     const Matrix<bool>::MatrixSize& size = img.Size();
     for (size_t y = initialRow; y < size.second; ++y)
     {
-        bool pixelFound = false;
+        bool pixelFound = img.At(initialColumn, y);
 
-        for (size_t x = initialColumn; x >= 0; --x)
+        if (initialColumn > 0)
         {
-            if (img.At(x, y))
+            for (size_t x = initialColumn - 1; x >= (minColumn - 1); --x)
             {
-                minColumn = std::min(minColumn, x);
-                pixelFound = true;
-            }
-            else if (x < minColumn)
-            {
-                break;
+                if (img.At(x, y))
+                {
+                    minColumn = std::min(minColumn, x);
+                    pixelFound = true;
+                }
+
+                if (x == 0)
+                {
+                    break;
+                }
             }
         }
 
-        for (size_t x = initialColumn; x < size.first; ++x)
+        for (size_t x = initialColumn; x < size.first && x <= (maxColumn + 1); ++x)
         {
             if (img.At(x, y))
             {
                 maxColumn = std::max(maxColumn, x);
                 pixelFound = true;
-            }
-            else if (x > maxColumn)
-            {
-                break;
             }
         }
 

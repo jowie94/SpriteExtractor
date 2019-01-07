@@ -7,11 +7,12 @@
 #include "SpriteExtractor.h"
 #include <mutex>
 #include <atomic>
+#include <thread>
 
 class App
 {
 public:
-    App() = default;
+    App();
     virtual ~App() = default;
 
     virtual void Run() = 0;
@@ -40,7 +41,7 @@ private:
     std::mutex foundSpritesMutex;
     SpriteExtractor::SpriteList foundSprites;
 
-    std::atomic<bool> isSearchingSprites = false;
-    std::atomic<bool> spritesProcessed = false;
+    std::atomic_bool isSearchingSprites;
+    std::atomic_bool spritesProcessed;
     std::thread searchSpritesThread;
 };

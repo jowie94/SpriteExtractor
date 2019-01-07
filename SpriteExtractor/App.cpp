@@ -36,6 +36,11 @@ namespace ImGui
     }
 }
 
+App::App()
+: isSearchingSprites(false)
+, spritesProcessed(false)
+{}
+
 void App::Loop()
 {
     bool wasSearchingSprites = false;

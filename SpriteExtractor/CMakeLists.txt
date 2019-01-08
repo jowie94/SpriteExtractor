@@ -10,31 +10,6 @@ set(CMAKE_CXX_STANDARD 14)
 add_executable(SpriteExtractor "main.cpp" "SpriteExtractor.cpp")
 target_sources(SpriteExtractor PRIVATE "App.cpp" "SFMLApp.cpp")
 
-if(NOT WIN32)
-  #FIND_PACKAGE(X11)
-  add_definitions(-Dcimg_display=0)
-  FIND_PACKAGE(Threads REQUIRED)
-endif()
-
-if(NOT APPLE)
-  if(NOT WIN32)
-    if(X11_FOUND)
-      SET(CIMG_CFLAGS "${CIMG_CFLAGS} ${CIMG_XSHM_CCFLAGS} ${CIMG_XRANDR_CCFLAGS}")
-      SET(SYSTEM_LIBS ${SYSTEM_LIBS} Xext Xrandr)
-    endif()
-  endif(NOT WIN32)
-endif(NOT APPLE)
-
-if(X11_FOUND)
-  link_directories(${X11_LIB_DIRS})
-  include_directories(${X11_INCLUDE_DIR})
-  SET( SYSTEM_LIBS ${SYSTEM_LIBS} ${X11_LIBRARIES} )
-endif()
-
-if (NOT WIN32)
-  SET( SYSTEM_LIBS ${SYSTEM_LIBS} ${CMAKE_THREAD_LIBS_INIT} )
-endif()
-
 if(APPLE)
   set(PLATFORM_SOURCES ${PLATFORM_SOURCES} "Platform/MacPlatform.mm")
   set(BUILD_SHARED_LIBS TRUE)
@@ -43,13 +18,11 @@ if(APPLE)
 endif(APPLE)
 
 if(WIN32)
-  SET( SYSTEM_LIBS  ${SYSTEM_LIBS}  gdi32)
   set_target_properties(SpriteExtractor PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
   set(PLATFORM_SOURCES ${PLATFORM_SOURCES} "Platform/WindowsPlatform.cpp")
 endif()
 
 target_sources(SpriteExtractor PRIVATE ${PLATFORM_SOURCES})
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CIMG_CFLAGS}")
 
 include_directories( ${PROJECT_SOURCE_DIR} )
 
@@ -71,7 +44,5 @@ target_link_libraries(SpriteExtractor imgui::imgui )
 find_package(OpenGL REQUIRED)
 include_directories(${OPENGL_INCLUDE_DIRS})
 target_link_libraries(SpriteExtractor ${OPENGL_LIBRARIES})
-
-target_link_libraries(SpriteExtractor ${SYSTEM_LIBS})
 
 # TODO: Add tests and install targets if needed.

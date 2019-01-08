@@ -37,20 +37,11 @@ namespace ImGui
 }
 
 App::App()
-: isSearchingSprites(false)
-, spritesProcessed(false)
+: searchSpritesTask(std::bind(&App::OnSpritesFound, this, std::placeholders::_1))
 {}
 
 void App::Loop()
 {
-    bool wasSearchingSprites = false;
-    if (spritesProcessed && searchSpritesThread.joinable())
-    {
-        wasSearchingSprites = true;
-        isSearchingSprites = false;
-        searchSpritesThread.join();
-    }
-
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
@@ -75,17 +66,6 @@ void App::Loop()
     ImGui::BeginChild("Right", ImVec2(300.0f, -30.0f));
     DrawRightPanel();
 
-    if (ImGui::BeginPopupModal("Searching Sprites", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize))
-    {
-        ImGui::Text("Searching sprites");
-        if (wasSearchingSprites)
-        {
-            ImGui::CloseCurrentPopup();
-        }
-
-        ImGui::EndPopup();
-    }
-
     ImGui::EndChild();
 
     ImGui::Separator();
@@ -97,6 +77,9 @@ void App::Loop()
     ImGui::PopStyleVar();
 
     ImGui::End();
+
+    DrawSearchingPopup();
+
     ImGui::PopStyleVar(3);
 
     //ImGui::ShowTestWindow();
@@ -106,7 +89,7 @@ void App::DrawFileMenu()
 {
     if (ImGui::BeginMenu("File"))
     {
-        if (ImGui::MenuItem("Open File", nullptr, false, !isSearchingSprites))
+        if (ImGui::MenuItem("Open File", nullptr, false))
         {
             OnSelectFile();
         }
@@ -131,9 +114,6 @@ void App::DrawImageContainer()
             ImVec2 maxRect(rectPos.x + ((sprite.Width + 1.0f) * imageScale), rectPos.y + (sprite.Height + 1.0f) * imageScale);
             ImGui::GetWindowDrawList()->AddRect(rectPos, maxRect, ImColor(255, 0, 0));
         }
-
-        /*ImVec2 rectPos(cursorScreenPos.x + 50.0f * imageScale, cursorScreenPos.y + 80.0f * imageScale);
-        ImGui::GetWindowDrawList()->AddRect(rectPos, ImVec2((rectPos.x) + 120.0f * imageScale, (rectPos.y) + 120.0f * imageScale), ImColor(255, 0, 0));*/
     }
     ImGui::EndChild();
 
@@ -165,19 +145,38 @@ void App::DrawImageContainer()
 
 void App::DrawRightPanel()
 {
-    /*ImGui::Text("File: %s", selectedFile.c_str());
-
-    const bool button = ImGui::Button("Open File");
-
-    if (button)
-    {
-        OnSelectFile();
-    }*/
-
     if (ImGui::Button("Search Sprites"))
     {
         alphaColor = Color(128, 0, 255);
         OnSearchSprites();
+    }
+}
+
+void App::DrawSearchingPopup()
+{
+    if (searchingPopupState == PopupState::Open)
+    {
+        ImGui::OpenPopup("Searching Sprites");
+
+        searchingPopupState = PopupState::Opened;
+    }
+
+    if (ImGui::BeginPopupModal("Searching Sprites", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize))
+    {
+        ImGui::Text("Searching sprites");
+
+        if (ImGui::Button("Cancel"))
+        {
+            OnCancelSearch();
+        }
+
+        if (searchingPopupState == PopupState::Close)
+        {
+            ImGui::CloseCurrentPopup();
+            searchingPopupState = PopupState::Closed;
+        }
+
+        ImGui::EndPopup();
     }
 }
 
@@ -215,20 +214,21 @@ void App::OnSearchSprites()
         return static_cast<const IImage*>(image)->GetPixel(x, y);
     };
 
-    auto findSprites = [this, callbacks]()
-    {
-        Matrix<bool> imageMatrix = SpriteExtractor::GenerateMatrix(callbacks, alphaColor, static_cast<const void*>(openedImage.get()));
+    searchingPopupState = PopupState::Open;
+    searchSpritesTask.Run(callbacks, alphaColor, static_cast<const void*>(openedImage.get()));
+}
 
-        SpriteExtractor::SpriteList tmp = SpriteExtractor::FindSprites(imageMatrix);
+void App::OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites)
+{
+    std::lock_guard<std::mutex> spriteList(foundSpritesMutex);
+    this->foundSprites = foundSprites;
 
-        std::lock_guard<std::mutex> spriteList(foundSpritesMutex);
-        foundSprites.swap(tmp);
-        
-        spritesProcessed = true;
-    };
+    searchingPopupState = PopupState::Close;
+}
 
-    isSearchingSprites = true;
-    spritesProcessed = false;
-    ImGui::OpenPopup("Searching Sprites");
-    searchSpritesThread = std::thread(findSprites);
+void App::OnCancelSearch()
+{
+    searchSpritesTask.Stop();
+
+    searchingPopupState = PopupState::Close;
 }

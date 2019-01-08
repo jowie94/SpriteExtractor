@@ -221,47 +221,115 @@ void SearchSprites()
     img.display();
 }
 
-Matrix<bool> SpriteExtractor::GenerateMatrix(const ImageAccessor& callbacks, const Color& filterColor, const void* image)
+namespace SpriteExtractor
 {
-    assert(callbacks.GetWidth);
-    assert(callbacks.GetHeight);
-    assert(callbacks.GetColor);
-
-    size_t width = callbacks.GetWidth(image);
-    size_t height = callbacks.GetHeight(image);
-
-    Matrix<bool> matrix(std::make_pair(width, height));
-
-    for (size_t y = 0; y < height; ++y)
+    Matrix<bool> GenerateMatrixImpl(const ImageAccessor& callbacks, const Color& filterColor, const void* image, std::function<bool()> exitCallback)
     {
-        for (size_t x = 0; x < width; ++x)
+        if (exitCallback == nullptr)
         {
-            matrix.At(x, y) = callbacks.GetColor(x, y, image) != filterColor;
+            exitCallback = []() { return false; };
         }
+
+        assert(callbacks.GetWidth);
+        assert(callbacks.GetHeight);
+        assert(callbacks.GetColor);
+
+        size_t width = callbacks.GetWidth(image);
+        size_t height = callbacks.GetHeight(image);
+
+        Matrix<bool> matrix(std::make_pair(width, height));
+
+        for (size_t y = 0; y < height && !exitCallback(); ++y)
+        {
+            for (size_t x = 0; x < width && !exitCallback(); ++x)
+            {
+                matrix.At(x, y) = callbacks.GetColor(x, y, image) != filterColor;
+            }
+        }
+
+        return matrix;
     }
 
-    return matrix;
+    SpriteList FindSpritesImpl(const Matrix<bool>& image, std::function<bool()> exitCallback)
+    {
+        if (exitCallback == nullptr)
+        {
+            exitCallback = []() { return false; };
+        }
+
+        SpriteList list;
+
+        Matrix<bool>::MatrixSize size = image.Size();
+        for (size_t row = 0; row < size.second && !exitCallback(); ++row)
+        {
+            for (size_t column = 0; column < size.first && !exitCallback(); ++column)
+            {
+                if (image.At(column, row) && !IsPointInList(list, column, row))
+                {
+                    BBox sprite = FindSprite(row, column, image);
+
+                    column = sprite.X + sprite.Width; // Skip to the next sprite
+
+                    list.emplace_back(sprite);
+                }
+            }
+        }
+
+        return list;
+    }
+}
+
+Matrix<bool> SpriteExtractor::GenerateMatrix(const ImageAccessor& callbacks, const Color& filterColor, const void* image)
+{
+    return GenerateMatrixImpl(callbacks, filterColor, image, nullptr);
 }
 
 SpriteExtractor::SpriteList SpriteExtractor::FindSprites(const Matrix<bool>& image)
 {
-    SpriteList list;
+    return FindSpritesImpl(image, nullptr);
+}
 
-    Matrix<bool>::MatrixSize size = image.Size();
-    for (size_t row = 0; row < size.second; ++row)
+SpriteExtractor::Task::Task(CompletedCallback completedCallback_)
+: completedCallback(completedCallback_)
+, stopped(false)
+, isRunning(false)
+{
+}
+
+void SpriteExtractor::Task::Run(const ImageAccessor& callbacks, const Color& filterColor, const void* image)
+{
+    assert(!isRunning && "Task already running");
+
+    if (!isRunning)
     {
-        for (size_t column = 0; column < size.first; ++column)
-        {
-            if (image.At(column, row) && !IsPointInList(list, column, row))
-            {
-                BBox sprite = FindSprite(row, column, image);
+        std::thread(std::bind(&Task::DoRun, this, callbacks, filterColor, image)).detach();
+    }
+}
 
-                column = sprite.X + sprite.Width; // Skip to the next sprite
+void SpriteExtractor::Task::Stop()
+{
+    stopped = true;
+}
 
-                list.emplace_back(sprite);
-            }
-        }
+bool SpriteExtractor::Task::IsRunning() const
+{
+    return isRunning;
+}
+
+void SpriteExtractor::Task::DoRun(const ImageAccessor& callbacks, const Color& filterColor, const void* image)
+{
+    stopped = false;
+    isRunning = true;
+
+    auto exitCallback = [this]() -> bool { return stopped; };
+
+    Matrix<bool> imageMatrix = GenerateMatrixImpl(callbacks, filterColor, image, exitCallback);
+    SpriteList sprites = FindSpritesImpl(imageMatrix, exitCallback);
+
+    if (!stopped)
+    {
+        completedCallback(sprites);
     }
 
-    return list;
+    isRunning = false;
 }

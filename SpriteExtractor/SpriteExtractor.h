@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <functional>
+#include <atomic>
 
 namespace SpriteExtractor
 {
@@ -18,4 +19,24 @@ namespace SpriteExtractor
 
     using SpriteList = std::vector<BBox>;
     SpriteList FindSprites(const Matrix<bool>& image);
+
+    class Task
+    {
+    public:
+        using CompletedCallback = std::function<void(const SpriteList&)>;
+
+        explicit Task(CompletedCallback completedCallback_);
+
+        void Run(const ImageAccessor& callbacks, const Color& filterColor, const void* image);
+        void Stop();
+
+        bool IsRunning() const;
+    private:
+        void DoRun(const ImageAccessor& callbacks, const Color& filterColor, const void* image);
+
+        CompletedCallback completedCallback = nullptr;
+
+        std::atomic_bool stopped;
+        std::atomic_bool isRunning;
+    };
 };

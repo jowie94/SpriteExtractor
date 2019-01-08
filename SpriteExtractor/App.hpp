@@ -23,12 +23,27 @@ protected:
     virtual std::unique_ptr<IImage> OpenImage(const std::string& path) = 0;
 
 private:
+    enum class PopupState
+    {
+        Open,
+        Opened,
+        Close,
+        Closed
+    };
+
+    // Panels
     void DrawFileMenu();
     void DrawImageContainer();
     void DrawRightPanel();
 
+    // Popups
+    void DrawSearchingPopup();
+
+    // Callbacks
     void OnSelectFile();
     void OnSearchSprites();
+    void OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites);
+    void OnCancelSearch();
 
     std::string selectedFile;
     std::unique_ptr<IImage> openedImage;
@@ -36,12 +51,12 @@ private:
 
     Color alphaColor;
     ImVec2 imageWindowSize;
-    float imageScale;
+    float imageScale = 1.0f;
 
     std::mutex foundSpritesMutex;
     SpriteExtractor::SpriteList foundSprites;
 
-    std::atomic_bool isSearchingSprites;
-    std::atomic_bool spritesProcessed;
-    std::thread searchSpritesThread;
+    SpriteExtractor::Task searchSpritesTask;
+
+    PopupState searchingPopupState = PopupState::Closed;
 };

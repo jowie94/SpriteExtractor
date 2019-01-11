@@ -162,9 +162,17 @@ void App::DrawImageContainer()
 
 void App::DrawRightPanel()
 {
+    float col4[4];
+
+    alphaColor.ToFloat(col4);
+    if (ImGui::ColorPicker4("Alpha Color", col4))
+    {
+        alphaColor = col4;
+    }
+
     if (ImGui::Button("Search Sprites", openedImage != nullptr))
     {
-        alphaColor = Color(128, 0, 255);
+        //alphaColor = Color(128, 0, 255);
         OnSearchSprites();
     }
 }

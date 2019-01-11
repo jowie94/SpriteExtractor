@@ -33,10 +33,24 @@ struct Color final
         , A(a)
     {}
 
-    channel_t R = 0;
-    channel_t G = 0;
-    channel_t B = 0;
-    channel_t A = 0;
+    void ToFloat(float colors[4])
+    {
+        static float sc = 1.0f / 255.0f;
+        colors[0] = R * sc;
+        colors[1] = G * sc;
+        colors[2] = B * sc;
+        colors[3] = A * sc;
+    }
+
+    Color& operator=(const float colors[4])
+    {
+        R = static_cast<channel_t>(colors[0] * 255.0f);
+        G = static_cast<channel_t>(colors[1] * 255.0f);
+        B = static_cast<channel_t>(colors[2] * 255.0f);
+        A = static_cast<channel_t>(colors[3] * 255.0f);
+
+        return *this;
+    }
 
     bool operator==(const Color& other) const
     {
@@ -47,6 +61,11 @@ struct Color final
     {
         return !operator==(other);
     }
+
+    channel_t R = 0;
+    channel_t G = 0;
+    channel_t B = 0;
+    channel_t A = 255;
 };
 
 using ImageSize = Vec2<unsigned int>;

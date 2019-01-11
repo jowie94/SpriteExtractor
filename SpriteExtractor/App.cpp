@@ -145,10 +145,20 @@ void App::DrawImageContainer()
 
 void App::DrawRightPanel()
 {
-    if (ImGui::Button("Search Sprites"))
+    if (openedImage == nullptr)
+    {
+        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+    }
+
+    if (ImGui::Button("Search Sprites") && openedImage != nullptr)
     {
         alphaColor = Color(128, 0, 255);
         OnSearchSprites();
+    }
+
+    if (openedImage == nullptr)
+    {
+        ImGui::PopStyleVar();
     }
 }
 

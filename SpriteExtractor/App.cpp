@@ -34,6 +34,23 @@ namespace ImGui
     {
         ImGui::Image((void*)(intptr_t)image.resourceId, imageSize);
     }
+
+    bool Button(const char* label, bool enabled, const ImVec2& size = ImVec2(0, 0))
+    {
+        if (!enabled)
+        {
+            PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+        }
+
+        bool result = Button(label, size);
+
+        if (!enabled)
+        {
+            PopStyleVar();
+        }
+
+        return enabled && result;
+    }
 }
 
 App::App()
@@ -145,20 +162,10 @@ void App::DrawImageContainer()
 
 void App::DrawRightPanel()
 {
-    if (openedImage == nullptr)
-    {
-        ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
-    }
-
-    if (ImGui::Button("Search Sprites") && openedImage != nullptr)
+    if (ImGui::Button("Search Sprites", openedImage != nullptr))
     {
         alphaColor = Color(128, 0, 255);
         OnSearchSprites();
-    }
-
-    if (openedImage == nullptr)
-    {
-        ImGui::PopStyleVar();
     }
 }
 

@@ -22,7 +22,7 @@ void SFMLApp::Run()
     sf::Clock deltaClock;
     while (window.isOpen())
     {
-        sf::Event event;
+        sf::Event event{};
         while (window.pollEvent(event))
         {
             ImGui::SFML::ProcessEvent(event);
@@ -31,15 +31,15 @@ void SFMLApp::Run()
             {
                 window.close();
             }
-
-            ImGui::SFML::Update(window, deltaClock.restart());
-
-            Loop();
-
-            window.clear();
-            ImGui::SFML::Render(window);
-            window.display();
         }
+
+        ImGui::SFML::Update(window, deltaClock.restart());
+
+        Loop();
+
+        window.clear();
+        ImGui::SFML::Render(window);
+        window.display();
     }
 }
 

@@ -59,4 +59,7 @@ private:
     SpriteExtractor::Task searchSpritesTask;
 
     PopupState searchingPopupState = PopupState::Closed;
+
+    Color originalAlphaColor;
+    bool enableColorPicker = false;
 };

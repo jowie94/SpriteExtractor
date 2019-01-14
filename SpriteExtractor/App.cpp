@@ -124,6 +124,27 @@ void App::DrawImageContainer()
         ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
         ImGui::Image(*textureResource, ImVec2(textureResource->size.x * imageScale, textureResource->size.y * imageScale));
 
+        if (enableColorPicker)
+        {
+            ImVec2 mousePos = ImGui::GetMousePos();
+            ImVec2 relativeMousePos((mousePos.x - cursorScreenPos.x) / imageScale, (mousePos.y - cursorScreenPos.y) / imageScale);
+
+            if (ImGui::IsWindowHovered() && relativeMousePos.x >= 0 && relativeMousePos.x <= openedImage->Size().x && relativeMousePos.y >= 0 && relativeMousePos.y <= openedImage->Size().y)
+            {
+                alphaColor = openedImage->GetPixel(relativeMousePos.x, relativeMousePos.y);
+            }
+            else
+            {
+                alphaColor = originalAlphaColor;
+            }
+
+            if (ImGui::IsMouseClicked(0))
+            {
+                enableColorPicker = false;
+            }
+        }
+
+
         std::lock_guard<std::mutex> spritesLock(foundSpritesMutex);
         for (const auto& sprite : foundSprites)
         {
@@ -168,6 +189,31 @@ void App::DrawRightPanel()
     if (ImGui::ColorPicker4("Alpha Color", col4))
     {
         alphaColor = col4;
+    }
+
+    bool colorPickerEnabled = enableColorPicker;
+
+    if (colorPickerEnabled)
+    {
+        ImGui::PushStyleColor(ImGuiCol_Button, ImColor(96, 198, 53).Value);
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor(74, 153, 41).Value);
+    }
+    if (ImGui::Button("Pick Color"))
+    {
+        if (enableColorPicker)
+        {
+            alphaColor = originalAlphaColor;
+            enableColorPicker = false;
+        }
+        else
+        {
+            originalAlphaColor = alphaColor;
+            enableColorPicker = true;
+        }
+    }
+    if (colorPickerEnabled)
+    {
+        ImGui::PopStyleColor(2);
     }
 
     if (ImGui::Button("Search Sprites", openedImage != nullptr))

@@ -131,7 +131,7 @@ void App::DrawImageContainer()
 
             if (ImGui::IsWindowHovered() && relativeMousePos.x >= 0 && relativeMousePos.x <= openedImage->Size().x && relativeMousePos.y >= 0 && relativeMousePos.y <= openedImage->Size().y)
             {
-                alphaColor = openedImage->GetPixel(relativeMousePos.x, relativeMousePos.y);
+                alphaColor = openedImage->GetPixel(static_cast<unsigned int>(relativeMousePos.x), static_cast<unsigned int>(relativeMousePos.y));
             }
             else
             {

@@ -93,9 +93,9 @@ public:
         return std::make_unique<SFMLTextureResource>(image);
     }
 
-    Color GetPixel(unsigned int x, unsigned int y) const override
+    Color GetPixel(size_t x, size_t y) const override
     {
-        return sfmlColorToColor(image.getPixel(x, y));
+        return sfmlColorToColor(image.getPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y)));
     }
 
 private:

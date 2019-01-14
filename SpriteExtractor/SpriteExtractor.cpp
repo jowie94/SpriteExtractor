@@ -21,8 +21,8 @@ namespace SpriteExtractor
     BBox FindSprite(size_t initialRow, size_t initialColumn, const Matrix<bool>& img)
     {
         BBox box;
-        box.X = initialColumn;
-        box.Y = initialRow;
+        box.X = static_cast<int>(initialColumn);
+        box.Y = static_cast<int>(initialRow);
 
         size_t minColumn = initialColumn;
         size_t maxColumn = initialColumn;
@@ -67,9 +67,9 @@ namespace SpriteExtractor
             maxRow = y;
         }
 
-        box.X = minColumn;
-        box.Width = maxColumn - box.X;
-        box.Height = maxRow - box.Y;
+        box.X = static_cast<int>(minColumn);
+        box.Width = static_cast<int>(maxColumn - box.X);
+        box.Height = static_cast<int>(maxRow - box.Y);
 
         return box;
     }
@@ -90,7 +90,7 @@ namespace SpriteExtractor
 
         Matrix<bool> matrix(std::make_pair(width, height));
 
-        const float totalPercentage = width * height;
+        const float totalPercentage = static_cast<float>(width * height);
 
         for (size_t y = 0; y < height && !exitCallback(); ++y)
         {
@@ -119,13 +119,13 @@ namespace SpriteExtractor
 
         Matrix<bool>::MatrixSize size = image.Size();
 
-        const float totalPercentage = size.first * size.second;
+        const float totalPercentage = static_cast<float>(size.first * size.second);
 
         for (size_t row = 0; row < size.second && !exitCallback(); ++row)
         {
             for (size_t column = 0; column < size.first && !exitCallback(); ++column)
             {
-                if (image.At(column, row) && !IsPointInList(list, column, row))
+                if (image.At(column, row) && !IsPointInList(list, static_cast<int>(column), static_cast<int>(row)))
                 {
                     BBox sprite = FindSprite(row, column, image);
 

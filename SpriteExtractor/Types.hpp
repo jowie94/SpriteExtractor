@@ -83,7 +83,7 @@ public:
     virtual ImageSize Size() const = 0;
     virtual std::unique_ptr<ITextureResource> GetTextureResource() const = 0;
 
-    virtual Color GetPixel(unsigned int x, unsigned int y) const = 0;
+    virtual Color GetPixel(size_t x, size_t y) const = 0;
 };
 
 template<typename T>

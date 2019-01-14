@@ -234,7 +234,29 @@ void App::DrawSearchingPopup()
 
     if (ImGui::BeginPopupModal("Searching Sprites", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize))
     {
-        ImGui::Text("Searching sprites");
+        std::string message;
+        switch (searchSpritesTask.GetStage())
+        {
+            case SpriteExtractor::Task::Stage::GenerateMatrix:
+            {
+                message = "Generating binary matrix";
+                break;
+            }
+            case SpriteExtractor::Task::Stage::FindSprites:
+            {
+                message = "Searching sprites";
+                break;
+            }
+            default:
+            {
+                message = "ERROR: Unknown stage";
+                break;
+            }
+        }
+
+        ImGui::Text(message.c_str());
+
+        ImGui::ProgressBar(searchSpritesTask.GetProgress());
 
         if (ImGui::Button("Cancel"))
         {

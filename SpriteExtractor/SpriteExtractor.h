@@ -25,12 +25,22 @@ namespace SpriteExtractor
     public:
         using CompletedCallback = std::function<void(const SpriteList&)>;
 
+        enum class Stage
+        {
+            None,
+            GenerateMatrix,
+            FindSprites
+        };
+
         explicit Task(CompletedCallback completedCallback_);
 
         void Run(const ImageAccessor& callbacks, const Color& filterColor, const void* image);
         void Stop();
 
         bool IsRunning() const;
+
+        Stage GetStage() const;
+        float GetProgress() const;
     private:
         void DoRun(const ImageAccessor& callbacks, const Color& filterColor, const void* image);
 
@@ -38,5 +48,8 @@ namespace SpriteExtractor
 
         std::atomic_bool stopped;
         std::atomic_bool isRunning;
+
+        std::atomic<Stage> stage;
+        std::atomic<float> progress;
     };
 };

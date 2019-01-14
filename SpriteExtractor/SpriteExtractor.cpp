@@ -74,7 +74,7 @@ namespace SpriteExtractor
         return box;
     }
 
-    Matrix<bool> GenerateMatrixImpl(const ImageAccessor& callbacks, const Color& filterColor, const void* image, std::function<bool()> exitCallback)
+    Matrix<bool> GenerateMatrixImpl(const ImageAccessor& callbacks, const Color& filterColor, const void* image, std::function<bool()> exitCallback, std::function<void(float)> progressCallback)
     {
         if (exitCallback == nullptr)
         {
@@ -90,18 +90,25 @@ namespace SpriteExtractor
 
         Matrix<bool> matrix(std::make_pair(width, height));
 
+        const float totalPercentage = width * height;
+
         for (size_t y = 0; y < height && !exitCallback(); ++y)
         {
             for (size_t x = 0; x < width && !exitCallback(); ++x)
             {
                 matrix.At(x, y) = callbacks.GetColor(x, y, image) != filterColor;
+
+                if (progressCallback)
+                {
+                    progressCallback((x + (width * y)) / totalPercentage);
+                }
             }
         }
 
         return matrix;
     }
 
-    SpriteList FindSpritesImpl(const Matrix<bool>& image, std::function<bool()> exitCallback)
+    SpriteList FindSpritesImpl(const Matrix<bool>& image, std::function<bool()> exitCallback, std::function<void(float)> progressCallback)
     {
         if (exitCallback == nullptr)
         {
@@ -111,6 +118,9 @@ namespace SpriteExtractor
         SpriteList list;
 
         Matrix<bool>::MatrixSize size = image.Size();
+
+        const float totalPercentage = size.first * size.second;
+
         for (size_t row = 0; row < size.second && !exitCallback(); ++row)
         {
             for (size_t column = 0; column < size.first && !exitCallback(); ++column)
@@ -123,6 +133,11 @@ namespace SpriteExtractor
 
                     list.emplace_back(sprite);
                 }
+
+                if (progressCallback != nullptr)
+                {
+                    progressCallback((column + (size.first * row)) / totalPercentage);
+                }
             }
         }
 
@@ -132,18 +147,20 @@ namespace SpriteExtractor
 
 Matrix<bool> SpriteExtractor::GenerateMatrix(const ImageAccessor& callbacks, const Color& filterColor, const void* image)
 {
-    return GenerateMatrixImpl(callbacks, filterColor, image, nullptr);
+    return GenerateMatrixImpl(callbacks, filterColor, image, nullptr, nullptr);
 }
 
 SpriteExtractor::SpriteList SpriteExtractor::FindSprites(const Matrix<bool>& image)
 {
-    return FindSpritesImpl(image, nullptr);
+    return FindSpritesImpl(image, nullptr, nullptr);
 }
 
 SpriteExtractor::Task::Task(CompletedCallback completedCallback_)
 : completedCallback(completedCallback_)
 , stopped(false)
 , isRunning(false)
+, stage(Stage::None)
+, progress(0.0f)
 {
 }
 
@@ -153,6 +170,7 @@ void SpriteExtractor::Task::Run(const ImageAccessor& callbacks, const Color& fil
 
     if (!isRunning)
     {
+        progress = 0.0f;
         std::thread(std::bind(&Task::DoRun, this, callbacks, filterColor, image)).detach();
     }
 }
@@ -167,15 +185,31 @@ bool SpriteExtractor::Task::IsRunning() const
     return isRunning;
 }
 
+SpriteExtractor::Task::Stage SpriteExtractor::Task::GetStage() const
+{
+    return stage;
+}
+
+float SpriteExtractor::Task::GetProgress() const
+{
+    return progress;
+}
+
 void SpriteExtractor::Task::DoRun(const ImageAccessor& callbacks, const Color& filterColor, const void* image)
 {
     stopped = false;
     isRunning = true;
 
     auto exitCallback = [this]() -> bool { return stopped; };
+    auto progressCallback = [this](float inProgress) { progress = inProgress; };
 
-    Matrix<bool> imageMatrix = GenerateMatrixImpl(callbacks, filterColor, image, exitCallback);
-    SpriteList sprites = FindSpritesImpl(imageMatrix, exitCallback);
+    progress = 0.0f;
+    stage = Stage::GenerateMatrix;
+    Matrix<bool> imageMatrix = GenerateMatrixImpl(callbacks, filterColor, image, exitCallback, progressCallback);
+
+    progress = 0.0f;
+    stage = Stage::FindSprites;
+    SpriteList sprites = FindSpritesImpl(imageMatrix, exitCallback, progressCallback);
 
     if (!stopped)
     {

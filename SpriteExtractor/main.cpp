@@ -8,3 +8,10 @@ int main()
 
     return 0;
 }
+
+#ifdef WIN32
+int WinMain()
+{
+    return main();
+}
+#endif

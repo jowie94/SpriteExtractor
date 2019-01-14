@@ -7,7 +7,7 @@ set(CIMG_H_PATH ${PROJECT_SOURCE_DIR})
 set(CMAKE_CXX_STANDARD 14)
 
 # Add source to this project's executable.
-add_executable(SpriteExtractor "main.cpp" "SpriteExtractor.cpp")
+add_executable(SpriteExtractor WIN32 "main.cpp" "SpriteExtractor.cpp")
 target_sources(SpriteExtractor PRIVATE "App.cpp" "SFMLApp.cpp")
 
 if(APPLE)

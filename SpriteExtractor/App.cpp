@@ -40,6 +40,8 @@ namespace ImGui
         if (!enabled)
         {
             PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
+            PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetStyleColorVec4(ImGuiCol_Button));
+            PushStyleColor(ImGuiCol_ButtonActive, ImGui::GetStyleColorVec4(ImGuiCol_Button));
         }
 
         bool result = Button(label, size);
@@ -47,6 +49,7 @@ namespace ImGui
         if (!enabled)
         {
             PopStyleVar();
+            PopStyleColor(2);
         }
 
         return enabled && result;
@@ -218,7 +221,6 @@ void App::DrawRightPanel()
 
     if (ImGui::Button("Search Sprites", openedImage != nullptr))
     {
-        //alphaColor = Color(128, 0, 255);
         OnSearchSprites();
     }
 }

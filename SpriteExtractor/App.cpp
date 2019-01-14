@@ -138,7 +138,7 @@ void App::DrawImageContainer()
                 alphaColor = originalAlphaColor;
             }
 
-            if (ImGui::IsMouseClicked(0))
+            if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0))
             {
                 enableColorPicker = false;
             }

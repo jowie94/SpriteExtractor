@@ -256,7 +256,7 @@ void App::DrawSearchingPopup()
             }
         }
 
-        ImGui::Text(message.c_str());
+        ImGui::Text("%s", message.c_str());
 
         ImGui::ProgressBar(searchSpritesTask.GetProgress());
 

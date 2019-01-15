@@ -26,6 +26,8 @@ namespace AppConst
 
         return std::min(scaleX, scaleY);
     }
+
+    float kZoomFactor = 0.3f;
 }
 
 namespace ImGui
@@ -189,14 +191,14 @@ void App::DrawImageContainer()
 
     ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImColor(0, 0, 0).Value);
     ImGui::BeginChild("Zoom", ImVec2(75.0f, 30.0f), true);
-    if (ImGui::SmallButton("+"))
+    if (ImGui::SmallButton("+") && imageScale > AppConst::kZoomFactor)
     {
-        imageScale += 0.5f;
+        imageScale += AppConst::kZoomFactor;
     }
     ImGui::SameLine();
-    if (ImGui::SmallButton("-"))
+    if (ImGui::SmallButton("-") && imageScale > AppConst::kZoomFactor)
     {
-        imageScale -= 0.1f;
+        imageScale -= AppConst::kZoomFactor;
     }
     ImGui::SameLine();
     if (ImGui::SmallButton("="))

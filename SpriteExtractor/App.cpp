@@ -71,11 +71,7 @@ void App::Loop()
 
     ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar);
 
-    if (ImGui::BeginMenuBar())
-    {
-        DrawFileMenu();
-        ImGui::EndMenuBar();
-    }
+    DrawMenuBar();
 
     ImGui::BeginChild("Image Container", ImVec2(-300.0f, -30.0f));
     DrawImageContainer();
@@ -85,7 +81,6 @@ void App::Loop()
 
     ImGui::BeginChild("Right", ImVec2(300.0f, -30.0f));
     DrawRightPanel();
-
     ImGui::EndChild();
 
     ImGui::Separator();
@@ -100,9 +95,24 @@ void App::Loop()
 
     DrawSearchingPopup();
 
+    if (showMetrics)
+    {
+        ImGui::ShowMetricsWindow(&showMetrics);
+    }
+
     ImGui::PopStyleVar(3);
 
     //ImGui::ShowTestWindow();
+}
+
+void App::DrawMenuBar()
+{
+    if (ImGui::BeginMenuBar())
+    {
+        DrawFileMenu();
+        DrawDebugMenu();
+        ImGui::EndMenuBar();
+    }
 }
 
 void App::DrawFileMenu()
@@ -112,6 +122,19 @@ void App::DrawFileMenu()
         if (ImGui::MenuItem("Open File", nullptr, false))
         {
             OnSelectFile();
+        }
+
+        ImGui::EndMenu();
+    }
+}
+
+void App::DrawDebugMenu()
+{
+    if (ImGui::BeginMenu("Debug"))
+    {
+        if (ImGui::MenuItem("Show Metrics", nullptr, showMetrics))
+        {
+            showMetrics = !showMetrics;
         }
 
         ImGui::EndMenu();

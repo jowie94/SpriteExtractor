@@ -32,7 +32,9 @@ private:
     };
 
     // Panels
+    void DrawMenuBar();
     void DrawFileMenu();
+    void DrawDebugMenu();
     void DrawImageContainer();
     void DrawRightPanel();
 
@@ -62,4 +64,6 @@ private:
 
     Color originalAlphaColor;
     bool enableColorPicker = false;
+
+    bool showMetrics = false;
 };

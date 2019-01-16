@@ -232,7 +232,7 @@ void Init(sf::Window& window, sf::RenderTarget& target, bool loadDefaultFont)
     initDefaultJoystickMapping();
 
     // init rendering
-    io.DisplaySize = static_cast<sf::Vector2f>(target.getSize());
+    io.DisplaySize = ImVec2(target.getSize().x / ImGui::GetIO().DisplayFramebufferScale.x, target.getSize().y / ImGui::GetIO().DisplayFramebufferScale.y);
 
     // clipboard
     io.SetClipboardTextFn = setClipboardText;
@@ -365,15 +365,17 @@ void Update(sf::Window& window, sf::RenderTarget& target, sf::Time dt)
 void Update(const sf::Vector2i& mousePos, const sf::Vector2f& displaySize, sf::Time dt)
 {
     ImGuiIO& io = ImGui::GetIO();
-    io.DisplaySize = displaySize;
+    float framebufferXScale = ImGui::GetIO().DisplayFramebufferScale.x;
+    float framebufferYScale = ImGui::GetIO().DisplayFramebufferScale.y;
+    io.DisplaySize = ImVec2(displaySize.x / framebufferXScale, displaySize.y / framebufferYScale);
     io.DeltaTime = dt.asSeconds();
 
     if (s_windowHasFocus) {
         if (io.WantSetMousePos) {
-            sf::Vector2i mousePos(static_cast<int>(io.MousePos.x), static_cast<int>(io.MousePos.y));
+            sf::Vector2i mousePos(static_cast<int>(io.MousePos.x * framebufferXScale), static_cast<int>(io.MousePos.y * framebufferYScale));
             sf::Mouse::setPosition(mousePos);
         } else {
-            io.MousePos = mousePos;
+            io.MousePos = ImVec2(mousePos.x / framebufferXScale, mousePos.y / framebufferYScale);
         }
         for (unsigned int i = 0; i < 3; i++) {
             io.MouseDown[i] =  s_touchDown[i] || sf::Touch::isDown(i) || s_mousePressed[i] || sf::Mouse::isButtonPressed((sf::Mouse::Button)i);

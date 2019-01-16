@@ -12,12 +12,17 @@
 
 void SFMLApp::Run()
 {
-    sf::RenderWindow window(sf::VideoMode(1366, 768), "Sprite Extractor");
+#ifdef __APPLE__
+    float scale = 2.0f;
+#else
+    float scale = 1.0f;
+#endif
+
+    sf::RenderWindow window(sf::VideoMode(1366 * scale, 768 * scale), "Sprite Extractor");
+
     ImGui::SFML::Init(window);
 
-#ifdef __APPLE__
-    ImGui::GetIO().FontGlobalScale = 2.0f;
-#endif
+    ImGui::GetIO().DisplayFramebufferScale = ImVec2(scale, scale);
 
     sf::Clock deltaClock;
     while (window.isOpen())

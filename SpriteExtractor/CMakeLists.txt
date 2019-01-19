@@ -7,7 +7,7 @@ set(CIMG_H_PATH ${PROJECT_SOURCE_DIR})
 set(CMAKE_CXX_STANDARD 14)
 
 # Add source to this project's executable.
-add_executable(SpriteExtractor WIN32 "main.cpp" "SpriteExtractor.cpp")
+add_executable(SpriteExtractor WIN32 "main.cpp" "SpriteExtractor.cpp" "Serializers/Paper2DSerializer.cpp")
 target_sources(SpriteExtractor PRIVATE "App.cpp" "SFMLApp.cpp")
 
 if(APPLE)
@@ -42,7 +42,10 @@ find_package(imgui REQUIRED)
 target_link_libraries(SpriteExtractor imgui::imgui )
 
 find_package(OpenGL REQUIRED)
-include_directories(${OPENGL_INCLUDE_DIRS})
-target_link_libraries(SpriteExtractor ${OPENGL_LIBRARIES})
+
+find_package(Boost REQUIRED)
+
+include_directories(${OPENGL_INCLUDE_DIRS} ${Boost_LIBRARIES})
+target_link_libraries(SpriteExtractor ${OPENGL_LIBRARIES} ${Boost_INCLUDE_DIRS})
 
 # TODO: Add tests and install targets if needed.

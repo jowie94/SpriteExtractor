@@ -1,6 +1,7 @@
 #include "App.hpp"
 
 #include "Platform/GenericPlatform.h"
+#include "Serializers/Paper2DSerializer.hpp"
 
 #include <algorithm>
 
@@ -247,6 +248,12 @@ void App::DrawRightPanel()
     if (ImGui::Button("Search Sprites", openedImage != nullptr))
     {
         OnSearchSprites();
+    }
+
+    if (ImGui::Button("Save", !foundSprites.empty()))
+    {
+        std::string fileName = selectedFile + ".paper2dsprites";
+        Paper2DSerializer::Serialize(fileName, foundSprites);
     }
 }
 

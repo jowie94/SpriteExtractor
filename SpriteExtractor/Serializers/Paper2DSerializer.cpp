@@ -26,12 +26,16 @@ namespace Paper2DSerializer
         pt::ptree frame;
 
         pt::ptree bboxTree = SerializeBBox(bbox);
-        frame.push_back(pt::ptree::value_type("frame", bboxTree));
-        frame.put("rotated", false)
-            .put("trimmed", false);
-        frame.push_back(pt::ptree::value_type("spriteSourceSize", bboxTree));
-        frame.push_back(pt::ptree::value_type("sourceSize", pt::ptree().put("w", bbox.Width).put("h", bbox.Height)));
-        frame.push_back(pt::ptree::value_type("pivot", pt::ptree().put("x", 0.5f).put("y", 0.5f)));
+        frame.put_child("frame", bboxTree);
+        frame.put("rotated", false);
+        frame.put("trimmed", false);
+        frame.put_child("spriteSourceSize", bboxTree);
+        
+        frame.put("sourceSize.w", bbox.Width);
+        frame.put("sourceSize.h", bbox.Height);
+
+        frame.put("pivot.x", 0.5f);
+        frame.put("pivot.y", 0.5f);
 
         return frame;
     }
@@ -46,12 +50,13 @@ void Paper2DSerializer::Serialize(const std::string& outputFile, const SpriteExt
     int frame = 0;
     for (const auto& sprite : spriteList)
     {
-        frames.push_back(pt::ptree::value_type(std::to_string(frame), CreateFrame(sprite)));
+        frames.put_child(std::to_string(frame), CreateFrame(sprite));
+        ++frame;
     }
 
     pt::ptree tree;
 
-    tree.push_back(pt::ptree::value_type("frames", frames));
+    tree.put_child("frames", frames);
 
     pt::write_json(outputFile, tree);
 }

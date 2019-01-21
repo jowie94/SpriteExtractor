@@ -1,0 +1,1 @@
+﻿target_sources(SpriteExtractor PRIVATE "${CMAKE_CURRENT_LIST_DIR}/Paper2DSerializer.cpp" "${CMAKE_CURRENT_LIST_DIR}/Serializer.cpp")

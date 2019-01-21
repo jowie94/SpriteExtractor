@@ -1,4 +1,4 @@
-﻿# CMakeList.txt : CMake project for SpriteExtractor, include source and define
+# CMakeList.txt : CMake project for SpriteExtractor, include source and define
 # project specific logic here.
 #
 cmake_minimum_required (VERSION 3.8)
@@ -7,8 +7,8 @@ set(CIMG_H_PATH ${PROJECT_SOURCE_DIR})
 set(CMAKE_CXX_STANDARD 14)
 
 # Add source to this project's executable.
-#add_executable(SpriteExtractor WIN32 "main.cpp" "SpriteExtractor.cpp" "Serializers/Paper2DSerializer.cpp")
-add_executable(SpriteExtractor "main.cpp" "SpriteExtractor.cpp" "Serializers/Paper2DSerializer.cpp")
+#add_executable(SpriteExtractor WIN32 "main.cpp" "SpriteExtractor.cpp")
+add_executable(SpriteExtractor "main.cpp" "SpriteExtractor.cpp")
 target_sources(SpriteExtractor PRIVATE "App.cpp" "SFMLApp.cpp")
 
 if(APPLE)
@@ -48,5 +48,7 @@ find_package(Boost REQUIRED)
 
 include_directories(${OPENGL_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 target_link_libraries(SpriteExtractor ${OPENGL_LIBRARIES} ${Boost_LIBRARIES})
+
+include(Serializers/CMakeLists.txt)
 
 # TODO: Add tests and install targets if needed.

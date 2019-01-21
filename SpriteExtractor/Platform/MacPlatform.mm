@@ -15,6 +15,11 @@ namespace Platform
         std::string::size_type i = 0;
         std::string::size_type j = str.find(delimiter);
 
+        if (j == std::string::npos)
+        {
+            splitted.push_back(str);
+        }
+
         while (j != std::string::npos) 
         {
             splitted.push_back(str.substr(i, j-i));
@@ -75,8 +80,41 @@ bool Platform::ShowOpenFileDialogue(const std::string& title, std::string& out, 
     if ([openDlg runModal] == NSModalResponseOK)
     {
         // Gets list of all files selected
-        NSArray *files = [openDlg URLs];
+        NSArray* files = [openDlg URLs];
         out = std::string([[[files firstObject] path] UTF8String]);
+
+        return true;
+    }
+
+    return false;
+}
+
+bool Platform::ShowSaveFileDialogue(const std::string& title, std::string& out, const std::vector<FileFilter>& filters)
+{
+    std::vector<std::string> fileList;
+    // Create a File Open Dialog class.
+    NSSavePanel* saveDlg = [NSSavePanel savePanel];
+    [saveDlg setLevel:CGShieldingWindowLevel()];
+    // Set array of file types
+
+    NSArray* nsFilters = FormatFilters(filters);
+    NSString* nsTitle = [NSString stringWithUTF8String:title.c_str()];
+    
+    // Enable options in the dialog.
+    [saveDlg setTitle:nsTitle];
+    [saveDlg setMessage:nsTitle];
+    //[saveDlg setCanChooseFiles:YES];
+    [saveDlg setAllowsOtherFileTypes:TRUE];
+    [saveDlg setAllowedFileTypes:nsFilters];
+    //[saveDlg setAllowsMultipleSelection:FALSE];
+    // [saveDlg setDirectoryURL:[NSURL URLWithString:[NSString stringWithUTF8String:aDefaultPathAndFile ] ] ];
+
+    // Display the dialog box. If the OK pressed,
+    // process the files.
+    if ([saveDlg runModal] == NSModalResponseOK)
+    {
+        // Gets list of all files selected
+        out = std::string([[[saveDlg URL] path] UTF8String]);
 
         return true;
     }

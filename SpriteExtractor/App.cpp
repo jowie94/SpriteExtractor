@@ -1,7 +1,7 @@
 #include "App.hpp"
 
 #include "Platform/GenericPlatform.h"
-#include "Serializers/Paper2DSerializer.hpp"
+#include "Serializers/Serializer.hpp"
 
 #include <algorithm>
 
@@ -26,6 +26,16 @@ namespace AppConst
         float scaleY = windowSize.y / imgSize.y;
 
         return std::min(scaleX, scaleY);
+    }
+
+    void ReplaceExtension(std::string& path, const std::string& newExt)
+    {
+        size_t dotPos = path.rfind('.', path.length());
+
+        if (dotPos != std::string::npos)
+        {
+            path.replace(dotPos+1, path.length(), newExt);
+        }
     }
 
     float kZoomFactor = 0.3f;
@@ -252,8 +262,7 @@ void App::DrawRightPanel()
 
     if (ImGui::Button("Save", !foundSprites.empty()))
     {
-        std::string fileName = selectedFile + ".paper2dsprites";
-        Paper2DSerializer::Serialize(fileName, foundSprites);
+        OnSaveFile();
     }
 }
 
@@ -317,6 +326,18 @@ void App::OnSelectFile()
         imageScale = AppConst::CalculateImageScale(*textureResource, imageWindowSize);
 
         foundSprites.clear();
+    }
+}
+
+void App::OnSaveFile()
+{
+    std::string outFile;
+    if (Platform::ShowSaveFileDialogue("Save Sprites", outFile, Serializer::GetSerializerFilters()))
+    {
+        Serializer::Serialize(outFile, foundSprites);
+
+        AppConst::ReplaceExtension(outFile, "png");
+        openedImage->Save(outFile);
     }
 }
 

@@ -12,4 +12,5 @@ namespace Platform
     };
 
     bool ShowOpenFileDialogue(const std::string& title, std::string& out, const std::vector<FileFilter>& filters = {});
+    bool ShowSaveFileDialogue(const std::string& title, std::string& out, const std::vector<FileFilter>& filters = {});
 }

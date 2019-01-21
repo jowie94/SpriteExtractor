@@ -43,6 +43,7 @@ private:
 
     // Callbacks
     void OnSelectFile();
+    void OnSaveFile();
     void OnSearchSprites();
     void OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites);
     void OnCancelSearch();

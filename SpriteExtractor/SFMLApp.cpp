@@ -1,6 +1,6 @@
 #include "SFMLApp.hpp"
 
-#include "imgui-SFML.h"
+#include "imgui-sfml/imgui-SFML.h"
 
 #include <imgui.h>
 

@@ -18,10 +18,10 @@ namespace Serializer
 
     static const std::unordered_map<std::string, Serializers> kExtensionToSerializer =
     {
-        {".paper2dsprite", Serializers::Paper2DSprite}
+        {".paper2dsprites", Serializers::Paper2DSprite}
     };
 
-    std::string GetFileExtension(const std::string fileName)
+    std::string GetFileExtension(const std::string& fileName)
     {
         size_t dotPos = fileName.find_last_of('.');
         if (dotPos != std::string::npos)

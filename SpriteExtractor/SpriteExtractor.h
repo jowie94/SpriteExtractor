@@ -32,7 +32,7 @@ namespace SpriteExtractor
             FindSprites
         };
 
-        explicit Task(CompletedCallback completedCallback_);
+        explicit Task(CompletedCallback completedCallback);
 
         void Run(const ImageAccessor& callbacks, const Color& filterColor, const void* image);
         void Stop();
@@ -44,12 +44,12 @@ namespace SpriteExtractor
     private:
         void DoRun(const ImageAccessor& callbacks, const Color& filterColor, const void* image);
 
-        CompletedCallback completedCallback = nullptr;
+        CompletedCallback _completedCallback = nullptr;
 
-        std::atomic_bool stopped;
-        std::atomic_bool isRunning;
+        std::atomic_bool _stopped;
+        std::atomic_bool _isRunning;
 
-        std::atomic<Stage> stage;
-        std::atomic<float> progress;
+        std::atomic<Stage> _stage;
+        std::atomic<float> _progress;
     };
 };

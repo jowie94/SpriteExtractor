@@ -64,26 +64,26 @@ class SFMLTextureResource : public ITextureResource
 public:
     SFMLTextureResource(const sf::Image& image)
     {
-        texture.loadFromImage(image);
-        resourceId = texture.getNativeHandle();
-        size = sfmlVecToVec(texture.getSize());
+        _texture.loadFromImage(image);
+        ResourceId = _texture.getNativeHandle();
+        Size = sfmlVecToVec(_texture.getSize());
     }
 
     SFMLTextureResource(const std::string& filename)
     {
-        texture.loadFromFile(filename);
-        resourceId = texture.getNativeHandle();
-        size = sfmlVecToVec(texture.getSize());
+        _texture.loadFromFile(filename);
+        ResourceId = _texture.getNativeHandle();
+        Size = sfmlVecToVec(_texture.getSize());
     }
 
 private:
-    sf::Texture texture;
+    sf::Texture _texture;
 };
 
 class SFMLImage : public IImage
 {
 public:
-    SFMLImage(const std::string& filename)
+    explicit SFMLImage(const std::string& filename)
     {
         image.loadFromFile(filename);
     }

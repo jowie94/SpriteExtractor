@@ -7,8 +7,8 @@ namespace Platform
 {
     struct FileFilter
     {
-        std::string name;
-        std::string spec;
+        std::string Name;
+        std::string Spec;
     };
 
     bool ShowOpenFileDialogue(const std::string& title, std::string& out, const std::vector<FileFilter>& filters = {});

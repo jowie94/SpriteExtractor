@@ -7,15 +7,9 @@
 
 namespace AppConst
 {
-    static std::vector<Platform::FileFilter> kImgFilter =
-    {
-        { "Images", "*.png;*.jpg" },
-        { "All", "*.*" }
-    };
-
     float CalculateImageScale(const ITextureResource& image, const ImVec2& windowSize)
     {
-        ImVec2 imgSize(static_cast<float>(image.size.x), static_cast<float>(image.size.y));
+        ImVec2 imgSize(static_cast<float>(image.Size.X), static_cast<float>(image.Size.Y));
 
         if (windowSize.x > imgSize.x && windowSize.y > imgSize.y)
         {
@@ -38,6 +32,12 @@ namespace AppConst
         }
     }
 
+    static std::vector<Platform::FileFilter> kImgFilter =
+    {
+        { "Images", "*.png;*.jpg" },
+        { "All", "*.*" }
+    };
+
     float kZoomFactor = 0.3f;
 }
 
@@ -45,7 +45,7 @@ namespace ImGui
 {
     void Image(const ITextureResource& image, const ImVec2& imageSize)
     {
-        ImGui::Image((void*)(intptr_t)image.resourceId, imageSize);
+        ImGui::Image((void*)(intptr_t)image.ResourceId, imageSize);
     }
 
     bool Button(const char* label, bool enabled, const ImVec2& size = ImVec2(0, 0))
@@ -70,7 +70,7 @@ namespace ImGui
 }
 
 App::App()
-: searchSpritesTask(std::bind(&App::OnSpritesFound, this, std::placeholders::_1))
+: _searchSpritesTask(std::bind(&App::OnSpritesFound, this, std::placeholders::_1))
 {}
 
 void App::Loop()
@@ -100,7 +100,7 @@ void App::Loop()
 
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0.0f, 1.0f));
     ImGui::BeginChild("ContextPanel", ImVec2(0.0f, 20.0f));
-    ImGui::Text("Opened image: %s", selectedFile.c_str());
+    ImGui::Text("Opened image: %s", _selectedFile.c_str());
     ImGui::EndChild();
     ImGui::PopStyleVar();
 
@@ -108,9 +108,9 @@ void App::Loop()
 
     DrawSearchingPopup();
 
-    if (showMetrics)
+    if (_showMetrics)
     {
-        ImGui::ShowMetricsWindow(&showMetrics);
+        ImGui::ShowMetricsWindow(&_showMetrics);
     }
 
     ImGui::PopStyleVar(3);
@@ -145,9 +145,9 @@ void App::DrawDebugMenu()
 {
     if (ImGui::BeginMenu("Debug"))
     {
-        if (ImGui::MenuItem("Show Metrics", nullptr, showMetrics))
+        if (ImGui::MenuItem("Show Metrics", nullptr, _showMetrics))
         {
-            showMetrics = !showMetrics;
+            _showMetrics = !_showMetrics;
         }
 
         ImGui::EndMenu();
@@ -157,38 +157,38 @@ void App::DrawDebugMenu()
 void App::DrawImageContainer()
 {
     ImGui::BeginChild("Image", ImVec2(0.0f, 0.0f), false, ImGuiWindowFlags_HorizontalScrollbar);
-    imageWindowSize = ImGui::GetWindowSize();
-    if (openedImage)
+    _imageWindowSize = ImGui::GetWindowSize();
+    if (_openedImage)
     {
         ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
-        ImGui::Image(*textureResource, ImVec2(textureResource->size.x * imageScale, textureResource->size.y * imageScale));
+        ImGui::Image(*_textureResource, ImVec2(_textureResource->Size.X * _imageScale, _textureResource->Size.Y * _imageScale));
 
-        if (enableColorPicker)
+        if (_enableColorPicker)
         {
             ImVec2 mousePos = ImGui::GetMousePos();
-            ImVec2 relativeMousePos((mousePos.x - cursorScreenPos.x) / imageScale, (mousePos.y - cursorScreenPos.y) / imageScale);
+            ImVec2 relativeMousePos((mousePos.x - cursorScreenPos.x) / _imageScale, (mousePos.y - cursorScreenPos.y) / _imageScale);
 
-            if (ImGui::IsWindowHovered() && relativeMousePos.x >= 0 && relativeMousePos.x <= openedImage->Size().x && relativeMousePos.y >= 0 && relativeMousePos.y <= openedImage->Size().y)
+            if (ImGui::IsWindowHovered() && relativeMousePos.x >= 0 && relativeMousePos.x <= _openedImage->Size().X && relativeMousePos.y >= 0 && relativeMousePos.y <= _openedImage->Size().Y)
             {
-                alphaColor = openedImage->GetPixel(static_cast<unsigned int>(relativeMousePos.x), static_cast<unsigned int>(relativeMousePos.y));
+                _alphaColor = _openedImage->GetPixel(static_cast<unsigned int>(relativeMousePos.x), static_cast<unsigned int>(relativeMousePos.y));
             }
             else
             {
-                alphaColor = originalAlphaColor;
+                _alphaColor = _originalAlphaColor;
             }
 
             if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0))
             {
-                enableColorPicker = false;
+                _enableColorPicker = false;
             }
         }
 
 
-        std::lock_guard<std::mutex> spritesLock(foundSpritesMutex);
-        for (const auto& sprite : foundSprites)
+        std::lock_guard<std::mutex> spritesLock(_foundSpritesMutex);
+        for (const auto& sprite : _foundSprites)
         {
-            ImVec2 rectPos(cursorScreenPos.x + sprite.X * imageScale, cursorScreenPos.y + sprite.Y * imageScale);
-            ImVec2 maxRect(rectPos.x + ((sprite.Width + 1.0f) * imageScale), rectPos.y + (sprite.Height + 1.0f) * imageScale);
+            ImVec2 rectPos(cursorScreenPos.x + sprite.X * _imageScale, cursorScreenPos.y + sprite.Y * _imageScale);
+            ImVec2 maxRect(rectPos.x + ((sprite.Width + 1.0f) * _imageScale), rectPos.y + (sprite.Height + 1.0f) * _imageScale);
             ImGui::GetWindowDrawList()->AddRect(rectPos, maxRect, ImColor(255, 0, 0));
         }
     }
@@ -202,19 +202,19 @@ void App::DrawImageContainer()
 
     ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImColor(0, 0, 0).Value);
     ImGui::BeginChild("Zoom", ImVec2(75.0f, 30.0f), true);
-    if (ImGui::SmallButton("+") && imageScale > AppConst::kZoomFactor)
+    if (ImGui::SmallButton("+") && _imageScale > AppConst::kZoomFactor)
     {
-        imageScale += AppConst::kZoomFactor;
+        _imageScale += AppConst::kZoomFactor;
     }
     ImGui::SameLine();
-    if (ImGui::SmallButton("-") && imageScale > AppConst::kZoomFactor)
+    if (ImGui::SmallButton("-") && _imageScale > AppConst::kZoomFactor)
     {
-        imageScale -= AppConst::kZoomFactor;
+        _imageScale -= AppConst::kZoomFactor;
     }
     ImGui::SameLine();
     if (ImGui::SmallButton("="))
     {
-        imageScale = AppConst::CalculateImageScale(*textureResource, imageWindowSize);
+        _imageScale = AppConst::CalculateImageScale(*_textureResource, _imageWindowSize);
     }
     ImGui::EndChild();
     ImGui::PopStyleColor();
@@ -224,13 +224,13 @@ void App::DrawRightPanel()
 {
     float col4[4];
 
-    alphaColor.ToFloat(col4);
+    _alphaColor.ToFloat(col4);
     if (ImGui::ColorPicker4("Alpha Color", col4))
     {
-        alphaColor = col4;
+        _alphaColor = col4;
     }
 
-    bool colorPickerEnabled = enableColorPicker;
+    bool colorPickerEnabled = _enableColorPicker;
 
     if (colorPickerEnabled)
     {
@@ -239,15 +239,15 @@ void App::DrawRightPanel()
     }
     if (ImGui::Button("Pick Color"))
     {
-        if (enableColorPicker)
+        if (_enableColorPicker)
         {
-            alphaColor = originalAlphaColor;
-            enableColorPicker = false;
+            _alphaColor = _originalAlphaColor;
+            _enableColorPicker = false;
         }
         else
         {
-            originalAlphaColor = alphaColor;
-            enableColorPicker = true;
+            _originalAlphaColor = _alphaColor;
+            _enableColorPicker = true;
         }
     }
     if (colorPickerEnabled)
@@ -255,12 +255,12 @@ void App::DrawRightPanel()
         ImGui::PopStyleColor(2);
     }
 
-    if (ImGui::Button("Search Sprites", openedImage != nullptr))
+    if (ImGui::Button("Search Sprites", _openedImage != nullptr))
     {
         OnSearchSprites();
     }
 
-    if (ImGui::Button("Save", !foundSprites.empty()))
+    if (ImGui::Button("Save", !_foundSprites.empty()))
     {
         OnSaveFile();
     }
@@ -268,17 +268,17 @@ void App::DrawRightPanel()
 
 void App::DrawSearchingPopup()
 {
-    if (searchingPopupState == PopupState::Open)
+    if (_searchingPopupState == PopupState::Open)
     {
         ImGui::OpenPopup("Searching Sprites");
 
-        searchingPopupState = PopupState::Opened;
+        _searchingPopupState = PopupState::Opened;
     }
 
     if (ImGui::BeginPopupModal("Searching Sprites", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize))
     {
         std::string message;
-        switch (searchSpritesTask.GetStage())
+        switch (_searchSpritesTask.GetStage())
         {
             case SpriteExtractor::Task::Stage::GenerateMatrix:
             {
@@ -299,17 +299,17 @@ void App::DrawSearchingPopup()
 
         ImGui::Text("%s", message.c_str());
 
-        ImGui::ProgressBar(searchSpritesTask.GetProgress());
+        ImGui::ProgressBar(_searchSpritesTask.GetProgress());
 
         if (ImGui::Button("Cancel"))
         {
             OnCancelSearch();
         }
 
-        if (searchingPopupState == PopupState::Close)
+        if (_searchingPopupState == PopupState::Close)
         {
             ImGui::CloseCurrentPopup();
-            searchingPopupState = PopupState::Closed;
+            _searchingPopupState = PopupState::Closed;
         }
 
         ImGui::EndPopup();
@@ -318,14 +318,14 @@ void App::DrawSearchingPopup()
 
 void App::OnSelectFile()
 {
-    if (Platform::ShowOpenFileDialogue("Choose an sprite sheet image", selectedFile, AppConst::kImgFilter))
+    if (Platform::ShowOpenFileDialogue("Choose an sprite sheet image", _selectedFile, AppConst::kImgFilter))
     {
-        openedImage = OpenImage(selectedFile);
-        textureResource = openedImage->GetTextureResource();
+        _openedImage = OpenImage(_selectedFile);
+        _textureResource = _openedImage->GetTextureResource();
 
-        imageScale = AppConst::CalculateImageScale(*textureResource, imageWindowSize);
+        _imageScale = AppConst::CalculateImageScale(*_textureResource, _imageWindowSize);
 
-        foundSprites.clear();
+        _foundSprites.clear();
     }
 }
 
@@ -334,49 +334,49 @@ void App::OnSaveFile()
     std::string outFile;
     if (Platform::ShowSaveFileDialogue("Save Sprites", outFile, Serializer::GetSerializerFilters()))
     {
-        Serializer::Serialize(outFile, foundSprites);
+        Serializer::Serialize(outFile, _foundSprites);
 
         AppConst::ReplaceExtension(outFile, "png");
-        openedImage->Save(outFile.c_str());
+        _openedImage->Save(outFile.c_str());
     }
 }
 
 void App::OnSearchSprites()
 {
     {
-        std::lock_guard<std::mutex> spriteList(foundSpritesMutex);
-        foundSprites.clear();
+        std::lock_guard<std::mutex> spriteList(_foundSpritesMutex);
+        _foundSprites.clear();
     }
 
     SpriteExtractor::ImageAccessor callbacks;
     callbacks.GetWidth = [](const void* image)
     {
-        return static_cast<const IImage*>(image)->Size().x;
+        return static_cast<const IImage*>(image)->Size().X;
     };
     callbacks.GetHeight = [](const void* image)
     {
-        return static_cast<const IImage*>(image)->Size().y;
+        return static_cast<const IImage*>(image)->Size().Y;
     };
     callbacks.GetColor = [](size_t x, size_t y, const void* image)
     {
         return static_cast<const IImage*>(image)->GetPixel(x, y);
     };
 
-    searchingPopupState = PopupState::Open;
-    searchSpritesTask.Run(callbacks, alphaColor, static_cast<const void*>(openedImage.get()));
+    _searchingPopupState = PopupState::Open;
+    _searchSpritesTask.Run(callbacks, _alphaColor, static_cast<const void*>(_openedImage.get()));
 }
 
 void App::OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites)
 {
-    std::lock_guard<std::mutex> spriteList(foundSpritesMutex);
-    this->foundSprites = foundSprites;
+    std::lock_guard<std::mutex> spriteList(_foundSpritesMutex);
+    this->_foundSprites = foundSprites;
 
-    searchingPopupState = PopupState::Close;
+    _searchingPopupState = PopupState::Close;
 }
 
 void App::OnCancelSearch()
 {
-    searchSpritesTask.Stop();
+    _searchSpritesTask.Stop();
 
-    searchingPopupState = PopupState::Close;
+    _searchingPopupState = PopupState::Close;
 }

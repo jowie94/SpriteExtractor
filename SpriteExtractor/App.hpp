@@ -48,23 +48,23 @@ private:
     void OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites);
     void OnCancelSearch();
 
-    std::string selectedFile;
-    std::unique_ptr<IImage> openedImage;
-    std::unique_ptr<ITextureResource> textureResource;
+    std::string _selectedFile;
+    std::unique_ptr<IImage> _openedImage;
+    std::unique_ptr<ITextureResource> _textureResource;
 
-    Color alphaColor;
-    ImVec2 imageWindowSize;
-    float imageScale = 1.0f;
+    Color _alphaColor;
+    ImVec2 _imageWindowSize;
+    float _imageScale = 1.0f;
 
-    std::mutex foundSpritesMutex;
-    SpriteExtractor::SpriteList foundSprites;
+    std::mutex _foundSpritesMutex;
+    SpriteExtractor::SpriteList _foundSprites;
 
-    SpriteExtractor::Task searchSpritesTask;
+    SpriteExtractor::Task _searchSpritesTask;
 
-    PopupState searchingPopupState = PopupState::Closed;
+    PopupState _searchingPopupState = PopupState::Closed;
 
-    Color originalAlphaColor;
-    bool enableColorPicker = false;
+    Color _originalAlphaColor;
+    bool _enableColorPicker = false;
 
-    bool showMetrics = false;
+    bool _showMetrics = false;
 };

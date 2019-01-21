@@ -25,8 +25,8 @@ namespace Platform
         {
             const FileFilter& filter = filters.at(i);
 
-            res[i].pszName = s2ws(filter.name);
-            res[i].pszSpec = s2ws(filter.spec);
+            res[i].pszName = s2ws(filter.Name);
+            res[i].pszSpec = s2ws(filter.Spec);
         }
 
         return res;
@@ -231,7 +231,7 @@ bool Platform::ShowSaveFileDialogue(const std::string& title, std::string& out, 
     out = ATL::CW2A(pszFilePath);
     if (StrCmpW(PathFindExtensionW(pszFilePath), L"") == 0)
     {
-        out.append(filters.at(fileTypeIndex - 1).spec.substr(1));
+        out.append(filters.at(fileTypeIndex - 1).Spec.substr(1));
     }
 
 

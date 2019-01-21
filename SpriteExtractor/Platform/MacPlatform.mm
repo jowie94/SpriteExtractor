@@ -41,7 +41,7 @@ namespace Platform
 
         for (const auto& filter : filters)
         {
-            std::vector<std::string> splittedFilters = SplitString(filter.spec, ';');
+            std::vector<std::string> splittedFilters = SplitString(filter.Spec, ';');
 
             for (const std::string& filterSpec : splittedFilters)
             {

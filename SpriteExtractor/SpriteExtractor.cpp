@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <thread>
+#include <utility>
 
 namespace SpriteExtractor
 {
@@ -155,66 +156,66 @@ SpriteExtractor::SpriteList SpriteExtractor::FindSprites(const Matrix<bool>& ima
     return FindSpritesImpl(image, nullptr, nullptr);
 }
 
-SpriteExtractor::Task::Task(CompletedCallback completedCallback_)
-: completedCallback(completedCallback_)
-, stopped(false)
-, isRunning(false)
-, stage(Stage::None)
-, progress(0.0f)
+SpriteExtractor::Task::Task(CompletedCallback completedCallback)
+: _completedCallback(std::move(completedCallback))
+, _stopped(false)
+, _isRunning(false)
+, _stage(Stage::None)
+, _progress(0.0f)
 {
 }
 
 void SpriteExtractor::Task::Run(const ImageAccessor& callbacks, const Color& filterColor, const void* image)
 {
-    assert(!isRunning && "Task already running");
+    assert(!_isRunning && "Task already running");
 
-    if (!isRunning)
+    if (!_isRunning)
     {
-        progress = 0.0f;
+        _progress = 0.0f;
         std::thread(std::bind(&Task::DoRun, this, callbacks, filterColor, image)).detach();
     }
 }
 
 void SpriteExtractor::Task::Stop()
 {
-    stopped = true;
+    _stopped = true;
 }
 
 bool SpriteExtractor::Task::IsRunning() const
 {
-    return isRunning;
+    return _isRunning;
 }
 
 SpriteExtractor::Task::Stage SpriteExtractor::Task::GetStage() const
 {
-    return stage;
+    return _stage;
 }
 
 float SpriteExtractor::Task::GetProgress() const
 {
-    return progress;
+    return _progress;
 }
 
 void SpriteExtractor::Task::DoRun(const ImageAccessor& callbacks, const Color& filterColor, const void* image)
 {
-    stopped = false;
-    isRunning = true;
+    _stopped = false;
+    _isRunning = true;
 
-    auto exitCallback = [this]() -> bool { return stopped; };
-    auto progressCallback = [this](float inProgress) { progress = inProgress; };
+    auto exitCallback = [this]() -> bool { return _stopped; };
+    auto progressCallback = [this](float inProgress) { _progress = inProgress; };
 
-    progress = 0.0f;
-    stage = Stage::GenerateMatrix;
+    _progress = 0.0f;
+    _stage = Stage::GenerateMatrix;
     Matrix<bool> imageMatrix = GenerateMatrixImpl(callbacks, filterColor, image, exitCallback, progressCallback);
 
-    progress = 0.0f;
-    stage = Stage::FindSprites;
+    _progress = 0.0f;
+    _stage = Stage::FindSprites;
     SpriteList sprites = FindSpritesImpl(imageMatrix, exitCallback, progressCallback);
 
-    if (!stopped)
+    if (!_stopped)
     {
-        completedCallback(sprites);
+        _completedCallback(sprites);
     }
 
-    isRunning = false;
+    _isRunning = false;
 }

@@ -11,13 +11,13 @@ struct Vec2
     {}
 
     Vec2(T x_, T y_)
-        : x(x_)
-        , y(y_)
+        : X(x_)
+        , Y(y_)
     {
     }
 
-    T x = 0;
-    T y = 0;
+    T X = 0;
+    T Y = 0;
 };
 
 struct Color final
@@ -33,7 +33,7 @@ struct Color final
         , A(a)
     {}
 
-    void ToFloat(float colors[4])
+    void ToFloat(float colors[4]) const
     {
         static float sc = 1.0f / 255.0f;
         colors[0] = R * sc;
@@ -71,8 +71,8 @@ struct Color final
 using ImageSize = Vec2<unsigned int>;
 struct ITextureResource
 {
-    unsigned int resourceId = 0;
-    ImageSize size;
+    unsigned int ResourceId = 0;
+    ImageSize Size;
 };
 
 using ImageSize = Vec2<unsigned int>;
@@ -94,66 +94,66 @@ public:
     using MatrixSize = std::pair<size_t, size_t>;
 
     Matrix(const MatrixSize& size_)
-        : size(size_)
-        , data(new T[size.first * size.second])
+        : _size(size_)
+        , _data(new T[_size.first * _size.second])
     {
-        assert(size.first != 0 || size.second != 0 && "Invalid size");
+        assert(_size.first != 0 || _size.second != 0 && "Invalid size");
     }
 
     Matrix(const MatrixSize& size_, const T& initialValue)
-        : size(size_)
-        , data(new T[size.first * size.second])
+        : _size(size_)
+        , _data(new T[_size.first * _size.second])
     {
-        assert(size.first != 0 || size.second != 0 && "Invalid size");
+        assert(_size.first != 0 || _size.second != 0 && "Invalid size");
 
-        for (size_t i = 0; i < size.first * size.second; ++i)
+        for (size_t i = 0; i < _size.first * _size.second; ++i)
         {
-            data[i] = initialValue;
+            _data[i] = initialValue;
         }
     }
 
     Matrix(const Matrix& other)
-        : size(other.size)
-        , data(new T[size.first * size.second])
+        : _size(other._size)
+        , _data(new T[_size.first * _size.second])
     {
-        memcpy(data, other.data, size.first * size.second);
+        memcpy(_data, other._data, _size.first * _size.second);
     }
 
     Matrix(Matrix&& other) noexcept
-        : size(other.size)
-        , data(other.data)
+        : _size(other._size)
+        , _data(other._data)
     {
-        other.size = std::make_pair(0, 0);
-        other.data = nullptr;
+        other._size = std::make_pair(0, 0);
+        other._data = nullptr;
     }
 
     ~Matrix()
     {
-        delete[] data;
+        delete[] _data;
     }
 
     const T& At(size_t i, size_t j) const
     {
-        assert(0 <= i && i < size.first && "Invalid i coordinate (column)");
-        assert(0 <= j && j < size.second && "Invalid j coordinate (row)");
-        return data[i * size.second + j];
+        assert(0 <= i && i < _size.first && "Invalid i coordinate (column)");
+        assert(0 <= j && j < _size.second && "Invalid j coordinate (row)");
+        return _data[i * _size.second + j];
     }
 
     T& At(size_t i, size_t j)
     {
-        assert(0 <= i && i < size.first && "Invalid i coordinate (column)");
-        assert(0 <= j && j < size.second && "Invalid j coordinate (row)");
-        return data[i * size.second + j];
+        assert(0 <= i && i < _size.first && "Invalid i coordinate (column)");
+        assert(0 <= j && j < _size.second && "Invalid j coordinate (row)");
+        return _data[i * _size.second + j];
     }
 
     const MatrixSize& Size() const
     {
-        return size;
+        return _size;
     }
 
 private:
-    MatrixSize size;
-    T* data;
+    MatrixSize _size;
+    T* _data;
 };
 
 struct BBox

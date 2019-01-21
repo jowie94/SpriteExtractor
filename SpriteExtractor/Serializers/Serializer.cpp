@@ -7,7 +7,7 @@ namespace Serializer
 {
     static const std::vector<Platform::FileFilter> kSerializerFilter =
     {
-        { "Unreal Paper2D", "*.paper2dsprite" }
+        { "Unreal Paper2D", "*.paper2dsprites" }
     };
 
     enum class Serializers
@@ -23,7 +23,7 @@ namespace Serializer
 
     std::string GetFileExtension(const std::string fileName)
     {
-        size_t dotPos = fileName.find_last_of(".");
+        size_t dotPos = fileName.find_last_of('.');
         if (dotPos != std::string::npos)
         {
             return fileName.substr(dotPos);

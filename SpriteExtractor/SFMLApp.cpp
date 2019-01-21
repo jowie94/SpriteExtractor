@@ -103,7 +103,7 @@ public:
         return sfmlColorToColor(image.getPixel(static_cast<unsigned int>(x), static_cast<unsigned int>(y)));
     }
 
-    bool Save(const std::string& filename) const override
+    bool Save(const char* filename) const override
     {
         return image.saveToFile(filename);
     }

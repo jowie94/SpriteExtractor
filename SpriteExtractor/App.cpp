@@ -337,7 +337,7 @@ void App::OnSaveFile()
         Serializer::Serialize(outFile, foundSprites);
 
         AppConst::ReplaceExtension(outFile, "png");
-        openedImage->Save(outFile);
+        openedImage->Save(outFile.c_str());
     }
 }
 

@@ -82,7 +82,7 @@ public:
     virtual ~IImage() = default;
     virtual ImageSize Size() const = 0;
     virtual std::unique_ptr<ITextureResource> GetTextureResource() const = 0;
-    virtual bool Save(const std::string& filename) const = 0;
+    virtual bool Save(const char* filename) const = 0;
 
     virtual Color GetPixel(size_t x, size_t y) const = 0;
 };

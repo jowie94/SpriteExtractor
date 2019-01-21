@@ -6,8 +6,6 @@
 #include "Types.hpp"
 #include "SpriteExtractor.h"
 #include <mutex>
-#include <atomic>
-#include <thread>
 
 class App
 {

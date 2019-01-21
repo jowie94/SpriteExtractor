@@ -8,6 +8,8 @@
 class MessageCallbackBase
 {
 public:
+    virtual ~MessageCallbackBase() = default;
+
     template<typename T>
     void Invoke(const T& msg) const
     {
@@ -15,7 +17,6 @@ public:
     }
 
 protected:
-    virtual ~MessageCallbackBase() = 0;
 
     virtual void InvokeImpl(const void* msg) const = 0;
 };
@@ -93,7 +94,7 @@ public:
     int64_t Subscribe(const MessageCallback<T>& callback)
     {
         int64_t id = clock();
-        _messageCallbacks[typeid(T)].emplace(id, callback);
+        _messageCallbacks[typeid(T)].emplace(id, std::make_unique<MessageCallback<T>>(callback));
         return id;
     }
 
@@ -117,12 +118,12 @@ public:
         {
             for (const auto& callback : it->second)
             {
-                callback.second.Invoke(message);
+                callback.second->Invoke(message);
             }
         }
     }
 
 private:
-    using CallbackMap = std::unordered_map<int64_t, MessageCallbackBase>;
+    using CallbackMap = std::unordered_map<int64_t, std::unique_ptr<MessageCallbackBase>>;
     std::unordered_map<std::type_index, CallbackMap> _messageCallbacks;
 };

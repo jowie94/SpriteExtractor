@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 # Add source to this project's executable.
 #add_executable(SpriteExtractor WIN32 "main.cpp")
 add_executable(SpriteExtractor "main.cpp")
-target_sources(SpriteExtractor PRIVATE "App.cpp" "SFMLApp.cpp" "SpriteExtractor.cpp")
+target_sources(SpriteExtractor PRIVATE "App.cpp" "SFMLApp.cpp" "SpriteExtractor.cpp" "imgui-extra.cpp")
 
 if(APPLE)
   set(BUILD_SHARED_LIBS TRUE)
@@ -39,3 +39,4 @@ target_link_libraries(SpriteExtractor ${OPENGL_LIBRARIES} ${Boost_LIBRARIES})
 include(imgui-sfml/CmakeLists.txt)
 include(Platform/CmakeLists.txt)
 include(Serializers/CMakeLists.txt)
+include(Widgets/CMakeLists.txt)

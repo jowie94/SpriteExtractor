@@ -2,8 +2,15 @@
 
 #include "Platform/GenericPlatform.h"
 #include "Serializers/Serializer.hpp"
+#include "MessageBroker.hpp"
+#include "Messages/GenericActions.hpp"
+
+#include "Widgets/RightPanelWidget.hpp"
+
+#include "imgui-extra.hpp"
 
 #include <algorithm>
+#include "Messages/RightPanelActions.hpp"
 
 namespace AppConst
 {
@@ -41,37 +48,23 @@ namespace AppConst
     float kZoomFactor = 0.3f;
 }
 
-namespace ImGui
-{
-    void Image(const ITextureResource& image, const ImVec2& imageSize)
-    {
-        ImGui::Image((void*)(intptr_t)image.ResourceId, imageSize);
-    }
-
-    bool Button(const char* label, bool enabled, const ImVec2& size = ImVec2(0, 0))
-    {
-        if (!enabled)
-        {
-            PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.5f);
-            PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetStyleColorVec4(ImGuiCol_Button));
-            PushStyleColor(ImGuiCol_ButtonActive, ImGui::GetStyleColorVec4(ImGuiCol_Button));
-        }
-
-        bool result = Button(label, size);
-
-        if (!enabled)
-        {
-            PopStyleVar();
-            PopStyleColor(2);
-        }
-
-        return enabled && result;
-    }
-}
-
 App::App()
 : _searchSpritesTask(std::bind(&App::OnSpritesFound, this, std::placeholders::_1))
 {}
+
+void App::Init()
+{
+    _rightWidget = std::make_unique<RightPanelWidget>();
+    _rightWidget->Init();
+
+    MessageBroker& broker = MessageBroker::GetInstance();
+
+    auto searchSpritesCB = [this](const RightPanelActions::SearchSprites&)
+    {
+        OnSearchSprites();
+    };
+    broker.Subscribe(MessageCallback<RightPanelActions::SearchSprites>(searchSpritesCB));
+}
 
 void App::Loop()
 {
@@ -93,7 +86,8 @@ void App::Loop()
     ImGui::SameLine(0.0f, 0.0f);
 
     ImGui::BeginChild("Right", ImVec2(300.0f, -30.0f));
-    DrawRightPanel();
+    //DrawRightPanel();
+    _rightWidget->Draw();
     ImGui::EndChild();
 
     ImGui::Separator();
@@ -320,7 +314,12 @@ void App::OnSelectFile()
 {
     if (Platform::ShowOpenFileDialogue("Choose an sprite sheet image", _selectedFile, AppConst::kImgFilter))
     {
+        MessageBroker& broker = MessageBroker::GetInstance();
+
+        broker.Broadcast(GenericActions::OpenImage(_selectedFile));
         _openedImage = OpenImage(_selectedFile);
+        broker.Broadcast(GenericActions::ImageOpened(_openedImage));
+        
         _textureResource = _openedImage->GetTextureResource();
 
         _imageScale = AppConst::CalculateImageScale(*_textureResource, _imageWindowSize);

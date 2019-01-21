@@ -2,10 +2,11 @@
 
 #include <string>
 #include <imgui.h>
+#include <mutex>
 
 #include "Types.hpp"
 #include "SpriteExtractor.h"
-#include <mutex>
+#include "Widgets/IWidget.hpp"
 
 class App
 {
@@ -13,12 +14,13 @@ public:
     App();
     virtual ~App() = default;
 
+    void Init();
     virtual void Run() = 0;
 
 protected:
     void Loop();
 
-    virtual std::unique_ptr<IImage> OpenImage(const std::string& path) = 0;
+    virtual std::shared_ptr<IImage> OpenImage(const std::string& path) = 0;
 
 private:
     enum class PopupState
@@ -47,7 +49,7 @@ private:
     void OnCancelSearch();
 
     std::string _selectedFile;
-    std::unique_ptr<IImage> _openedImage;
+    std::shared_ptr<IImage> _openedImage;
     std::unique_ptr<ITextureResource> _textureResource;
 
     Color _alphaColor;
@@ -65,4 +67,6 @@ private:
     bool _enableColorPicker = false;
 
     bool _showMetrics = false;
+
+    std::unique_ptr<IWidget> _rightWidget;
 };

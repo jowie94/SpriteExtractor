@@ -112,7 +112,7 @@ private:
     sf::Image image;
 };
 
-std::unique_ptr<IImage> SFMLApp::OpenImage(const std::string& path)
+std::shared_ptr<IImage> SFMLApp::OpenImage(const std::string& path)
 {
-    return std::make_unique<SFMLImage>(path);
+    return std::make_shared<SFMLImage>(path);
 }

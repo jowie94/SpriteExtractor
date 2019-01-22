@@ -64,6 +64,17 @@ void App::Init()
         OnSearchSprites();
     };
     broker.Subscribe(MessageCallback<RightPanelActions::SearchSprites>(searchSpritesCB));
+
+    auto toggleColorPickerCB = [this](const RightPanelActions::ToggleColorPicker& toggle)
+    {
+        _enableColorPicker = toggle.Enabled;
+
+        if (_enableColorPicker)
+        {
+            _originalAlphaColor = _alphaColor;
+        }
+    };
+    broker.Subscribe(MessageCallback<RightPanelActions::ToggleColorPicker>(toggleColorPickerCB));
 }
 
 void App::Loop()
@@ -162,6 +173,8 @@ void App::DrawImageContainer()
             ImVec2 mousePos = ImGui::GetMousePos();
             ImVec2 relativeMousePos((mousePos.x - cursorScreenPos.x) / _imageScale, (mousePos.y - cursorScreenPos.y) / _imageScale);
 
+            MessageBroker& broker = MessageBroker::GetInstance();
+
             if (ImGui::IsWindowHovered() && relativeMousePos.x >= 0 && relativeMousePos.x <= _openedImage->Size().X && relativeMousePos.y >= 0 && relativeMousePos.y <= _openedImage->Size().Y)
             {
                 _alphaColor = _openedImage->GetPixel(static_cast<unsigned int>(relativeMousePos.x), static_cast<unsigned int>(relativeMousePos.y));
@@ -171,9 +184,12 @@ void App::DrawImageContainer()
                 _alphaColor = _originalAlphaColor;
             }
 
+            broker.Broadcast(GenericActions::ColorHovered{_alphaColor});
+
             if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0))
             {
                 _enableColorPicker = false;
+                broker.Broadcast(GenericActions::ColorPicked{_alphaColor});
             }
         }
 

@@ -13,6 +13,8 @@ void RightPanelWidget::Init()
 
     broker.Subscribe(MessageCallback<GenericActions::OpenImage>(std::bind(&RightPanelWidget::OnOpenImage, this, std::placeholders::_1)));
     broker.Subscribe(MessageCallback<GenericActions::ImageOpened>(std::bind(&RightPanelWidget::OnImageOpened, this, std::placeholders::_1)));
+    broker.Subscribe(MessageCallback<GenericActions::ColorHovered>(std::bind(&RightPanelWidget::OnColorHovered, this, std::placeholders::_1)));
+    broker.Subscribe(MessageCallback<GenericActions::ColorPicked>(std::bind(&RightPanelWidget::OnColorPicked, this, std::placeholders::_1)));
 }
 
 void RightPanelWidget::Draw()
@@ -27,6 +29,8 @@ void RightPanelWidget::Draw()
 
     bool colorPickerEnabled = _enableColorPicker;
 
+    MessageBroker& broker = MessageBroker::GetInstance();
+
     if (colorPickerEnabled)
     {
         ImGui::PushStyleColor(ImGuiCol_Button, ImColor(96, 198, 53).Value);
@@ -34,16 +38,8 @@ void RightPanelWidget::Draw()
     }
     if (ImGui::Button("Pick Color"))
     {
-        if (_enableColorPicker)
-        {
-            _alphaColor = _originalAlphaColor;
-            _enableColorPicker = false;
-        }
-        else
-        {
-            _originalAlphaColor = _alphaColor;
-            _enableColorPicker = true;
-        }
+        _enableColorPicker = !_enableColorPicker;
+        broker.Broadcast(RightPanelActions::ToggleColorPicker{_enableColorPicker});
     }
     if (colorPickerEnabled)
     {
@@ -52,13 +48,13 @@ void RightPanelWidget::Draw()
 
     if (ImGui::Button("Search Sprites", _imageIsOpened))
     {
-        MessageBroker::GetInstance().Broadcast(RightPanelActions::SearchSprites());
+        broker.Broadcast(RightPanelActions::SearchSprites());
         //OnSearchSprites();
     }
 
     if (ImGui::Button("Save", _hasSprites))
     {
-        MessageBroker::GetInstance().Broadcast(RightPanelActions::SaveFile());
+        broker.Broadcast(RightPanelActions::SaveFile());
         //OnSaveFile();
     }
 }
@@ -72,4 +68,15 @@ void RightPanelWidget::OnOpenImage(const GenericActions::OpenImage& /*image*/)
 void RightPanelWidget::OnImageOpened(const GenericActions::ImageOpened& /*openedImage*/)
 {
     _imageIsOpened = true;
+}
+
+void RightPanelWidget::OnColorHovered(const GenericActions::ColorHovered& colorHovered)
+{
+    _alphaColor = colorHovered.HoveredColor;
+}
+
+void RightPanelWidget::OnColorPicked(const GenericActions::ColorPicked& colorPicked)
+{
+    _alphaColor = colorPicked.PickedColor;
+    _enableColorPicker = false;
 }

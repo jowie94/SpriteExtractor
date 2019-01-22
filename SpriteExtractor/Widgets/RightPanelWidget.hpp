@@ -8,6 +8,8 @@ namespace GenericActions
 {
     struct ImageOpened;
     struct OpenImage;
+    struct ColorHovered;
+    struct ColorPicked;
 }
 
 class RightPanelWidget : public IWidget
@@ -21,9 +23,10 @@ public:
 private:
     void OnOpenImage(const GenericActions::OpenImage& image);
     void OnImageOpened(const GenericActions::ImageOpened& openedImage);
+    void OnColorHovered(const GenericActions::ColorHovered& colorHovered);
+    void OnColorPicked(const GenericActions::ColorPicked& colorPicked);
 
     Color _alphaColor;
-    Color _originalAlphaColor;
 
     bool _imageIsOpened = false;
     bool _enableColorPicker = false;

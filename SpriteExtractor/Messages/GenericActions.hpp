@@ -22,4 +22,14 @@ namespace GenericActions
 
         std::weak_ptr<IImage> OpenedImage;
     };
+
+    struct ColorHovered
+    {
+        Color HoveredColor;
+    };
+
+    struct ColorPicked
+    {
+        Color PickedColor;
+    };
 }

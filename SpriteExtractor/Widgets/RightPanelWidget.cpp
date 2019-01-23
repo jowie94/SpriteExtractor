@@ -11,10 +11,10 @@ void RightPanelWidget::Init()
 {
     MessageBroker& broker = MessageBroker::GetInstance();
 
-    broker.Subscribe(MessageCallback<GenericActions::ImageOpened>(std::bind(&RightPanelWidget::OnImageOpened, this, std::placeholders::_1)));
-    broker.Subscribe(MessageCallback<GenericActions::ColorHovered>(std::bind(&RightPanelWidget::OnColorHovered, this, std::placeholders::_1)));
-    broker.Subscribe(MessageCallback<GenericActions::ColorPicked>(std::bind(&RightPanelWidget::OnColorPicked, this, std::placeholders::_1)));
-    broker.Subscribe(MessageCallback<GenericActions::SpriteSearchFinished>(std::bind(&RightPanelWidget::OnSpriteSearchFinished, this, std::placeholders::_1)));
+    broker.Subscribe<GenericActions::ImageOpened>(std::bind(&RightPanelWidget::OnImageOpened, this, std::placeholders::_1));
+    broker.Subscribe<GenericActions::ColorHovered>(std::bind(&RightPanelWidget::OnColorHovered, this, std::placeholders::_1));
+    broker.Subscribe<GenericActions::ColorPicked>(std::bind(&RightPanelWidget::OnColorPicked, this, std::placeholders::_1));
+    broker.Subscribe<GenericActions::SpriteSearchFinished>(std::bind(&RightPanelWidget::OnSpriteSearchFinished, this, std::placeholders::_1));
 }
 
 void RightPanelWidget::Draw()

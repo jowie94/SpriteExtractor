@@ -63,13 +63,13 @@ void App::Init()
     {
         OnSearchSprites();
     };
-    broker.Subscribe(MessageCallback<RightPanelActions::SearchSprites>(searchSpritesCB));
+    broker.Subscribe<RightPanelActions::SearchSprites>(searchSpritesCB);
 
     auto saveSpritesCB = [this](const RightPanelActions::SaveFile&)
     {
         OnSaveFile();
     };
-    broker.Subscribe(MessageCallback<RightPanelActions::SaveFile>(saveSpritesCB));
+    broker.Subscribe<RightPanelActions::SaveFile>(saveSpritesCB);
 
     auto toggleColorPickerCB = [this](const RightPanelActions::ToggleColorPicker& toggle)
     {
@@ -80,7 +80,7 @@ void App::Init()
             _originalAlphaColor = _alphaColor;
         }
     };
-    broker.Subscribe(MessageCallback<RightPanelActions::ToggleColorPicker>(toggleColorPickerCB));
+    broker.Subscribe<RightPanelActions::ToggleColorPicker>(toggleColorPickerCB);
 }
 
 void App::Loop()

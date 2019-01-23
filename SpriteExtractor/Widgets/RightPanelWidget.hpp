@@ -6,6 +6,7 @@
 
 namespace GenericActions 
 {
+    struct SpriteSearchFinished;
     struct ImageOpened;
     struct OpenImage;
     struct ColorHovered;
@@ -21,10 +22,10 @@ public:
     void Draw() override;
 
 private:
-    void OnOpenImage(const GenericActions::OpenImage& image);
     void OnImageOpened(const GenericActions::ImageOpened& openedImage);
     void OnColorHovered(const GenericActions::ColorHovered& colorHovered);
     void OnColorPicked(const GenericActions::ColorPicked& colorPicked);
+    void OnSpriteSearchFinished(const GenericActions::SpriteSearchFinished& foundSprites);
 
     Color _alphaColor;
 

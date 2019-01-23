@@ -65,6 +65,12 @@ void App::Init()
     };
     broker.Subscribe(MessageCallback<RightPanelActions::SearchSprites>(searchSpritesCB));
 
+    auto saveSpritesCB = [this](const RightPanelActions::SaveFile&)
+    {
+        OnSaveFile();
+    };
+    broker.Subscribe(MessageCallback<RightPanelActions::SaveFile>(saveSpritesCB));
+
     auto toggleColorPickerCB = [this](const RightPanelActions::ToggleColorPicker& toggle)
     {
         _enableColorPicker = toggle.Enabled;
@@ -332,7 +338,6 @@ void App::OnSelectFile()
     {
         MessageBroker& broker = MessageBroker::GetInstance();
 
-        broker.Broadcast(GenericActions::OpenImage(_selectedFile));
         _openedImage = OpenImage(_selectedFile);
         broker.Broadcast(GenericActions::ImageOpened(_openedImage));
         
@@ -384,7 +389,9 @@ void App::OnSearchSprites()
 void App::OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites)
 {
     std::lock_guard<std::mutex> spriteList(_foundSpritesMutex);
-    this->_foundSprites = foundSprites;
+    _foundSprites = foundSprites;
+
+    MessageBroker::GetInstance().Broadcast(GenericActions::SpriteSearchFinished(_foundSprites));
 
     _searchingPopupState = PopupState::Close;
 }

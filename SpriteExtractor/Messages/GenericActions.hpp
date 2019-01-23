@@ -5,15 +5,6 @@
 
 namespace GenericActions
 {
-    struct OpenImage
-    {
-        OpenImage(std::string fileName)
-        : FileName(std::move(fileName))
-        {}
-
-        std::string FileName;
-    };
-
     struct ImageOpened
     {
         ImageOpened(std::weak_ptr<IImage> openedImage)
@@ -31,5 +22,14 @@ namespace GenericActions
     struct ColorPicked
     {
         Color PickedColor;
+    };
+
+    struct SpriteSearchFinished
+    {
+        SpriteSearchFinished(std::vector<BBox>& foundSprites)
+        : FoundSprites(foundSprites)
+        {}
+
+        std::vector<BBox>& FoundSprites;
     };
 }

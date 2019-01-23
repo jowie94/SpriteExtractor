@@ -11,10 +11,10 @@ void RightPanelWidget::Init()
 {
     MessageBroker& broker = MessageBroker::GetInstance();
 
-    broker.Subscribe(MessageCallback<GenericActions::OpenImage>(std::bind(&RightPanelWidget::OnOpenImage, this, std::placeholders::_1)));
     broker.Subscribe(MessageCallback<GenericActions::ImageOpened>(std::bind(&RightPanelWidget::OnImageOpened, this, std::placeholders::_1)));
     broker.Subscribe(MessageCallback<GenericActions::ColorHovered>(std::bind(&RightPanelWidget::OnColorHovered, this, std::placeholders::_1)));
     broker.Subscribe(MessageCallback<GenericActions::ColorPicked>(std::bind(&RightPanelWidget::OnColorPicked, this, std::placeholders::_1)));
+    broker.Subscribe(MessageCallback<GenericActions::SpriteSearchFinished>(std::bind(&RightPanelWidget::OnSpriteSearchFinished, this, std::placeholders::_1)));
 }
 
 void RightPanelWidget::Draw()
@@ -59,15 +59,10 @@ void RightPanelWidget::Draw()
     }
 }
 
-void RightPanelWidget::OnOpenImage(const GenericActions::OpenImage& /*image*/)
-{
-    _imageIsOpened = false;
-    _hasSprites = false;
-}
-
 void RightPanelWidget::OnImageOpened(const GenericActions::ImageOpened& /*openedImage*/)
 {
     _imageIsOpened = true;
+    _hasSprites = false;
 }
 
 void RightPanelWidget::OnColorHovered(const GenericActions::ColorHovered& colorHovered)
@@ -79,4 +74,9 @@ void RightPanelWidget::OnColorPicked(const GenericActions::ColorPicked& colorPic
 {
     _alphaColor = colorPicked.PickedColor;
     _enableColorPicker = false;
+}
+
+void RightPanelWidget::OnSpriteSearchFinished(const GenericActions::SpriteSearchFinished& foundSprites)
+{
+    _hasSprites = !foundSprites.FoundSprites.empty();
 }

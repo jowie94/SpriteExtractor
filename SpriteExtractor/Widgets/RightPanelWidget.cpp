@@ -19,8 +19,9 @@ void RightPanelWidget::Init()
 
 void RightPanelWidget::Draw()
 {
-    float col4[4];
+    ImGui::BeginChild("Right", ImVec2(300.0f, -30.0f));
 
+    float col4[4];
     _alphaColor.ToFloat(col4);
     if (ImGui::ColorPicker4("Alpha Color", col4))
     {
@@ -57,6 +58,8 @@ void RightPanelWidget::Draw()
         broker.Broadcast(RightPanelActions::SaveFile());
         //OnSaveFile();
     }
+
+    ImGui::EndChild();
 }
 
 void RightPanelWidget::OnImageOpened(const GenericActions::ImageOpened& /*openedImage*/)

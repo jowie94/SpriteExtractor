@@ -102,10 +102,8 @@ void App::Loop()
 
     ImGui::SameLine(0.0f, 0.0f);
 
-    ImGui::BeginChild("Right", ImVec2(300.0f, -30.0f));
     //DrawRightPanel();
     _rightWidget->Draw();
-    ImGui::EndChild();
 
     ImGui::Separator();
 

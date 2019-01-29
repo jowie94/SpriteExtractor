@@ -1,12 +1,16 @@
 #pragma once
 
 #include <string>
-#include <imgui.h>
 #include <mutex>
 
 #include "Types.hpp"
 #include "SpriteExtractor.h"
 #include "Widgets/IWidget.hpp"
+
+namespace RightPanelActions 
+{
+    struct SearchSprites;
+}
 
 class App
 {
@@ -35,8 +39,6 @@ private:
     void DrawMenuBar();
     void DrawFileMenu();
     void DrawDebugMenu();
-    void DrawImageContainer();
-    void DrawRightPanel();
 
     // Popups
     void DrawSearchingPopup();
@@ -44,17 +46,12 @@ private:
     // Callbacks
     void OnSelectFile();
     void OnSaveFile();
-    void OnSearchSprites();
+    void OnSearchSprites(const RightPanelActions::SearchSprites& action);
     void OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites);
     void OnCancelSearch();
 
     std::string _selectedFile;
     std::shared_ptr<IImage> _openedImage;
-    std::unique_ptr<ITextureResource> _textureResource;
-
-    Color _alphaColor;
-    ImVec2 _imageWindowSize;
-    float _imageScale = 1.0f;
 
     std::mutex _foundSpritesMutex;
     SpriteExtractor::SpriteList _foundSprites;
@@ -63,10 +60,8 @@ private:
 
     PopupState _searchingPopupState = PopupState::Closed;
 
-    Color _originalAlphaColor;
-    bool _enableColorPicker = false;
-
     bool _showMetrics = false;
 
     std::unique_ptr<IWidget> _rightWidget;
+    std::unique_ptr<IWidget> _centerWidget;
 };

@@ -49,7 +49,7 @@ void RightPanelWidget::Draw()
 
     if (ImGui::Button("Search Sprites", _imageIsOpened))
     {
-        broker.Broadcast(RightPanelActions::SearchSprites());
+        broker.Broadcast(RightPanelActions::SearchSprites{_alphaColor});
         //OnSearchSprites();
     }
 

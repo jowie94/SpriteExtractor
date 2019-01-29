@@ -2,15 +2,17 @@
 
 #include "Platform/GenericPlatform.h"
 #include "Serializers/Serializer.hpp"
+
 #include "MessageBroker.hpp"
 #include "Messages/GenericActions.hpp"
+#include "Messages/RightPanelActions.hpp"
 
 #include "Widgets/RightPanelWidget.hpp"
 
 #include "imgui-extra.hpp"
 
 #include <algorithm>
-#include "Messages/RightPanelActions.hpp"
+#include "Widgets/CentralPanelWidget.hpp"
 
 namespace AppConst
 {
@@ -44,8 +46,6 @@ namespace AppConst
         { "Images", "*.png;*.jpg" },
         { "All", "*.*" }
     };
-
-    float kZoomFactor = 0.3f;
 }
 
 App::App()
@@ -57,30 +57,18 @@ void App::Init()
     _rightWidget = std::make_unique<RightPanelWidget>();
     _rightWidget->Init();
 
+    _centerWidget = std::make_unique<CentralPanelWidget>();
+    _centerWidget->Init();
+
     MessageBroker& broker = MessageBroker::GetInstance();
 
-    auto searchSpritesCB = [this](const RightPanelActions::SearchSprites&)
-    {
-        OnSearchSprites();
-    };
-    broker.Subscribe<RightPanelActions::SearchSprites>(searchSpritesCB);
+    broker.Subscribe<RightPanelActions::SearchSprites>(std::bind(&App::OnSearchSprites, this, std::placeholders::_1));
 
     auto saveSpritesCB = [this](const RightPanelActions::SaveFile&)
     {
         OnSaveFile();
     };
     broker.Subscribe<RightPanelActions::SaveFile>(saveSpritesCB);
-
-    auto toggleColorPickerCB = [this](const RightPanelActions::ToggleColorPicker& toggle)
-    {
-        _enableColorPicker = toggle.Enabled;
-
-        if (_enableColorPicker)
-        {
-            _originalAlphaColor = _alphaColor;
-        }
-    };
-    broker.Subscribe<RightPanelActions::ToggleColorPicker>(toggleColorPickerCB);
 }
 
 void App::Loop()
@@ -96,13 +84,8 @@ void App::Loop()
 
     DrawMenuBar();
 
-    ImGui::BeginChild("Image Container", ImVec2(-300.0f, -30.0f));
-    DrawImageContainer();
-    ImGui::EndChild();
-
+    _centerWidget->Draw();
     ImGui::SameLine(0.0f, 0.0f);
-
-    //DrawRightPanel();
     _rightWidget->Draw();
 
     ImGui::Separator();
@@ -160,123 +143,6 @@ void App::DrawDebugMenu()
         }
 
         ImGui::EndMenu();
-    }
-}
-
-void App::DrawImageContainer()
-{
-    ImGui::BeginChild("Image", ImVec2(0.0f, 0.0f), false, ImGuiWindowFlags_HorizontalScrollbar);
-    _imageWindowSize = ImGui::GetWindowSize();
-    if (_openedImage)
-    {
-        ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
-        ImGui::Image(*_textureResource, ImVec2(_textureResource->Size.X * _imageScale, _textureResource->Size.Y * _imageScale));
-
-        if (_enableColorPicker)
-        {
-            ImVec2 mousePos = ImGui::GetMousePos();
-            ImVec2 relativeMousePos((mousePos.x - cursorScreenPos.x) / _imageScale, (mousePos.y - cursorScreenPos.y) / _imageScale);
-
-            MessageBroker& broker = MessageBroker::GetInstance();
-
-            if (ImGui::IsWindowHovered() && relativeMousePos.x >= 0 && relativeMousePos.x <= _openedImage->Size().X && relativeMousePos.y >= 0 && relativeMousePos.y <= _openedImage->Size().Y)
-            {
-                _alphaColor = _openedImage->GetPixel(static_cast<unsigned int>(relativeMousePos.x), static_cast<unsigned int>(relativeMousePos.y));
-            }
-            else
-            {
-                _alphaColor = _originalAlphaColor;
-            }
-
-            broker.Broadcast(GenericActions::ColorHovered{_alphaColor});
-
-            if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0))
-            {
-                _enableColorPicker = false;
-                broker.Broadcast(GenericActions::ColorPicked{_alphaColor});
-            }
-        }
-
-
-        std::lock_guard<std::mutex> spritesLock(_foundSpritesMutex);
-        for (const auto& sprite : _foundSprites)
-        {
-            ImVec2 rectPos(cursorScreenPos.x + sprite.X * _imageScale, cursorScreenPos.y + sprite.Y * _imageScale);
-            ImVec2 maxRect(rectPos.x + ((sprite.Width + 1.0f) * _imageScale), rectPos.y + (sprite.Height + 1.0f) * _imageScale);
-            ImGui::GetWindowDrawList()->AddRect(rectPos, maxRect, ImColor(255, 0, 0));
-        }
-    }
-    ImGui::EndChild();
-
-    ImVec2 cursorPos = ImGui::GetWindowSize();
-    cursorPos.x -= 95.0f;
-    cursorPos.y -= 50.0f;
-
-    ImGui::SetCursorPos(cursorPos);
-
-    ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImColor(0, 0, 0).Value);
-    ImGui::BeginChild("Zoom", ImVec2(75.0f, 30.0f), true);
-    if (ImGui::SmallButton("+") && _imageScale > AppConst::kZoomFactor)
-    {
-        _imageScale += AppConst::kZoomFactor;
-    }
-    ImGui::SameLine();
-    if (ImGui::SmallButton("-") && _imageScale > AppConst::kZoomFactor)
-    {
-        _imageScale -= AppConst::kZoomFactor;
-    }
-    ImGui::SameLine();
-    if (ImGui::SmallButton("="))
-    {
-        _imageScale = AppConst::CalculateImageScale(*_textureResource, _imageWindowSize);
-    }
-    ImGui::EndChild();
-    ImGui::PopStyleColor();
-}
-
-void App::DrawRightPanel()
-{
-    float col4[4];
-
-    _alphaColor.ToFloat(col4);
-    if (ImGui::ColorPicker4("Alpha Color", col4))
-    {
-        _alphaColor = col4;
-    }
-
-    bool colorPickerEnabled = _enableColorPicker;
-
-    if (colorPickerEnabled)
-    {
-        ImGui::PushStyleColor(ImGuiCol_Button, ImColor(96, 198, 53).Value);
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImColor(74, 153, 41).Value);
-    }
-    if (ImGui::Button("Pick Color"))
-    {
-        if (_enableColorPicker)
-        {
-            _alphaColor = _originalAlphaColor;
-            _enableColorPicker = false;
-        }
-        else
-        {
-            _originalAlphaColor = _alphaColor;
-            _enableColorPicker = true;
-        }
-    }
-    if (colorPickerEnabled)
-    {
-        ImGui::PopStyleColor(2);
-    }
-
-    if (ImGui::Button("Search Sprites", _openedImage != nullptr))
-    {
-        OnSearchSprites();
-    }
-
-    if (ImGui::Button("Save", !_foundSprites.empty()))
-    {
-        OnSaveFile();
     }
 }
 
@@ -338,10 +204,6 @@ void App::OnSelectFile()
 
         _openedImage = OpenImage(_selectedFile);
         broker.Broadcast(GenericActions::ImageOpened(_openedImage));
-        
-        _textureResource = _openedImage->GetTextureResource();
-
-        _imageScale = AppConst::CalculateImageScale(*_textureResource, _imageWindowSize);
 
         _foundSprites.clear();
     }
@@ -359,7 +221,7 @@ void App::OnSaveFile()
     }
 }
 
-void App::OnSearchSprites()
+void App::OnSearchSprites(const RightPanelActions::SearchSprites& action)
 {
     {
         std::lock_guard<std::mutex> spriteList(_foundSpritesMutex);
@@ -381,7 +243,7 @@ void App::OnSearchSprites()
     };
 
     _searchingPopupState = PopupState::Open;
-    _searchSpritesTask.Run(callbacks, _alphaColor, static_cast<const void*>(_openedImage.get()));
+    _searchSpritesTask.Run(callbacks, action.AlphaColor, static_cast<const void*>(_openedImage.get()));
 }
 
 void App::OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites)

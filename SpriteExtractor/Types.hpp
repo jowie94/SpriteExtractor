@@ -3,6 +3,7 @@
 #include <memory>
 #include <utility>
 #include <cassert>
+#include <vector>
 
 template<class T>
 struct Vec2
@@ -170,3 +171,5 @@ struct BBox
         return X <= x && x <= mX && Y <= y && y <= mY;
     }
 };
+
+using SpriteList = std::vector<BBox>;

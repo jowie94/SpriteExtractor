@@ -54,7 +54,7 @@ private:
     std::shared_ptr<IImage> _openedImage;
 
     std::mutex _foundSpritesMutex;
-    SpriteExtractor::SpriteList _foundSprites;
+    std::shared_ptr<SpriteList> _foundSprites;
 
     SpriteExtractor::Task _searchSpritesTask;
 

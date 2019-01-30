@@ -37,6 +37,7 @@ void CentralPanelWidget::Init()
 
     broker.Subscribe<RightPanelActions::ToggleColorPicker>(std::bind(&CentralPanelWidget::OnToggleColorPicker, this, std::placeholders::_1));
     broker.Subscribe<GenericActions::ImageOpened>(std::bind(&CentralPanelWidget::OnImageOpened, this, std::placeholders::_1));
+    broker.Subscribe<GenericActions::SpriteSearchFinished>(std::bind(&CentralPanelWidget::OnSpritesFound, this, std::placeholders::_1));
 }
 
 void CentralPanelWidget::Draw()
@@ -133,4 +134,9 @@ void CentralPanelWidget::OnImageOpened(const GenericActions::ImageOpened& opened
         _imageScale = CentralPanelWidgetConst::CalculateImageScale(*image, _imageWindowSize);
         _textureResource = image->GetTextureResource();
     }
+}
+
+void CentralPanelWidget::OnSpritesFound(const GenericActions::SpriteSearchFinished& spritesFound)
+{
+    _foundSprites = spritesFound.FoundSprites;
 }

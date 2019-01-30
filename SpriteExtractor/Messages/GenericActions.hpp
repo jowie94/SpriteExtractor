@@ -26,10 +26,10 @@ namespace GenericActions
 
     struct SpriteSearchFinished
     {
-        SpriteSearchFinished(std::vector<BBox>& foundSprites)
+        SpriteSearchFinished(std::weak_ptr<SpriteList> foundSprites)
         : FoundSprites(foundSprites)
         {}
 
-        std::vector<BBox>& FoundSprites;
+        std::weak_ptr<SpriteList> FoundSprites;
     };
 }

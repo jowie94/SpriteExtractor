@@ -81,5 +81,5 @@ void RightPanelWidget::OnColorPicked(const GenericActions::ColorPicked& colorPic
 
 void RightPanelWidget::OnSpriteSearchFinished(const GenericActions::SpriteSearchFinished& foundSprites)
 {
-    _hasSprites = !foundSprites.FoundSprites.empty();
+    _hasSprites = !foundSprites.FoundSprites.lock()->empty();
 }

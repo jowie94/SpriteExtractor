@@ -205,7 +205,7 @@ void App::OnSelectFile()
         _openedImage = OpenImage(_selectedFile);
         broker.Broadcast(GenericActions::ImageOpened(_openedImage));
 
-        _foundSprites.clear();
+        _foundSprites.reset();
     }
 }
 
@@ -214,7 +214,7 @@ void App::OnSaveFile()
     std::string outFile;
     if (Platform::ShowSaveFileDialogue("Save Sprites", outFile, Serializer::GetSerializerFilters()))
     {
-        Serializer::Serialize(outFile, _foundSprites);
+        Serializer::Serialize(outFile, *_foundSprites);
 
         AppConst::ReplaceExtension(outFile, "png");
         _openedImage->Save(outFile.c_str());
@@ -225,7 +225,7 @@ void App::OnSearchSprites(const RightPanelActions::SearchSprites& action)
 {
     {
         std::lock_guard<std::mutex> spriteList(_foundSpritesMutex);
-        _foundSprites.clear();
+        _foundSprites.reset();
     }
 
     SpriteExtractor::ImageAccessor callbacks;
@@ -249,7 +249,7 @@ void App::OnSearchSprites(const RightPanelActions::SearchSprites& action)
 void App::OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites)
 {
     std::lock_guard<std::mutex> spriteList(_foundSpritesMutex);
-    _foundSprites = foundSprites;
+    _foundSprites = std::make_shared<SpriteList>(foundSprites);
 
     MessageBroker::GetInstance().Broadcast(GenericActions::SpriteSearchFinished(_foundSprites));
 

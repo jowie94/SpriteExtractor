@@ -8,6 +8,7 @@
 
 namespace GenericActions 
 {
+    struct SpriteSearchFinished;
     struct ImageOpened;
 }
 
@@ -25,6 +26,7 @@ public:
 private:
     void OnToggleColorPicker(const RightPanelActions::ToggleColorPicker& toggle);
     void OnImageOpened(const GenericActions::ImageOpened& openedImage);
+    void OnSpritesFound(const GenericActions::SpriteSearchFinished& spritesFound);
 
     std::weak_ptr<IImage> _openedImage;
     std::weak_ptr<SpriteList> _foundSprites;

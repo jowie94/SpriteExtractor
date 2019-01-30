@@ -131,5 +131,6 @@ void CentralPanelWidget::OnImageOpened(const GenericActions::ImageOpened& opened
     if (auto image = _openedImage.lock())
     {
         _imageScale = CentralPanelWidgetConst::CalculateImageScale(*image, _imageWindowSize);
+        _textureResource = image->GetTextureResource();
     }
 }

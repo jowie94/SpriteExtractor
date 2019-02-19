@@ -12,6 +12,11 @@ namespace RightPanelActions
     struct SearchSprites;
 }
 
+namespace MainWindowActions
+{
+    struct CancelSearch;
+}
+
 class App
 {
 public:
@@ -27,28 +32,12 @@ protected:
     virtual std::shared_ptr<IImage> OpenImage(const std::string& path) = 0;
 
 private:
-    enum class PopupState
-    {
-        Open,
-        Opened,
-        Close,
-        Closed
-    };
-
-    // Panels
-    void DrawMenuBar();
-    void DrawFileMenu();
-    void DrawDebugMenu();
-
-    // Popups
-    void DrawSearchingPopup();
-
     // Callbacks
     void OnSelectFile();
     void OnSaveFile();
     void OnSearchSprites(const RightPanelActions::SearchSprites& action);
     void OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites);
-    void OnCancelSearch();
+    void OnCancelSearch(const MainWindowActions::CancelSearch& cancelSearch);
 
     std::string _selectedFile;
     std::shared_ptr<IImage> _openedImage;
@@ -58,10 +47,5 @@ private:
 
     SpriteExtractor::Task _searchSpritesTask;
 
-    PopupState _searchingPopupState = PopupState::Closed;
-
-    bool _showMetrics = false;
-
-    std::unique_ptr<IWidget> _rightWidget;
-    std::unique_ptr<IWidget> _centerWidget;
+    std::unique_ptr<IWidget> _mainWindow;
 };

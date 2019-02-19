@@ -7,10 +7,12 @@ namespace GenericActions
 {
     struct ImageOpened
     {
-        ImageOpened(std::weak_ptr<IImage> openedImage)
-        : OpenedImage(std::move(openedImage))
+        ImageOpened(const std::string& imageName, std::weak_ptr<IImage> openedImage)
+        : ImageName(imageName)
+        , OpenedImage(std::move(openedImage))
         {}
 
+        std::string ImageName;
         std::weak_ptr<IImage> OpenedImage;
     };
 

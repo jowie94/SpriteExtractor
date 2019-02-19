@@ -1,1 +1,1 @@
-﻿target_sources(SpriteExtractor PRIVATE "${CMAKE_CURRENT_LIST_DIR}/RightPanelWidget.cpp" "${CMAKE_CURRENT_LIST_DIR}/CentralPanelWidget.cpp")
+﻿target_sources(SpriteExtractor PRIVATE "${CMAKE_CURRENT_LIST_DIR}/RightPanelWidget.cpp" "${CMAKE_CURRENT_LIST_DIR}/CentralPanelWidget.cpp" "${CMAKE_CURRENT_LIST_DIR}/MainWindowWidget.cpp")

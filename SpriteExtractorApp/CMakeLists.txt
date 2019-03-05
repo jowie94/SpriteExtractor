@@ -1,11 +1,12 @@
-cmake_minimum_required (VERSION 3.8)
-
-set(CMAKE_CXX_STANDARD 14)
-
-# Add source to this project's executable.
 #add_executable(SpriteExtractor WIN32 "main.cpp")
 add_executable(SpriteExtractor "main.cpp")
-target_sources(SpriteExtractor PRIVATE "App.cpp" "SFMLApp.cpp" "SpriteExtractor.cpp" "imgui-extra.cpp")
+target_sources(SpriteExtractor PRIVATE "App.cpp" "SFMLApp.cpp" "imgui-extra.cpp")
+target_include_directories(SpriteExtractor PRIVATE .)
+
+include(imgui-sfml/CmakeLists.txt)
+include(Platform/CmakeLists.txt)
+include(Serializers/CMakeLists.txt)
+include(Widgets/CMakeLists.txt)
 
 if(APPLE)
   set(BUILD_SHARED_LIBS TRUE)
@@ -16,8 +17,6 @@ endif(APPLE)
 if(WIN32)
   set_target_properties(SpriteExtractor PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 endif()
-
-include_directories(${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_LIST_DIR})
 
 find_package(Freetype REQUIRED)
 
@@ -33,10 +32,7 @@ find_package(OpenGL REQUIRED)
 
 find_package(Boost REQUIRED)
 
-include_directories(${OPENGL_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+target_include_directories(SpriteExtractor PRIVATE ${OPENGL_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 target_link_libraries(SpriteExtractor ${OPENGL_LIBRARIES} ${Boost_LIBRARIES})
 
-include(imgui-sfml/CmakeLists.txt)
-include(Platform/CmakeLists.txt)
-include(Serializers/CMakeLists.txt)
-include(Widgets/CMakeLists.txt)
+target_link_libraries(SpriteExtractor SpriteExtractorLib)

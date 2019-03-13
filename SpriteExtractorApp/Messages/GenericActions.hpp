@@ -25,13 +25,4 @@ namespace GenericActions
     {
         Color PickedColor;
     };
-
-    struct SpriteSearchFinished
-    {
-        SpriteSearchFinished(std::weak_ptr<SpriteList> foundSprites)
-        : FoundSprites(foundSprites)
-        {}
-
-        std::weak_ptr<SpriteList> FoundSprites;
-    };
 }

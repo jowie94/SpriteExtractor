@@ -84,6 +84,8 @@ private:
 class MessageBroker
 {
 public:
+    using SubscriptionId = int64_t;
+
     static MessageBroker& GetInstance()
     {
         static MessageBroker instance;
@@ -91,25 +93,25 @@ public:
     }
 
     template<typename U, typename T>
-    int64_t Subscribe(const std::function<void(U::*)(const T&)>& function)
+    SubscriptionId Subscribe(const std::function<void(U::*)(const T&)>& function)
     {
         return Subscribe<T>(std::make_unique<MessageCallback<T>>(function));
     }
 
     template<typename U, typename T>
-    int64_t Subscribe(U* ptr, void(U::* function)(const T&))
+    SubscriptionId Subscribe(U* ptr, void(U::* function)(const T&))
     {
         return Subscribe<T>(std::make_unique<MessageCallback<T>>(function));
     }
 
     template<typename T>
-    int64_t Subscribe(std::function<void(const T&)>&& function)
+    SubscriptionId Subscribe(std::function<void(const T&)>&& function)
     {
         return Subscribe<T>(std::make_unique<MessageCallback<T>>(function));
     }
 
     template<typename T>
-    void Unsubscribe(int64_t id)
+    void Unsubscribe(SubscriptionId id)
     {
         auto it = _messageCallbacks.find(typeid(T));
 
@@ -135,13 +137,13 @@ public:
 
 private:
     template<typename T>
-    int64_t Subscribe(std::unique_ptr<MessageCallback<T>>&& ptr)
+    SubscriptionId Subscribe(std::unique_ptr<MessageCallback<T>>&& ptr)
     {
-        int64_t id = clock();
+        SubscriptionId id = clock();
         _messageCallbacks[typeid(T)].emplace(id, std::forward<std::unique_ptr<MessageCallback<T>>>(ptr));
         return id;
     }
 
-    using CallbackMap = std::unordered_map<int64_t, std::unique_ptr<MessageCallbackBase>>;
+    using CallbackMap = std::unordered_map<SubscriptionId, std::unique_ptr<MessageCallbackBase>>;
     std::unordered_map<std::type_index, CallbackMap> _messageCallbacks;
 };

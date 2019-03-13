@@ -7,6 +7,7 @@
 #include "MessageBroker.hpp"
 #include "Messages/GenericActions.hpp"
 #include "Messages/RightPanelActions.hpp"
+#include "Messages/SpriteSearchMessages.hpp"
 
 #include "imgui-extra.hpp"
 
@@ -37,7 +38,7 @@ void CentralPanelWidget::Init()
 
     broker.Subscribe<RightPanelActions::ToggleColorPicker>(std::bind(&CentralPanelWidget::OnToggleColorPicker, this, std::placeholders::_1));
     broker.Subscribe<GenericActions::ImageOpened>(std::bind(&CentralPanelWidget::OnImageOpened, this, std::placeholders::_1));
-    broker.Subscribe<GenericActions::SpriteSearchFinished>(std::bind(&CentralPanelWidget::OnSpritesFound, this, std::placeholders::_1));
+    broker.Subscribe<SpriteSearchMessages::SpriteSearchFinished>(std::bind(&CentralPanelWidget::OnSpritesFound, this, std::placeholders::_1));
 }
 
 void CentralPanelWidget::Draw()
@@ -136,7 +137,7 @@ void CentralPanelWidget::OnImageOpened(const GenericActions::ImageOpened& opened
     }
 }
 
-void CentralPanelWidget::OnSpritesFound(const GenericActions::SpriteSearchFinished& spritesFound)
+void CentralPanelWidget::OnSpritesFound(const SpriteSearchMessages::SpriteSearchFinished& spritesFound)
 {
     _foundSprites = spritesFound.FoundSprites;
 }

@@ -7,6 +7,7 @@ include(imgui-sfml/CmakeLists.txt)
 include(Platform/CmakeLists.txt)
 include(Serializers/CMakeLists.txt)
 include(Widgets/CMakeLists.txt)
+include(UI/CMakeLists.txt)
 
 if(APPLE)
   set(BUILD_SHARED_LIBS TRUE)

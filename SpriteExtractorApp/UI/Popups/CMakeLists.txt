@@ -1,0 +1,1 @@
+﻿target_sources(SpriteExtractor PRIVATE "${CMAKE_CURRENT_LIST_DIR}/SearchingPopup.cpp" "${CMAKE_CURRENT_LIST_DIR}/PopupWidget.cpp")

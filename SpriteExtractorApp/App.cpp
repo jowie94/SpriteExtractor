@@ -149,7 +149,7 @@ void App::OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites)
     std::lock_guard<std::mutex> spriteList(_foundSpritesMutex);
     _foundSprites = std::make_shared<SpriteList>(foundSprites);
 
-    MessageBroker::GetInstance().Broadcast(GenericActions::SpriteSearchFinished(_foundSprites));
+    MessageBroker::GetInstance().Broadcast(SpriteSearchMessages::SpriteSearchFinished(_foundSprites));
 }
 
 void App::OnCancelSearch(const MainWindowActions::CancelSearch& /*cancelSearch*/)

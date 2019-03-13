@@ -8,13 +8,17 @@
 
 namespace GenericActions 
 {
-    struct SpriteSearchFinished;
     struct ImageOpened;
 }
 
 namespace RightPanelActions 
 {
     struct ToggleColorPicker;
+}
+
+namespace SpriteSearchMessages
+{
+    struct SpriteSearchFinished;
 }
 
 class CentralPanelWidget : public IWidget
@@ -26,7 +30,7 @@ public:
 private:
     void OnToggleColorPicker(const RightPanelActions::ToggleColorPicker& toggle);
     void OnImageOpened(const GenericActions::ImageOpened& openedImage);
-    void OnSpritesFound(const GenericActions::SpriteSearchFinished& spritesFound);
+    void OnSpritesFound(const SpriteSearchMessages::SpriteSearchFinished& spritesFound);
 
     std::weak_ptr<IImage> _openedImage;
     std::weak_ptr<SpriteList> _foundSprites;

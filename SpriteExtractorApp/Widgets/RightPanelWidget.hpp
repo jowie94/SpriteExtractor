@@ -6,11 +6,15 @@
 
 namespace GenericActions 
 {
-    struct SpriteSearchFinished;
     struct ImageOpened;
     struct OpenImage;
     struct ColorHovered;
     struct ColorPicked;
+}
+
+namespace SpriteSearchMessages
+{
+    struct SpriteSearchFinished;
 }
 
 class RightPanelWidget : public IWidget
@@ -25,7 +29,7 @@ private:
     void OnImageOpened(const GenericActions::ImageOpened& openedImage);
     void OnColorHovered(const GenericActions::ColorHovered& colorHovered);
     void OnColorPicked(const GenericActions::ColorPicked& colorPicked);
-    void OnSpriteSearchFinished(const GenericActions::SpriteSearchFinished& foundSprites);
+    void OnSpriteSearchFinished(const SpriteSearchMessages::SpriteSearchFinished& foundSprites);
 
     Color _alphaColor;
 

@@ -3,6 +3,7 @@
 #include "MessageBroker.hpp"
 #include "Messages/RightPanelActions.hpp"
 #include "Messages/GenericActions.hpp"
+#include "Messages/SpriteSearchMessages.hpp"
 
 #include "imgui-extra.hpp"
 #include <imgui.h>
@@ -14,7 +15,7 @@ void RightPanelWidget::Init()
     broker.Subscribe<GenericActions::ImageOpened>(std::bind(&RightPanelWidget::OnImageOpened, this, std::placeholders::_1));
     broker.Subscribe<GenericActions::ColorHovered>(std::bind(&RightPanelWidget::OnColorHovered, this, std::placeholders::_1));
     broker.Subscribe<GenericActions::ColorPicked>(std::bind(&RightPanelWidget::OnColorPicked, this, std::placeholders::_1));
-    broker.Subscribe<GenericActions::SpriteSearchFinished>(std::bind(&RightPanelWidget::OnSpriteSearchFinished, this, std::placeholders::_1));
+    broker.Subscribe<SpriteSearchMessages::SpriteSearchFinished>(std::bind(&RightPanelWidget::OnSpriteSearchFinished, this, std::placeholders::_1));
 }
 
 void RightPanelWidget::Draw()
@@ -79,7 +80,7 @@ void RightPanelWidget::OnColorPicked(const GenericActions::ColorPicked& colorPic
     _enableColorPicker = false;
 }
 
-void RightPanelWidget::OnSpriteSearchFinished(const GenericActions::SpriteSearchFinished& foundSprites)
+void RightPanelWidget::OnSpriteSearchFinished(const SpriteSearchMessages::SpriteSearchFinished& foundSprites)
 {
     _hasSprites = !foundSprites.FoundSprites.lock()->empty();
 }

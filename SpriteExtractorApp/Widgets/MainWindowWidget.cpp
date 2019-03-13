@@ -25,8 +25,6 @@ void MainWindowWidget::Init()
     MessageBroker& broker = MessageBroker::GetInstance();
 
     broker.Subscribe<RightPanelActions::SearchSprites>(std::bind(&MainWindowWidget::OnSearchSprites, this, std::placeholders::_1));
-    broker.Subscribe<GenericActions::SpriteSearchFinished>(std::bind(&MainWindowWidget::OnSpriteSearchFinished, this, std::placeholders::_1));
-    broker.Subscribe<SpriteSearchMessages::ProgressUpdate>(std::bind(&MainWindowWidget::OnProgressUpdate, this, std::placeholders::_1));
 
     auto imageOpenedCallback = [this](const GenericActions::ImageOpened& imageOpened)
     {
@@ -34,6 +32,8 @@ void MainWindowWidget::Init()
     };
     broker.Subscribe<GenericActions::ImageOpened>(imageOpenedCallback);
 }
+
+#include "UI/Popups/SearchingPopup.hpp"
 
 void MainWindowWidget::Draw()
 {
@@ -62,7 +62,8 @@ void MainWindowWidget::Draw()
 
     ImGui::End();
 
-    DrawSearchingPopup();
+    _popupsController.Draw();
+    // DrawSearchingPopup();
 
     if (_showMetrics)
     {
@@ -98,7 +99,7 @@ void MainWindowWidget::DrawFileMenu()
 void MainWindowWidget::DrawDebugMenu()
 {
     if (ImGui::BeginMenu("Debug"))
-    {
+    {        
         if (ImGui::MenuItem("Show Metrics", nullptr, _showMetrics))
         {
             _showMetrics = !_showMetrics;
@@ -110,67 +111,8 @@ void MainWindowWidget::DrawDebugMenu()
 
 void MainWindowWidget::OnSearchSprites(const RightPanelActions::SearchSprites& /*searchSprites*/)
 {
-    _searchingPopupState = PopupState::Open;
-}
-
-void MainWindowWidget::OnSpriteSearchFinished(const GenericActions::SpriteSearchFinished& /*spriteSearchFinished*/)
-{
-    _searchingPopupState = PopupState::Close;
-}
-
-void MainWindowWidget::OnProgressUpdate(const SpriteSearchMessages::ProgressUpdate& progressUpdate)
-{
-    _stage = progressUpdate.Stage;
-    _progress = progressUpdate.Progress;
-}
-
-void MainWindowWidget::DrawSearchingPopup()
-{
-    if (_searchingPopupState == PopupState::Open)
-    {
-        ImGui::OpenPopup("Searching Sprites");
-
-        _searchingPopupState = PopupState::Opened;
-    }
-
-    if (ImGui::BeginPopupModal("Searching Sprites", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize))
-    {
-        std::string message;
-        switch (_stage)
-        {
-        case SpriteExtractor::Task::Stage::GenerateMatrix:
-        {
-            message = "Generating binary matrix";
-            break;
-        }
-        case SpriteExtractor::Task::Stage::FindSprites:
-        {
-            message = "Searching sprites";
-            break;
-        }
-        default:
-        {
-            message = "ERROR: Unknown stage";
-            break;
-        }
-        }
-
-        ImGui::Text("%s", message.c_str());
-
-        ImGui::ProgressBar(_progress);
-
-        if (ImGui::Button("Cancel"))
-        {
-            MessageBroker::GetInstance().Broadcast(MainWindowActions::CancelSearch());
-            _searchingPopupState = PopupState::Close;
-        }
-
-        if (_searchingPopupState == PopupState::Close)
-        {
-            ImGui::CloseCurrentPopup();
-            _searchingPopupState = PopupState::Closed;
-        }
-
-        ImGui::EndPopup();
-    }
+    std::shared_ptr<SearchingPopup> searchingPopup = std::make_shared<SearchingPopup>();
+    searchingPopup->Init();
+    _popupsController.ShowPopup(searchingPopup);
+    // _searchingPopupState = PopupState::Open;
 }

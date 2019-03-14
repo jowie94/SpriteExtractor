@@ -12,7 +12,7 @@
 #include "Messages/MainWindowActions.hpp"
 #include "Messages/SpriteSearchMessages.hpp"
 
-#include "Widgets/MainWindowWidget.hpp"
+#include "UI/Widgets/MainWindowWidget.hpp"
 
 #include "imgui-extra.hpp"
 

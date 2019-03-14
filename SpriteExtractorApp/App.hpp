@@ -5,7 +5,7 @@
 
 #include "Types.hpp"
 #include "SpriteExtractor.h"
-#include "Widgets/IWidget.hpp"
+#include "UI/Widgets/IWidget.hpp"
 
 namespace RightPanelActions 
 {

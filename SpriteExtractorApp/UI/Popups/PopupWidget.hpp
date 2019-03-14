@@ -4,7 +4,7 @@
 
 #include <imgui.h>
 
-#include "Widgets/IWidget.hpp"
+#include "UI/Widgets/IWidget.hpp"
 
 class PopupWidget : public IWidget
 {

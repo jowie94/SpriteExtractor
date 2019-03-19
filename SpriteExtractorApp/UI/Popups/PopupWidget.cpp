@@ -8,13 +8,15 @@ PopupWidget::PopupWidget(const std::string &popupName, bool isCloseable)
 
 void PopupWidget::Draw()
 {
-    bool canBeClosed = _isCloseable;
-    if (ImGui::BeginPopupModal(_popupName.c_str(), &canBeClosed))
+    bool* canBeClosed = _isCloseable ? &_isCloseable : nullptr;
+    if (ImGui::BeginPopupModal(_popupName.c_str(), canBeClosed))
     {
+        _isDrawing = true;
         DrawPopup();
         ImGui::EndPopup();
+        _isDrawing = false;
     }
-    else if (!canBeClosed && _isCloseable)
+    else if (canBeClosed && *canBeClosed)
     {
         Close();
     }
@@ -22,5 +24,10 @@ void PopupWidget::Draw()
 
 void PopupWidget::Close()
 {
+    if (_isDrawing)
+    {
+        ImGui::CloseCurrentPopup();
+    }
+    
     _state = State::Close;
 }

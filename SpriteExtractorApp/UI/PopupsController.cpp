@@ -27,7 +27,6 @@ void PopupsController::Draw()
         if (popup->_state == PopupWidget::State::Close)
         {
             popup->_state = PopupWidget::State::Closed;
-            ImGui::CloseCurrentPopup();
             _popupQueue.pop();
         }
     }

@@ -45,6 +45,7 @@ void MainWindowWidget::Draw()
     ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
 
     ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar);
+    _popupsController.Draw();
 
     DrawMenuBar();
 
@@ -61,8 +62,6 @@ void MainWindowWidget::Draw()
     ImGui::PopStyleVar();
 
     ImGui::End();
-
-    _popupsController.Draw();
     // DrawSearchingPopup();
 
     if (_showMetrics)

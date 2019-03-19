@@ -33,4 +33,6 @@ protected:
 
 private:
     friend class PopupsController;
+
+    bool _isDrawing = false;
 };

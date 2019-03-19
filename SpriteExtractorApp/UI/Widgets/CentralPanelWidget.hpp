@@ -32,6 +32,11 @@ private:
     void OnImageOpened(const GenericActions::ImageOpened& openedImage);
     void OnSpritesFound(const SpriteSearchMessages::SpriteSearchFinished& spritesFound);
 
+    void DrawImage();
+    void DrawZoom();
+
+    Color CalculateHoveredColor(const ImVec2& mousePosition, const std::shared_ptr<IImage> image);
+
     std::weak_ptr<IImage> _openedImage;
     std::weak_ptr<SpriteList> _foundSprites;
     std::unique_ptr<ITextureResource> _textureResource;
@@ -39,6 +44,4 @@ private:
     float _imageScale = 1.0f;
     ImVec2 _imageWindowSize;
     bool _enableColorPicker = false;
-    Color _alphaColor;
-    Color _originalAlphaColor;
 };

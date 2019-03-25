@@ -139,7 +139,7 @@ private:
     template<typename T>
     SubscriptionId Subscribe(std::unique_ptr<MessageCallback<T>>&& ptr)
     {
-        SubscriptionId id = clock();
+        SubscriptionId id = reinterpret_cast<SubscriptionId>(ptr.get());
         _messageCallbacks[typeid(T)].emplace(id, std::forward<std::unique_ptr<MessageCallback<T>>>(ptr));
         return id;
     }

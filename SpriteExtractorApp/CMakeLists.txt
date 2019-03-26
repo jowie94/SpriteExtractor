@@ -7,6 +7,7 @@ add_subdirectory(imgui-sfml)
 add_subdirectory(Platform)
 add_subdirectory(Serializers)
 add_subdirectory(UI)
+add_subdirectory(Logger)
 
 if(APPLE)
   set(BUILD_SHARED_LIBS TRUE)
@@ -31,6 +32,10 @@ target_link_libraries(SpriteExtractor imgui::imgui)
 find_package(OpenGL REQUIRED)
 
 find_package(Boost REQUIRED)
+
+add_definitions(-DFMT_HEADER_ONLY)
+find_package(spdlog REQUIRED)
+target_link_libraries(SpriteExtractor spdlog::spdlog)
 
 target_include_directories(SpriteExtractor PRIVATE ${OPENGL_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 target_link_libraries(SpriteExtractor ${OPENGL_LIBRARIES} ${Boost_LIBRARIES})

@@ -6,6 +6,9 @@
 
 #include "RightPanelWidget.hpp"
 #include "CentralPanelWidget.hpp"
+
+#include "UI/Popups/SearchingPopup.hpp"
+
 #include "SpriteExtractor.h"
 
 #include "MessageBroker.hpp"
@@ -32,8 +35,6 @@ void MainWindowWidget::Init()
     };
     broker.Subscribe<GenericActions::ImageOpened>(imageOpenedCallback);
 }
-
-#include "UI/Popups/SearchingPopup.hpp"
 
 void MainWindowWidget::Draw()
 {

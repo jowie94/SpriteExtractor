@@ -14,6 +14,8 @@
 
 #include "UI/Widgets/MainWindowWidget.hpp"
 
+#include "Logger/Logger.hpp"
+
 #include "imgui-extra.hpp"
 
 namespace AppConst
@@ -56,6 +58,7 @@ App::App()
 
 void App::Init()
 {
+	Logger::GetLogger("App")->info("Initializing App");
     _mainWindow = std::make_unique<MainWindowWidget>();
     _mainWindow->Init();
 

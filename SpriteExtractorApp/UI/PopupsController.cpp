@@ -18,7 +18,7 @@ void PopupsController::Draw()
 
         if (popup->_state == PopupWidget::State::Open)
         {
-            ImGui::OpenPopup(popup->_popupName.c_str());
+            ImGui::OpenPopup(popup->GetName());
             popup->_state = PopupWidget::State::Opened;
         }
 

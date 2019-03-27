@@ -1,6 +1,7 @@
 #include "App.hpp"
 
 #include <algorithm>
+
 #include <ImGui/imgui.h>
 
 #include "Platform/GenericPlatform.h"
@@ -15,8 +16,6 @@
 #include "UI/Widgets/MainWindowWidget.hpp"
 
 #include "Logger/Logger.hpp"
-
-#include "imgui-extra.hpp"
 
 namespace AppConst
 {
@@ -93,7 +92,7 @@ void App::Loop()
         MessageBroker::GetInstance().Broadcast(progressUpdate);
     }
 
-    _mainWindow->Draw();
+    _mainWindow->DoDraw();
 
     //ImGui::ShowTestWindow();
 }

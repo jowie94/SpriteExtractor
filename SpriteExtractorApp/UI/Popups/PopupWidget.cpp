@@ -1,7 +1,9 @@
 #include "PopupWidget.hpp"
 
-PopupWidget::PopupWidget(const std::string &popupName, bool isCloseable)
-: _popupName(popupName)
+#include <ImGui/imgui.h>
+
+PopupWidget::PopupWidget(const char* popupName, bool isCloseable)
+: IWidget(popupName, ImGuiWindowFlags_None)
 , _isCloseable(isCloseable)
 {
 }
@@ -9,7 +11,7 @@ PopupWidget::PopupWidget(const std::string &popupName, bool isCloseable)
 void PopupWidget::Draw()
 {
     bool* canBeClosed = _isCloseable ? &_isCloseable : nullptr;
-    if (ImGui::BeginPopupModal(_popupName.c_str(), canBeClosed))
+    if (ImGui::BeginPopupModal(GetName(), canBeClosed))
     {
         _isDrawing = true;
         DrawPopup();
@@ -30,4 +32,12 @@ void PopupWidget::Close()
     }
     
     _state = State::Close;
+}
+
+void PopupWidget::BeginWidget()
+{
+}
+
+void PopupWidget::EndWidget()
+{
 }

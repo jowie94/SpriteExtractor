@@ -11,7 +11,7 @@ public:
     void ShowPopup(std::shared_ptr<PopupWidget> popup);
 
 private:
-    friend class MainWindowWidget;
+    friend class IMainWindowWidget;
 
     void Draw();
 

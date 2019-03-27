@@ -1,5 +1,7 @@
 #include "SearchingPopup.hpp"
 
+#include <ImGui/imgui.h>
+
 #include "MessageBroker.hpp"
 #include "Messages/SpriteSearchMessages.hpp"
 #include "Messages/MainWindowActions.hpp"

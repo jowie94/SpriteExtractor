@@ -23,10 +23,10 @@ public:
     App();
     virtual ~App() = default;
 
-    void Init();
     virtual void Run() = 0;
 
 protected:
+	void Init();
     void Loop();
 
     virtual std::shared_ptr<IImage> OpenImage(const std::string& path) = 0;

@@ -1,9 +1,5 @@
 #pragma once
 
-#include <string>
-
-#include <ImGui/imgui.h>
-
 #include "UI/Widgets/IWidget.hpp"
 
 class PopupWidget : public IWidget
@@ -17,7 +13,7 @@ public:
         Closed
     };
 
-    PopupWidget(const std::string& popupName, bool isCloseable);
+    PopupWidget(const char* popupName, bool isCloseable);
 
     void Draw() override final;
 
@@ -28,11 +24,13 @@ public:
 protected:
     State _state = State::Closed;
 
-    std::string _popupName;
     bool _isCloseable = false;
 
 private:
     friend class PopupsController;
+
+	void BeginWidget() override final;
+	void EndWidget() override final;
 
     bool _isDrawing = false;
 };

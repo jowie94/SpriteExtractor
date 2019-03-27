@@ -1,1 +1,8 @@
-﻿target_sources(SpriteExtractor PRIVATE "${CMAKE_CURRENT_LIST_DIR}/RightPanelWidget.cpp" "${CMAKE_CURRENT_LIST_DIR}/CentralPanelWidget.cpp" "${CMAKE_CURRENT_LIST_DIR}/MainWindowWidget.cpp")
+﻿set(WIDGET_SOURCES ${WIDGET_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/IMainWindowWidget.cpp")
+set(WIDGET_SOURCES ${WIDGET_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/IWidget.cpp")
+set(WIDGET_SOURCES ${WIDGET_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/IPanelWidget.cpp")
+set(WIDGET_SOURCES ${WIDGET_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/RightPanelWidget.cpp")
+set(WIDGET_SOURCES ${WIDGET_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/CentralPanelWidget.cpp")
+set(WIDGET_SOURCES ${WIDGET_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/MainWindowWidget.cpp")
+
+target_sources(SpriteExtractor PRIVATE ${WIDGET_SOURCES})

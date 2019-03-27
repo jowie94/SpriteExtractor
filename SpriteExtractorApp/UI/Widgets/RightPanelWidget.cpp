@@ -1,15 +1,23 @@
 #include "RightPanelWidget.hpp"
 
+#include <ImGui/imgui.h>
+
 #include "MessageBroker.hpp"
 #include "Messages/RightPanelActions.hpp"
 #include "Messages/GenericActions.hpp"
 #include "Messages/SpriteSearchMessages.hpp"
 
 #include "imgui-extra.hpp"
-#include <ImGui/imgui.h>
+
+RightPanelWidget::RightPanelWidget(Position position)
+: IPanelWidget("Search Sprites", ImVec2(30.0f, 30.0f), position)
+{
+}
 
 void RightPanelWidget::Init()
 {
+    IPanelWidget::Init();
+    
     MessageBroker& broker = MessageBroker::GetInstance();
 
     broker.Subscribe<GenericActions::ImageOpened>(std::bind(&RightPanelWidget::OnImageOpened, this, std::placeholders::_1));
@@ -20,7 +28,7 @@ void RightPanelWidget::Init()
 
 void RightPanelWidget::Draw()
 {
-    ImGui::BeginChild("Right", ImVec2(300.0f, -30.0f));
+    IPanelWidget::Draw();
 
     float col4[4];
     _alphaColor.ToFloat(col4);
@@ -59,8 +67,6 @@ void RightPanelWidget::Draw()
         broker.Broadcast(RightPanelActions::SaveFile());
         //OnSaveFile();
     }
-
-    ImGui::EndChild();
 }
 
 void RightPanelWidget::OnImageOpened(const GenericActions::ImageOpened& /*openedImage*/)

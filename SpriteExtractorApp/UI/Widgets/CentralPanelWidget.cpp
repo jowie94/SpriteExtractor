@@ -32,8 +32,15 @@ namespace CentralPanelWidgetConst
     float kZoomFactor = 0.3f;
 }
 
+CentralPanelWidget::CentralPanelWidget(Position position)
+: IPanelWidget("Sprites", ImVec2(-300.0f, -30.0f), position, ImGuiWindowFlags_NoMove)
+{
+}
+
 void CentralPanelWidget::Init()
 {
+    IPanelWidget::Init();
+
     MessageBroker& broker = MessageBroker::GetInstance();
 
     broker.Subscribe<RightPanelActions::ToggleColorPicker>(std::bind(&CentralPanelWidget::OnToggleColorPicker, this, std::placeholders::_1));
@@ -43,7 +50,8 @@ void CentralPanelWidget::Init()
 
 void CentralPanelWidget::Draw()
 {
-    ImGui::BeginChild("Image Container", ImVec2(-300.0f, -30.0f));
+    IPanelWidget::Draw();
+
     DrawImage();
 
     ImVec2 cursorPos = ImGui::GetWindowSize();
@@ -53,8 +61,6 @@ void CentralPanelWidget::Draw()
     ImGui::SetCursorPos(cursorPos);
 
     DrawZoom();
-
-    ImGui::EndChild();
 }
 
 void CentralPanelWidget::OnToggleColorPicker(const RightPanelActions::ToggleColorPicker& toggle)

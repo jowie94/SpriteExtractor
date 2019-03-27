@@ -18,11 +18,15 @@ void SFMLApp::Run()
     float scale = 1.0f;
 #endif
 
-    sf::RenderWindow window(sf::VideoMode(1366 * scale, 768 * scale), "Sprite Extractor");
+    sf::RenderWindow window(sf::VideoMode(static_cast<unsigned int>(1366.0f * scale), static_cast<unsigned int>(768.0f * scale)), "Sprite Extractor");
 
     ImGui::SFML::Init(window);
 
     ImGui::GetIO().DisplayFramebufferScale = ImVec2(scale, scale);
+    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    ImGui::GetIO().IniFilename = nullptr;
+
+	Init();
 
     sf::Clock deltaClock;
     while (window.isOpen())

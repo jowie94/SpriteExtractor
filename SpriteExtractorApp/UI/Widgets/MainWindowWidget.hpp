@@ -1,12 +1,8 @@
 #pragma once
 
-#include <memory>
 #include <string>
 
-#include "IWidget.hpp"
-#include "UI/PopupsController.hpp"
-
-#include "SpriteExtractor.h"
+#include "IMainWindowWidget.hpp"
 
 namespace RightPanelActions 
 {
@@ -23,21 +19,19 @@ namespace SpriteSearchMessages
     struct ProgressUpdate;
 }
 
-class MainWindowWidget : public IWidget
+class MainWindowWidget : public IMainWindowWidget
 {
 public:
+	MainWindowWidget();
+
     void Init() override;
+
+protected:
+    void BeforeDraw() override;
     void Draw() override;
+    void AfterDraw() override;
 
 private:
-    enum class PopupState
-    {
-        Open,
-        Opened,
-        Close,
-        Closed
-    };
-
     // Panels
     void DrawMenuBar();
     void DrawFileMenu();
@@ -48,9 +42,4 @@ private:
     bool _showMetrics = false;
 
     std::string _openedFile;
-
-    std::unique_ptr<IWidget> _rightWidget;
-    std::unique_ptr<IWidget> _centerWidget;
-
-    PopupsController _popupsController;
 };

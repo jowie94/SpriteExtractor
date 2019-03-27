@@ -2,7 +2,7 @@
 
 #include "imgui-sfml/imgui-SFML.h"
 
-#include <imgui.h>
+#include <ImGui/imgui.h>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Texture.hpp>

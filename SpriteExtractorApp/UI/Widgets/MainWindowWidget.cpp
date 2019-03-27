@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include <imgui.h>
+#include <ImGui/imgui.h>
 
 #include "RightPanelWidget.hpp"
 #include "CentralPanelWidget.hpp"

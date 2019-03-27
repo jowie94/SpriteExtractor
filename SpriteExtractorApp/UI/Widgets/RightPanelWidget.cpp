@@ -6,7 +6,7 @@
 #include "Messages/SpriteSearchMessages.hpp"
 
 #include "imgui-extra.hpp"
-#include <imgui.h>
+#include <ImGui/imgui.h>
 
 void RightPanelWidget::Init()
 {

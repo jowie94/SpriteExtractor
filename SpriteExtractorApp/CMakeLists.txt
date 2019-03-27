@@ -26,8 +26,7 @@ if(SFML_FOUND)
     target_link_libraries(SpriteExtractor sfml-graphics sfml-window sfml-system)
 endif()
 
-find_package(imgui REQUIRED)
-target_link_libraries(SpriteExtractor imgui::imgui)
+target_link_libraries(SpriteExtractor ImGui)
 
 find_package(OpenGL REQUIRED)
 

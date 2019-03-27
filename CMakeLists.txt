@@ -5,4 +5,5 @@ project ("SpriteExtractor")
 
 # Include sub-projects.
 add_subdirectory("SpriteExtractorLib")
+add_subdirectory("lib")
 add_subdirectory("SpriteExtractorApp")

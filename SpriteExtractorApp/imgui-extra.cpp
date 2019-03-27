@@ -1,5 +1,5 @@
 #include "imgui-extra.hpp"
-#include <imgui.h>
+#include <ImGui/imgui.h>
 #include "Types.hpp"
 
 void ImGui::Image(const ITextureResource& image, const ImVec2& imageSize)

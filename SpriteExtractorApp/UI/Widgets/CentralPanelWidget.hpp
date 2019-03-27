@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include <imgui.h>
+#include <ImGui/imgui.h>
 
 #include "IWidget.hpp"
 #include "Types.hpp"

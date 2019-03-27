@@ -1,6 +1,6 @@
 #include "CentralPanelWidget.hpp"
 
-#include <imgui.h>
+#include <ImGui/imgui.h>
 
 #include <algorithm>
 

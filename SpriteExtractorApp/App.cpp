@@ -1,7 +1,7 @@
 #include "App.hpp"
 
 #include <algorithm>
-#include <imgui.h>
+#include <ImGui/imgui.h>
 
 #include "Platform/GenericPlatform.h"
 #include "Serializers/Serializer.hpp"

@@ -1,28 +1,28 @@
-#include "IMainWindowWidget.hpp"
+#include "BaseMainWindow.hpp"
 
 #include <cassert>
 
 #include <ImGui/imgui.h>
 #include <ImGui/imgui_internal.h> // Docking stuff
 
-IMainWindowWidget::IMainWindowWidget(const char* name)
-: IWidget(name, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar)
+BaseMainWindow::BaseMainWindow(const char* name)
+: BaseWindow(name, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar)
 {
 }
 
-PopupsController& IMainWindowWidget::GetPopupsController()
+PopupsController& BaseMainWindow::GetPopupsController()
 {
 	return _popupsController;
 }
 
-void IMainWindowWidget::AddPanelInt(std::shared_ptr<IPanelWidget> panel)
+void BaseMainWindow::AddPanelInt(std::shared_ptr<PanelWindow> panel)
 {
 	panel->Init();
 
 	_panels.emplace_back(std::move(panel));
 }
 
-void IMainWindowWidget::BeginWidget()
+void BaseMainWindow::BeginWidget()
 {
 	ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
 	ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
@@ -45,12 +45,12 @@ void IMainWindowWidget::BeginWidget()
 	_popupsController.Draw();
 }
 
-void IMainWindowWidget::EndWidget()
+void BaseMainWindow::EndWidget()
 {
 	ImGui::End();
 }
 
-void IMainWindowWidget::SetupLayout()
+void BaseMainWindow::SetupLayout()
 {
 	ImGuiID dockId = ImGui::GetID(GetName());
 
@@ -68,27 +68,27 @@ void IMainWindowWidget::SetupLayout()
 	{
 		switch (panel->GetPosition())
 		{
-			case IPanelWidget::Position::Right:
+			case PanelWindow::Position::Right:
 			{
 				ImGui::DockBuilderDockWindow(panel->GetName(), rightDockId);
 				break;
 			}
-			case IPanelWidget::Position::Left:
+			case PanelWindow::Position::Left:
 			{
 				ImGui::DockBuilderDockWindow(panel->GetName(), leftDockId);
 				break;
 			}
-			case IPanelWidget::Position::Up:
+			case PanelWindow::Position::Up:
 			{
 				ImGui::DockBuilderDockWindow(panel->GetName(), topDockId);
 				break;
 			}
-			case IPanelWidget::Position::Down:
+			case PanelWindow::Position::Down:
 			{
 				ImGui::DockBuilderDockWindow(panel->GetName(), bottomDockId);
 				break;
 			}
-			case IPanelWidget::Position::Middle:
+			case PanelWindow::Position::Middle:
 			{
 				ImGui::DockBuilderDockWindow(panel->GetName(), mainDock);
 			}

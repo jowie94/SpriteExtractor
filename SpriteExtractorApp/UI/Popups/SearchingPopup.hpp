@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PopupWidget.hpp"
+#include "UI/Popup/PopupWindow.hpp"
 #include "SpriteExtractor.h"
 #include "MessageBroker.hpp"
 
@@ -10,7 +10,7 @@ namespace SpriteSearchMessages
     struct SpriteSearchFinished;
 }
 
-class SearchingPopup : public PopupWidget
+class SearchingPopup : public PopupWindow
 {
 public:
     SearchingPopup();

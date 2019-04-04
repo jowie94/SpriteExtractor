@@ -55,9 +55,11 @@ App::App()
 : _searchSpritesTask(std::bind(&App::OnSpritesFound, this, std::placeholders::_1))
 {}
 
+App::~App() = default;
+
 void App::Init()
 {
-	Logger::GetLogger("App")->info("Initializing App");
+    Logger::GetLogger("App")->info("Initializing App");
     _mainWindow = std::make_unique<MainWindowWidget>();
     _mainWindow->Init();
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "UI/Widgets/IWidget.hpp"
+#include "UI/BaseWindow.hpp"
 
-class PopupWidget : public IWidget
+class PopupWindow : public BaseWindow
 {
 public:
     enum class State
@@ -13,7 +13,7 @@ public:
         Closed
     };
 
-    PopupWidget(const char* popupName, bool isCloseable);
+    PopupWindow(const char* popupName, bool isCloseable);
 
     void Draw() override final;
 
@@ -29,8 +29,8 @@ protected:
 private:
     friend class PopupsController;
 
-	void BeginWidget() override final;
-	void EndWidget() override final;
+    void BeginWidget() override final;
+    void EndWidget() override final;
 
     bool _isDrawing = false;
 };

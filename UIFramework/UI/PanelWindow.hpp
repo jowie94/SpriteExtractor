@@ -1,10 +1,10 @@
 #pragma once
 
-#include "IWidget.hpp"
+#include "BaseWindow.hpp"
 
 #include <ImGui/imgui.h>
 
-class IPanelWidget : public IWidget
+class PanelWindow : public BaseWindow
 {
 public:
     enum class Position
@@ -16,7 +16,7 @@ public:
         Down
     };
 
-    IPanelWidget(const char* name, const ImVec2& initialSize, Position position, ImGuiWindowFlags flags = ImGuiWindowFlags_None);
+	PanelWindow(const char* name, const ImVec2& initialSize, Position position, ImGuiWindowFlags flags = ImGuiWindowFlags_None);
 
     Position GetPosition() const
     {

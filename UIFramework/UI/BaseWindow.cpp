@@ -1,14 +1,14 @@
-#include "IWidget.hpp"
+#include "BaseWindow.hpp"
 
 #include <cassert>
 
-IWidget::IWidget(const char* name, ImGuiWindowFlags flags)
+BaseWindow::BaseWindow(const char* name, ImGuiWindowFlags flags)
 : _flags(flags)
 , _name(name)
 {
 }
 
-void IWidget::DoDraw()
+void BaseWindow::DoDraw()
 {
 	BeforeDraw();
 	BeginWidget();
@@ -19,18 +19,18 @@ void IWidget::DoDraw()
 	_drawn = false;
 }
 
-void IWidget::Init()
+void BaseWindow::Init()
 {
 	assert(!_init);
 	_init = true;
 }
 
-const char* IWidget::GetName() const
+const char* BaseWindow::GetName() const
 {
 	return _name;
 }
 
-void IWidget::Draw()
+void BaseWindow::Draw()
 {
 	assert(_init && "Drawing a not initialized window");
 	_drawn = true;

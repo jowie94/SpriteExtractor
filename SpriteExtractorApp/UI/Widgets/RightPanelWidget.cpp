@@ -10,13 +10,13 @@
 #include "imgui-extra.hpp"
 
 RightPanelWidget::RightPanelWidget(Position position)
-: IPanelWidget("Search Sprites", ImVec2(30.0f, 30.0f), position)
+: PanelWindow("Search Sprites", ImVec2(30.0f, 30.0f), position)
 {
 }
 
 void RightPanelWidget::Init()
 {
-    IPanelWidget::Init();
+    PanelWindow::Init();
     
     MessageBroker& broker = MessageBroker::GetInstance();
 
@@ -28,7 +28,7 @@ void RightPanelWidget::Init()
 
 void RightPanelWidget::Draw()
 {
-    IPanelWidget::Draw();
+    PanelWindow::Draw();
 
     float col4[4];
     _alphaColor.ToFloat(col4);

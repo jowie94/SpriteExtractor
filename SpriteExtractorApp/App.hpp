@@ -5,7 +5,6 @@
 
 #include "Types.hpp"
 #include "SpriteExtractor.h"
-#include "UI/Widgets/IWidget.hpp"
 
 namespace RightPanelActions 
 {
@@ -17,11 +16,13 @@ namespace MainWindowActions
     struct CancelSearch;
 }
 
+class BaseWindow;
+
 class App
 {
 public:
     App();
-    virtual ~App() = default;
+    virtual ~App();
 
     virtual void Run() = 0;
 
@@ -47,5 +48,5 @@ private:
 
     SpriteExtractor::Task _searchSpritesTask;
 
-    std::unique_ptr<IWidget> _mainWindow;
+    std::unique_ptr<BaseWindow> _mainWindow;
 };

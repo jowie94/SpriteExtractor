@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IPanelWidget.hpp"
+#include "UI/PanelWindow.hpp"
 
 #include "Types.hpp"
 
@@ -17,10 +17,10 @@ namespace SpriteSearchMessages
     struct SpriteSearchFinished;
 }
 
-class RightPanelWidget : public IPanelWidget
+class RightPanelWidget : public PanelWindow
 {
 public:
-	explicit RightPanelWidget(Position position);
+    explicit RightPanelWidget(Position position);
     ~RightPanelWidget() override = default;
 
     void Init() override;

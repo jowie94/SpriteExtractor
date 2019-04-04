@@ -7,7 +7,7 @@
 #include "Messages/MainWindowActions.hpp"
 
 SearchingPopup::SearchingPopup()
-: PopupWidget("Searching Popup", false)
+: PopupWindow("Searching Popup", false)
 {}
 
 SearchingPopup::~SearchingPopup()

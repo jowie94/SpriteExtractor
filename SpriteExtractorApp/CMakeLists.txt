@@ -27,6 +27,7 @@ if(SFML_FOUND)
 endif()
 
 target_link_libraries(SpriteExtractor ImGui)
+target_link_libraries(SpriteExtractor UIFramework)
 
 find_package(OpenGL REQUIRED)
 

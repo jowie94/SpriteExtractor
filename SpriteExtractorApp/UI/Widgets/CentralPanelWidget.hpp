@@ -3,7 +3,7 @@
 #include <memory>
 #include <ImGui/imgui.h>
 
-#include "IPanelWidget.hpp"
+#include "UI/PanelWindow.hpp"
 #include "Types.hpp"
 
 namespace GenericActions 
@@ -21,7 +21,7 @@ namespace SpriteSearchMessages
     struct SpriteSearchFinished;
 }
 
-class CentralPanelWidget : public IPanelWidget
+class CentralPanelWidget : public PanelWindow
 {
 public:
     explicit CentralPanelWidget(Position position);

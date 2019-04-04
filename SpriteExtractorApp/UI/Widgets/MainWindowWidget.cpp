@@ -16,16 +16,16 @@
 #include "Messages/SpriteSearchMessages.hpp"
 
 MainWindowWidget::MainWindowWidget()
-: IMainWindowWidget("MainWindow")
+: BaseMainWindow("MainWindow")
 {
 }
 
 void MainWindowWidget::Init()
 {
-    IMainWindowWidget::Init();
+    BaseMainWindow::Init();
 
-	AddPanel<CentralPanelWidget>(IPanelWidget::Position::Left);
-	AddPanel<RightPanelWidget>(IPanelWidget::Position::Right);
+    AddPanel<CentralPanelWidget>(PanelWindow::Position::Left);
+    AddPanel<RightPanelWidget>(PanelWindow::Position::Right);
 
     MessageBroker& broker = MessageBroker::GetInstance();
 
@@ -40,7 +40,7 @@ void MainWindowWidget::Init()
 
 void MainWindowWidget::BeforeDraw()
 {
-    IMainWindowWidget::BeforeDraw();
+    BaseMainWindow::BeforeDraw();
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
@@ -49,7 +49,7 @@ void MainWindowWidget::BeforeDraw()
 
 void MainWindowWidget::Draw()
 {
-	IMainWindowWidget::Draw();
+    BaseMainWindow::Draw();
 
     DrawMenuBar();
 
@@ -61,7 +61,7 @@ void MainWindowWidget::Draw()
 
 void MainWindowWidget::AfterDraw()
 {
-    IMainWindowWidget::AfterDraw();
+    BaseMainWindow::AfterDraw();
     ImGui::PopStyleVar(3);
 }
 

@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "IMainWindowWidget.hpp"
+#include "UI/BaseMainWindow.hpp"
 
 namespace RightPanelActions 
 {
@@ -19,7 +19,7 @@ namespace SpriteSearchMessages
     struct ProgressUpdate;
 }
 
-class MainWindowWidget : public IMainWindowWidget
+class MainWindowWidget : public BaseMainWindow
 {
 public:
 	MainWindowWidget();

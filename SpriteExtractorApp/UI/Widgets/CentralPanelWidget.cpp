@@ -33,13 +33,13 @@ namespace CentralPanelWidgetConst
 }
 
 CentralPanelWidget::CentralPanelWidget(Position position)
-: IPanelWidget("Sprites", ImVec2(-300.0f, -30.0f), position, ImGuiWindowFlags_NoMove)
+: PanelWindow("Sprites", ImVec2(-300.0f, -30.0f), position, ImGuiWindowFlags_NoMove)
 {
 }
 
 void CentralPanelWidget::Init()
 {
-    IPanelWidget::Init();
+	PanelWindow::Init();
 
     MessageBroker& broker = MessageBroker::GetInstance();
 
@@ -50,7 +50,7 @@ void CentralPanelWidget::Init()
 
 void CentralPanelWidget::Draw()
 {
-    IPanelWidget::Draw();
+	PanelWindow::Draw();
 
     DrawImage();
 

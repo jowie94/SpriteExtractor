@@ -2,8 +2,8 @@
 
 #include <ImGui/imgui.h>
 
-#include "RightPanelWidget.hpp"
-#include "CentralPanelWidget.hpp"
+#include "UI/Panels/RightPanelWidget.hpp"
+#include "UI/Panels/CentralPanelWidget.hpp"
 
 #include "UI/Popups/SearchingPopup.hpp"
 

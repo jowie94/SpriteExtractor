@@ -13,7 +13,7 @@
 #include "Messages/MainWindowActions.hpp"
 #include "Messages/SpriteSearchMessages.hpp"
 
-#include "UI/Widgets/MainWindowWidget.hpp"
+#include "UI/MainWindowWidget.hpp"
 
 #include "Logger/Logger.hpp"
 

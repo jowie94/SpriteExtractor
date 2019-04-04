@@ -9,8 +9,8 @@
 
 #include "imgui-extra.hpp"
 
-RightPanelWidget::RightPanelWidget(Position position)
-: PanelWindow("Search Sprites", ImVec2(30.0f, 30.0f), position)
+RightPanelWidget::RightPanelWidget()
+: PanelWindow("Search Sprites", ImVec2(30.0f, 30.0f))
 {
 }
 

@@ -32,8 +32,8 @@ namespace CentralPanelWidgetConst
     float kZoomFactor = 0.3f;
 }
 
-CentralPanelWidget::CentralPanelWidget(Position position)
-: PanelWindow("Sprites", ImVec2(-300.0f, -30.0f), position, ImGuiWindowFlags_NoMove)
+CentralPanelWidget::CentralPanelWidget()
+: PanelWindow("Sprites", ImVec2(-300.0f, -30.0f), ImGuiWindowFlags_NoMove)
 {
 }
 

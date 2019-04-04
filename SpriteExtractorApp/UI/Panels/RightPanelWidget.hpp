@@ -20,7 +20,7 @@ namespace SpriteSearchMessages
 class RightPanelWidget : public PanelWindow
 {
 public:
-    explicit RightPanelWidget(Position position);
+    RightPanelWidget();
     ~RightPanelWidget() override = default;
 
     void Init() override;

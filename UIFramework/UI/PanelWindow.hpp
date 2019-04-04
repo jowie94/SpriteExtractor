@@ -9,6 +9,7 @@ class PanelWindow : public BaseWindow
 public:
     enum class Position
     {
+        None,
         Left,
         Middle,
         Right,
@@ -16,17 +17,11 @@ public:
         Down
     };
 
-    PanelWindow(const char* name, const ImVec2& initialSize, Position position, ImGuiWindowFlags flags = ImGuiWindowFlags_None);
+    PanelWindow(const char* name, const ImVec2& initialSize, ImGuiWindowFlags flags = ImGuiWindowFlags_None);
 
-    Position GetPosition() const
-    {
-        return _position;
-    }
-    
 private:
     bool BeginWidget() override final;
     void EndWidget(bool wasDrawn) override final;
 
     ImVec2 _initialSize;
-    Position _position;
 };

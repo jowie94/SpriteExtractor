@@ -24,7 +24,7 @@ namespace SpriteSearchMessages
 class CentralPanelWidget : public PanelWindow
 {
 public:
-    explicit CentralPanelWidget(Position position);
+    CentralPanelWidget();
 
     void Init() override;
 

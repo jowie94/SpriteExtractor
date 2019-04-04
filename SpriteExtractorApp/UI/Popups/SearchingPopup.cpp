@@ -19,13 +19,16 @@ SearchingPopup::~SearchingPopup()
 
 void SearchingPopup::Init()
 {
+    PopupWindow::Init();
     MessageBroker& broker = MessageBroker::GetInstance();
     _progressUpdateSubscription = broker.Subscribe<SpriteSearchMessages::ProgressUpdate>(std::bind(&SearchingPopup::OnProgressUpdate, this, std::placeholders::_1));
     _searchFinishedSubscription = broker.Subscribe<SpriteSearchMessages::SpriteSearchFinished>(std::bind(&SearchingPopup::OnSearchFinished, this, std::placeholders::_1));
 }
 
-void SearchingPopup::DrawPopup()
+void SearchingPopup::Draw()
 {
+    PopupWindow::Draw();
+
     std::string message;
     switch (_stage)
     {

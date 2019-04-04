@@ -15,11 +15,7 @@ public:
 
     PopupWindow(const char* popupName, bool isCloseable);
 
-    void Draw() override final;
-
     void Close();
-
-    virtual void DrawPopup() = 0;
 
 protected:
     State _state = State::Closed;
@@ -29,8 +25,9 @@ protected:
 private:
     friend class PopupsController;
 
-    void BeginWidget() override final;
-    void EndWidget() override final;
+    bool BeginWidget() override final;
+    void EndWidget(bool wasDrawn) override final;
 
     bool _isDrawing = false;
+    bool _opened = true;
 };

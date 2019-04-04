@@ -22,7 +22,7 @@ void PopupsController::Draw()
             popup->_state = PopupWindow::State::Opened;
         }
 
-        popup->Draw();
+        popup->DoDraw();
 
         if (popup->_state == PopupWindow::State::Close)
         {

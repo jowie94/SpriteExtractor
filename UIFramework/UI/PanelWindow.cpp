@@ -7,13 +7,13 @@ PanelWindow::PanelWindow(const char* name, const ImVec2& initialSize, Position p
 {
 }
 
-void PanelWindow::BeginWidget()
+bool PanelWindow::BeginWidget()
 {
 	ImGui::SetNextWindowSize(_initialSize, ImGuiCond_FirstUseEver);
-	ImGui::Begin(GetName(), nullptr, _flags);
+	return ImGui::Begin(GetName(), nullptr, _flags);
 }
 
-void PanelWindow::EndWidget()
+void PanelWindow::EndWidget(bool wasDrawn)
 {
 	ImGui::End();
 }

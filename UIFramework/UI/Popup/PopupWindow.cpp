@@ -8,22 +8,6 @@ PopupWindow::PopupWindow(const char* popupName, bool isCloseable)
 {
 }
 
-void PopupWindow::Draw()
-{
-    bool* canBeClosed = _isCloseable ? &_isCloseable : nullptr;
-    if (ImGui::BeginPopupModal(GetName(), canBeClosed))
-    {
-        _isDrawing = true;
-        DrawPopup();
-        ImGui::EndPopup();
-        _isDrawing = false;
-    }
-    else if (canBeClosed && *canBeClosed)
-    {
-        Close();
-    }
-}
-
 void PopupWindow::Close()
 {
     if (_isDrawing)
@@ -34,10 +18,22 @@ void PopupWindow::Close()
     _state = State::Close;
 }
 
-void PopupWindow::BeginWidget()
+bool PopupWindow::BeginWidget()
 {
+    bool* opened = _isCloseable ? &_opened : nullptr;
+    _isDrawing = ImGui::BeginPopupModal(GetName(), opened);
+    return _isDrawing;
 }
 
-void PopupWindow::EndWidget()
+void PopupWindow::EndWidget(bool wasDrawn)
 {
+    if (wasDrawn)
+    {
+        ImGui::EndPopup();
+        _isDrawing = false;
+    }
+    else if (_isCloseable && !_opened)
+    {
+        Close();
+    }
 }

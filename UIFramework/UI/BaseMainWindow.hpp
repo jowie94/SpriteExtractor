@@ -10,29 +10,31 @@
 class BaseMainWindow : public BaseWindow
 {
 public:
-	explicit BaseMainWindow(const char* name);
+    explicit BaseMainWindow(const char* name);
     virtual ~BaseMainWindow() = default;
 
 protected:
-	template<typename T, typename... Args>
-	std::weak_ptr<T> AddPanel(Args&&... args)
-	{
-		static_assert(std::is_base_of<PanelWindow, T>::value, "Can't convert T to IPanelWidget");
-		std::shared_ptr<T> panel = std::make_shared<T>(std::forward<Args...>(args...));
-		AddPanelInt(panel);
-		return panel;
-	}
+    void Draw() override;
 
-	PopupsController& GetPopupsController();
+    template<typename T, typename... Args>
+    std::weak_ptr<T> AddPanel(Args&&... args)
+    {
+        static_assert(std::is_base_of<PanelWindow, T>::value, "Can't convert T to IPanelWidget");
+        std::shared_ptr<T> panel = std::make_shared<T>(std::forward<Args...>(args...));
+        AddPanelInt(panel);
+        return panel;
+    }
+
+    PopupsController& GetPopupsController();
 
 private:
-	void AddPanelInt(std::shared_ptr<PanelWindow> panel);
+    void AddPanelInt(std::shared_ptr<PanelWindow> panel);
 
-	void BeginWidget() override final;
-	void EndWidget() override final;
+    bool BeginWidget() override final;
+    void EndWidget(bool wasDrawn) override final;
 
-	void SetupLayout();
+    void SetupLayout();
 
-	std::vector<std::shared_ptr<PanelWindow>> _panels;
-	PopupsController _popupsController;
+    std::vector<std::shared_ptr<PanelWindow>> _panels;
+    PopupsController _popupsController;
 };

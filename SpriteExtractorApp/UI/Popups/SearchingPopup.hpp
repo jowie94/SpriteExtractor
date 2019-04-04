@@ -17,7 +17,7 @@ public:
     ~SearchingPopup() override;
 
     void Init() override;
-    void DrawPopup() override;
+    void Draw() override;
 
 private:
     void OnProgressUpdate(const SpriteSearchMessages::ProgressUpdate& progressUpdate);

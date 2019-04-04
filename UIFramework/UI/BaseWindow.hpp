@@ -16,9 +16,9 @@ public:
 
 protected:
     virtual void BeforeDraw() {}
-    virtual void BeginWidget() = 0;
+    virtual bool BeginWidget() = 0;
     virtual void Draw();
-    virtual void EndWidget() = 0;
+    virtual void EndWidget(bool wasDrawn) = 0;
     virtual void AfterDraw() {}
 
     ImGuiWindowFlags _flags;

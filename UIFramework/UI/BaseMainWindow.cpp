@@ -10,24 +10,9 @@ BaseMainWindow::BaseMainWindow(const char* name)
 {
 }
 
-PopupsController& BaseMainWindow::GetPopupsController()
+void BaseMainWindow::Draw()
 {
-	return _popupsController;
-}
-
-void BaseMainWindow::AddPanelInt(std::shared_ptr<PanelWindow> panel)
-{
-	panel->Init();
-
-	_panels.emplace_back(std::move(panel));
-}
-
-void BaseMainWindow::BeginWidget()
-{
-	ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
-	ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
-
-	ImGui::Begin(GetName(), nullptr, _flags);
+	BaseWindow::Draw();
 
 	ImGuiID dockId = ImGui::GetID(GetName());
 	if (ImGui::DockBuilderGetNode(dockId) == nullptr)
@@ -45,7 +30,27 @@ void BaseMainWindow::BeginWidget()
 	_popupsController.Draw();
 }
 
-void BaseMainWindow::EndWidget()
+PopupsController& BaseMainWindow::GetPopupsController()
+{
+	return _popupsController;
+}
+
+void BaseMainWindow::AddPanelInt(std::shared_ptr<PanelWindow> panel)
+{
+	panel->Init();
+
+	_panels.emplace_back(std::move(panel));
+}
+
+bool BaseMainWindow::BeginWidget()
+{
+	ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
+	ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+
+	return ImGui::Begin(GetName(), nullptr, _flags);
+}
+
+void BaseMainWindow::EndWidget(bool wasDrawn)
 {
 	ImGui::End();
 }

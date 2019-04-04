@@ -11,10 +11,13 @@ BaseWindow::BaseWindow(const char* name, ImGuiWindowFlags flags)
 void BaseWindow::DoDraw()
 {
 	BeforeDraw();
-	BeginWidget();
-	Draw();
-	assert(_drawn && "Base IWidget::Draw() not called, are you calling the parent Draw()?");
-	EndWidget();
+	bool draw = BeginWidget();
+	if (draw)
+	{
+		Draw();
+		assert(_drawn && "Base IWidget::Draw() not called, are you calling the parent Draw()?");
+	}
+	EndWidget(draw);
 	AfterDraw();
 	_drawn = false;
 }

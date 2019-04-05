@@ -6,7 +6,7 @@ target_include_directories(SpriteExtractor PRIVATE .)
 add_subdirectory(imgui-sfml)
 add_subdirectory(Platform)
 add_subdirectory(Serializers)
-add_subdirectory(UI)
+add_subdirectory(Windows)
 add_subdirectory(Logger)
 
 if(APPLE)

@@ -1,11 +1,11 @@
-#include "MainWindowWidget.hpp"
+#include "MainWindow.hpp"
 
 #include <ImGui/imgui.h>
 
-#include "UI/Panels/RightPanelWidget.hpp"
-#include "UI/Panels/CentralPanelWidget.hpp"
+#include "Windows/Panels/SearchConfigPanel.hpp"
+#include "Windows/Panels/SpritesPanel.hpp"
 
-#include "UI/Popups/SearchingPopup.hpp"
+#include "Windows/Popups/SearchingPopup.hpp"
 
 #include "SpriteExtractor.h"
 
@@ -15,21 +15,21 @@
 #include "Messages/RightPanelActions.hpp"
 #include "Messages/SpriteSearchMessages.hpp"
 
-MainWindowWidget::MainWindowWidget()
+MainWindow::MainWindow()
 : BaseMainWindow("MainWindow")
 {
 }
 
-void MainWindowWidget::Init()
+void MainWindow::Init()
 {
     BaseMainWindow::Init();
 
-    AddPanel<CentralPanelWidget>(PanelWindow::Position::Left);
-    AddPanel<RightPanelWidget>(PanelWindow::Position::Right);
+    AddPanel<SpritesPanel>(PanelWindow::Position::Left);
+    AddPanel<SearchConfigPanel>(PanelWindow::Position::Right);
 
     MessageBroker& broker = MessageBroker::GetInstance();
 
-    broker.Subscribe<RightPanelActions::SearchSprites>(std::bind(&MainWindowWidget::OnSearchSprites, this, std::placeholders::_1));
+    broker.Subscribe<RightPanelActions::SearchSprites>(std::bind(&MainWindow::OnSearchSprites, this, std::placeholders::_1));
 
     auto imageOpenedCallback = [this](const GenericActions::ImageOpened& imageOpened)
     {
@@ -38,7 +38,7 @@ void MainWindowWidget::Init()
     broker.Subscribe<GenericActions::ImageOpened>(imageOpenedCallback);
 }
 
-void MainWindowWidget::BeforeDraw()
+void MainWindow::BeforeDraw()
 {
     BaseMainWindow::BeforeDraw();
 
@@ -47,7 +47,7 @@ void MainWindowWidget::BeforeDraw()
     ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
 }
 
-void MainWindowWidget::Draw()
+void MainWindow::Draw()
 {
     BaseMainWindow::Draw();
 
@@ -59,13 +59,13 @@ void MainWindowWidget::Draw()
     }
 }
 
-void MainWindowWidget::AfterDraw()
+void MainWindow::AfterDraw()
 {
     BaseMainWindow::AfterDraw();
     ImGui::PopStyleVar(3);
 }
 
-void MainWindowWidget::DrawMenuBar()
+void MainWindow::DrawMenuBar()
 {
     if (ImGui::BeginMenuBar())
     {
@@ -75,7 +75,7 @@ void MainWindowWidget::DrawMenuBar()
     }
 }
 
-void MainWindowWidget::DrawFileMenu()
+void MainWindow::DrawFileMenu()
 {
     if (ImGui::BeginMenu("File"))
     {
@@ -88,7 +88,7 @@ void MainWindowWidget::DrawFileMenu()
     }
 }
 
-void MainWindowWidget::DrawDebugMenu()
+void MainWindow::DrawDebugMenu()
 {
     if (ImGui::BeginMenu("Debug"))
     {        
@@ -101,7 +101,7 @@ void MainWindowWidget::DrawDebugMenu()
     }
 }
 
-void MainWindowWidget::OnSearchSprites(const RightPanelActions::SearchSprites& /*searchSprites*/)
+void MainWindow::OnSearchSprites(const RightPanelActions::SearchSprites& /*searchSprites*/)
 {
     std::shared_ptr<SearchingPopup> searchingPopup = std::make_shared<SearchingPopup>();
     searchingPopup->Init();

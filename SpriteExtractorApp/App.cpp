@@ -13,7 +13,7 @@
 #include "Messages/MainWindowActions.hpp"
 #include "Messages/SpriteSearchMessages.hpp"
 
-#include "UI/MainWindowWidget.hpp"
+#include "Windows/MainWindow.hpp"
 
 #include "Logger/Logger.hpp"
 
@@ -60,7 +60,7 @@ App::~App() = default;
 void App::Init()
 {
     Logger::GetLogger("App")->info("Initializing App");
-    _mainWindow = std::make_unique<MainWindowWidget>();
+    _mainWindow = std::make_unique<MainWindow>();
     _mainWindow->Init();
 
     MessageBroker& broker = MessageBroker::GetInstance();

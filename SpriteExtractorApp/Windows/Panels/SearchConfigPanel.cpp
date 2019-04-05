@@ -1,4 +1,4 @@
-#include "RightPanelWidget.hpp"
+#include "SearchConfigPanel.hpp"
 
 #include <ImGui/imgui.h>
 
@@ -9,24 +9,24 @@
 
 #include "imgui-extra.hpp"
 
-RightPanelWidget::RightPanelWidget()
-: PanelWindow("Search Sprites", ImVec2(30.0f, 30.0f))
+SearchConfigPanel::SearchConfigPanel()
+: PanelWindow("Search Configuration", ImVec2(30.0f, 30.0f))
 {
 }
 
-void RightPanelWidget::Init()
+void SearchConfigPanel::Init()
 {
     PanelWindow::Init();
     
     MessageBroker& broker = MessageBroker::GetInstance();
 
-    broker.Subscribe<GenericActions::ImageOpened>(std::bind(&RightPanelWidget::OnImageOpened, this, std::placeholders::_1));
-    broker.Subscribe<GenericActions::ColorHovered>(std::bind(&RightPanelWidget::OnColorHovered, this, std::placeholders::_1));
-    broker.Subscribe<GenericActions::ColorPicked>(std::bind(&RightPanelWidget::OnColorPicked, this, std::placeholders::_1));
-    broker.Subscribe<SpriteSearchMessages::SpriteSearchFinished>(std::bind(&RightPanelWidget::OnSpriteSearchFinished, this, std::placeholders::_1));
+    broker.Subscribe<GenericActions::ImageOpened>(std::bind(&SearchConfigPanel::OnImageOpened, this, std::placeholders::_1));
+    broker.Subscribe<GenericActions::ColorHovered>(std::bind(&SearchConfigPanel::OnColorHovered, this, std::placeholders::_1));
+    broker.Subscribe<GenericActions::ColorPicked>(std::bind(&SearchConfigPanel::OnColorPicked, this, std::placeholders::_1));
+    broker.Subscribe<SpriteSearchMessages::SpriteSearchFinished>(std::bind(&SearchConfigPanel::OnSpriteSearchFinished, this, std::placeholders::_1));
 }
 
-void RightPanelWidget::Draw()
+void SearchConfigPanel::Draw()
 {
     PanelWindow::Draw();
 
@@ -69,24 +69,24 @@ void RightPanelWidget::Draw()
     }
 }
 
-void RightPanelWidget::OnImageOpened(const GenericActions::ImageOpened& /*openedImage*/)
+void SearchConfigPanel::OnImageOpened(const GenericActions::ImageOpened& /*openedImage*/)
 {
     _imageIsOpened = true;
     _hasSprites = false;
 }
 
-void RightPanelWidget::OnColorHovered(const GenericActions::ColorHovered& colorHovered)
+void SearchConfigPanel::OnColorHovered(const GenericActions::ColorHovered& colorHovered)
 {
     _alphaColor = colorHovered.HoveredColor;
 }
 
-void RightPanelWidget::OnColorPicked(const GenericActions::ColorPicked& colorPicked)
+void SearchConfigPanel::OnColorPicked(const GenericActions::ColorPicked& colorPicked)
 {
     _alphaColor = colorPicked.PickedColor;
     _enableColorPicker = false;
 }
 
-void RightPanelWidget::OnSpriteSearchFinished(const SpriteSearchMessages::SpriteSearchFinished& foundSprites)
+void SearchConfigPanel::OnSpriteSearchFinished(const SpriteSearchMessages::SpriteSearchFinished& foundSprites)
 {
     _hasSprites = !foundSprites.FoundSprites.lock()->empty();
 }

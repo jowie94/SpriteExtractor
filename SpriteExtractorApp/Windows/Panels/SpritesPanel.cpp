@@ -1,4 +1,4 @@
-#include "CentralPanelWidget.hpp"
+#include "SpritesPanel.hpp"
 
 #include <ImGui/imgui.h>
 
@@ -11,7 +11,7 @@
 
 #include "imgui-extra.hpp"
 
-namespace CentralPanelWidgetConst
+namespace SpritesPanelConst
 {
     float CalculateImageScale(const IImage& image, const ImVec2& windowSize)
     {
@@ -32,23 +32,23 @@ namespace CentralPanelWidgetConst
     float kZoomFactor = 0.3f;
 }
 
-CentralPanelWidget::CentralPanelWidget()
-: PanelWindow("Sprites", ImVec2(-300.0f, -30.0f), ImGuiWindowFlags_NoMove)
+SpritesPanel::SpritesPanel()
+: PanelWindow("Spritesheet", ImVec2(-300.0f, -30.0f), ImGuiWindowFlags_NoMove)
 {
 }
 
-void CentralPanelWidget::Init()
+void SpritesPanel::Init()
 {
 	PanelWindow::Init();
 
     MessageBroker& broker = MessageBroker::GetInstance();
 
-    broker.Subscribe<RightPanelActions::ToggleColorPicker>(std::bind(&CentralPanelWidget::OnToggleColorPicker, this, std::placeholders::_1));
-    broker.Subscribe<GenericActions::ImageOpened>(std::bind(&CentralPanelWidget::OnImageOpened, this, std::placeholders::_1));
-    broker.Subscribe<SpriteSearchMessages::SpriteSearchFinished>(std::bind(&CentralPanelWidget::OnSpritesFound, this, std::placeholders::_1));
+    broker.Subscribe<RightPanelActions::ToggleColorPicker>(std::bind(&SpritesPanel::OnToggleColorPicker, this, std::placeholders::_1));
+    broker.Subscribe<GenericActions::ImageOpened>(std::bind(&SpritesPanel::OnImageOpened, this, std::placeholders::_1));
+    broker.Subscribe<SpriteSearchMessages::SpriteSearchFinished>(std::bind(&SpritesPanel::OnSpritesFound, this, std::placeholders::_1));
 }
 
-void CentralPanelWidget::Draw()
+void SpritesPanel::Draw()
 {
 	PanelWindow::Draw();
 
@@ -63,28 +63,28 @@ void CentralPanelWidget::Draw()
     DrawZoom();
 }
 
-void CentralPanelWidget::OnToggleColorPicker(const RightPanelActions::ToggleColorPicker& toggle)
+void SpritesPanel::OnToggleColorPicker(const RightPanelActions::ToggleColorPicker& toggle)
 {
     _enableColorPicker = toggle.Enabled;
 }
 
-void CentralPanelWidget::OnImageOpened(const GenericActions::ImageOpened& openedImage)
+void SpritesPanel::OnImageOpened(const GenericActions::ImageOpened& openedImage)
 {
     _openedImage = openedImage.OpenedImage;
 
     if (auto image = _openedImage.lock())
     {
-        _imageScale = CentralPanelWidgetConst::CalculateImageScale(*image, _imageWindowSize);
+        _imageScale = SpritesPanelConst::CalculateImageScale(*image, _imageWindowSize);
         _textureResource = image->GetTextureResource();
     }
 }
 
-void CentralPanelWidget::OnSpritesFound(const SpriteSearchMessages::SpriteSearchFinished& spritesFound)
+void SpritesPanel::OnSpritesFound(const SpriteSearchMessages::SpriteSearchFinished& spritesFound)
 {
     _foundSprites = spritesFound.FoundSprites;
 }
 
-void CentralPanelWidget::DrawImage()
+void SpritesPanel::DrawImage()
 {
     ImGui::BeginChild("Image", ImVec2(0.0f, 0.0f), false, ImGuiWindowFlags_HorizontalScrollbar);
     _imageWindowSize = ImGui::GetWindowSize();
@@ -124,32 +124,32 @@ void CentralPanelWidget::DrawImage()
     ImGui::EndChild();
 }
 
-void CentralPanelWidget::DrawZoom()
+void SpritesPanel::DrawZoom()
 {
     ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImColor(0, 0, 0).Value);
     ImGui::BeginChild("Zoom", ImVec2(75.0f, 30.0f), true);
-    if (ImGui::SmallButton("+") && _imageScale > CentralPanelWidgetConst::kZoomFactor)
+    if (ImGui::SmallButton("+") && _imageScale > SpritesPanelConst::kZoomFactor)
     {
-        _imageScale += CentralPanelWidgetConst::kZoomFactor;
+        _imageScale += SpritesPanelConst::kZoomFactor;
     }
     ImGui::SameLine();
-    if (ImGui::SmallButton("-") && _imageScale > CentralPanelWidgetConst::kZoomFactor)
+    if (ImGui::SmallButton("-") && _imageScale > SpritesPanelConst::kZoomFactor)
     {
-        _imageScale -= CentralPanelWidgetConst::kZoomFactor;
+        _imageScale -= SpritesPanelConst::kZoomFactor;
     }
     ImGui::SameLine();
     if (ImGui::SmallButton("="))
     {
         if (auto image = _openedImage.lock())
         {
-            _imageScale = CentralPanelWidgetConst::CalculateImageScale(*image, _imageWindowSize);
+            _imageScale = SpritesPanelConst::CalculateImageScale(*image, _imageWindowSize);
         }
     }
     ImGui::EndChild();
     ImGui::PopStyleColor();
 }
 
-Color CentralPanelWidget::CalculateHoveredColor(const ImVec2& mousePosition, const std::shared_ptr<IImage> image)
+Color SpritesPanel::CalculateHoveredColor(const ImVec2& mousePosition, const std::shared_ptr<IImage> image)
 {
     if (mousePosition.x >= 0 && mousePosition.x <= image->Size().X && mousePosition.y >= 0 && mousePosition.y <= image->Size().Y)
     {

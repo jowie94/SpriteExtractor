@@ -19,10 +19,10 @@ namespace SpriteSearchMessages
     struct ProgressUpdate;
 }
 
-class MainWindowWidget : public BaseMainWindow
+class MainWindow : public BaseMainWindow
 {
 public:
-	MainWindowWidget();
+	MainWindow();
 
     void Init() override;
 

@@ -17,11 +17,11 @@ namespace SpriteSearchMessages
     struct SpriteSearchFinished;
 }
 
-class RightPanelWidget : public PanelWindow
+class SearchConfigPanel : public PanelWindow
 {
 public:
-    RightPanelWidget();
-    ~RightPanelWidget() override = default;
+	SearchConfigPanel();
+    ~SearchConfigPanel() override = default;
 
     void Init() override;
 

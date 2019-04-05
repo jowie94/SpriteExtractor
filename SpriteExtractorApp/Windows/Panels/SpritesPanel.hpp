@@ -21,10 +21,10 @@ namespace SpriteSearchMessages
     struct SpriteSearchFinished;
 }
 
-class CentralPanelWidget : public PanelWindow
+class SpritesPanel : public PanelWindow
 {
 public:
-    CentralPanelWidget();
+	SpritesPanel();
 
     void Init() override;
 

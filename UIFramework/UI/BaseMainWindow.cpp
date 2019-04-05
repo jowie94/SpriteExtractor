@@ -32,10 +32,7 @@ void BaseMainWindow::Draw()
 
     ImGui::DockSpace(dockId);
 
-    for (auto& panel : _panels)
-    {
-        panel.panel->DoDraw();
-    }
+	DrawPanels();
 
     _popupsController.Draw();
 }
@@ -63,6 +60,29 @@ bool BaseMainWindow::BeginWidget()
 void BaseMainWindow::EndWidget(bool wasDrawn)
 {
     ImGui::End();
+}
+
+void BaseMainWindow::DrawPanels()
+{
+	auto panelIt = _panels.begin();
+	while (panelIt != _panels.end())
+	{
+		std::shared_ptr<PanelWindow> panelPtr = panelIt->panel;
+
+		if (panelPtr->GetClosePolicy() == PanelWindow::ClosePolicy::NoClose || panelPtr->IsOpened())
+		{
+			panelPtr->DoDraw();
+		}
+
+		if (panelPtr->GetClosePolicy() == PanelWindow::ClosePolicy::Close && !panelPtr->IsOpened())
+		{
+			panelIt = _panels.erase(panelIt);
+		}
+		else
+		{
+			++panelIt;
+		}
+	}
 }
 
 void BaseMainWindow::SetupLayout()

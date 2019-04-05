@@ -33,6 +33,8 @@ private:
     bool BeginWidget() override final;
     void EndWidget(bool wasDrawn) override final;
 
+	void DrawPanels();
+
     void SetupLayout();
 
     std::vector<struct PanelContainer> _panels;

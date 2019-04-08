@@ -1,5 +1,7 @@
 #include "SearchingPopup.hpp"
 
+#include <string>
+
 #include <ImGui/imgui.h>
 
 #include "MessageBroker.hpp"

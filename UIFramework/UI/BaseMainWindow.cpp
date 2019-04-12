@@ -94,10 +94,10 @@ void BaseMainWindow::SetupLayout()
     ImGui::DockBuilderSetNodeSize(dockId, ImGui::GetIO().DisplaySize);
 
     ImGuiID mainDock = dockId;
+    ImGuiID bottomDockId = ImGui::DockBuilderSplitNode(mainDock, ImGuiDir_Down, 0.20f, NULL, &mainDock);
+    ImGuiID topDockId = ImGui::DockBuilderSplitNode(mainDock, ImGuiDir_Up, 0.20f, NULL, &mainDock);
     ImGuiID rightDockId = ImGui::DockBuilderSplitNode(mainDock, ImGuiDir_Right, 0.20f, NULL, &mainDock);
     ImGuiID leftDockId = ImGui::DockBuilderSplitNode(mainDock, ImGuiDir_Left, 0.20f, NULL, &mainDock);
-    ImGuiID topDockId = ImGui::DockBuilderSplitNode(mainDock, ImGuiDir_Up, 0.20f, NULL, &mainDock);
-    ImGuiID bottomDockId = ImGui::DockBuilderSplitNode(mainDock, ImGuiDir_Down, 0.20f, NULL, &mainDock);
 
     for (auto& panel : _panels)
     {

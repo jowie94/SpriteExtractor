@@ -101,14 +101,28 @@ void App::Loop()
 
 void App::OnSelectFile()
 {
+    auto logger = Logger::GetLogger("App");
     if (Platform::ShowOpenFileDialogue("Choose an sprite sheet image", _selectedFile, AppConst::kImgFilter))
     {
         MessageBroker& broker = MessageBroker::GetInstance();
 
-        _openedImage = OpenImage(_selectedFile);
-        broker.Broadcast(GenericActions::ImageOpened(_selectedFile, _openedImage));
-
         _foundSprites.reset();
+
+        _openedImage = OpenImage(_selectedFile);
+
+        if (_openedImage)
+        {
+            broker.Broadcast(GenericActions::ImageOpened(_selectedFile, _openedImage));
+            logger->info("Opened image {}", _selectedFile);
+        }
+        else
+        {
+            logger->error("Error opening image {}", _selectedFile);
+        }
+    }
+    else
+    {
+        logger->error("Couldn't open file");
     }
 }
 
@@ -117,6 +131,9 @@ void App::OnSaveFile()
     std::string outFile;
     if (Platform::ShowSaveFileDialogue("Save Sprites", outFile, Serializer::GetSerializerFilters()))
     {
+        auto logger = Logger::GetLogger("App");
+        logger->info("Serializing {}", outFile);
+
         Serializer::Serialize(outFile, *_foundSprites);
 
         AppConst::ReplaceExtension(outFile, "png");

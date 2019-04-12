@@ -10,6 +10,8 @@
 
 #include <memory>
 
+#include "Logger/Logger.hpp"
+
 void SFMLApp::Run()
 {
 #ifdef __APPLE__
@@ -28,6 +30,7 @@ void SFMLApp::Run()
 
 	Init();
 
+    Logger::GetLogger("SFML")->info("Beginning App Loop");
     sf::Clock deltaClock;
     while (window.isOpen())
     {
@@ -87,9 +90,15 @@ private:
 class SFMLImage : public IImage
 {
 public:
-    explicit SFMLImage(const std::string& filename)
+    static std::shared_ptr<SFMLImage> Create(const std::string& filename)
     {
-        image.loadFromFile(filename);
+        auto image = std::make_shared<SFMLImage>();
+
+        if (image->image.loadFromFile(filename))
+        {
+            return image;
+        }
+        return nullptr;
     }
 
     ImageSize Size() const override
@@ -118,5 +127,5 @@ private:
 
 std::shared_ptr<IImage> SFMLApp::OpenImage(const std::string& path)
 {
-    return std::make_shared<SFMLImage>(path);
+    return SFMLImage::Create(path);
 }

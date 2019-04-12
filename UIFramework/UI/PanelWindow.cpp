@@ -16,6 +16,12 @@ bool PanelWindow::IsOpened() const
 	return _opened;
 }
 
+void PanelWindow::Close()
+{
+	assert(_closePolicy != ClosePolicy::NoClose);
+	_opened = false;
+}
+
 void PanelWindow::SetClosePolicy(ClosePolicy policy)
 {
 	_closePolicy = policy;

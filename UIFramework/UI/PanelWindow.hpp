@@ -28,6 +28,7 @@ public:
 
 	ClosePolicy GetClosePolicy() const;
     bool IsOpened() const;
+    void Close();
 
 protected:
 	void SetClosePolicy(ClosePolicy policy);

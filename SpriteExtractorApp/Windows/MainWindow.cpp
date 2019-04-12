@@ -4,6 +4,7 @@
 
 #include "Windows/Panels/SearchConfigPanel.hpp"
 #include "Windows/Panels/SpritesPanel.hpp"
+#include "Windows/Panels/ConsolePanel.hpp"
 
 #include "Windows/Popups/SearchingPopup.hpp"
 
@@ -26,6 +27,8 @@ void MainWindow::Init()
 
     AddPanel<SpritesPanel>(PanelWindow::Position::Left);
     AddPanel<SearchConfigPanel>(PanelWindow::Position::Right);
+
+    _consolePanel = AddPanel<ConsolePanel>(PanelWindow::Position::Down);
 
     MessageBroker& broker = MessageBroker::GetInstance();
 
@@ -95,6 +98,21 @@ void MainWindow::DrawDebugMenu()
         if (ImGui::MenuItem("Show Metrics", nullptr, _showMetrics))
         {
             _showMetrics = !_showMetrics;
+        }
+
+        auto consolePtr = _consolePanel.lock();
+        bool consoleOpened = consolePtr && consolePtr->IsOpened();
+        if (ImGui::MenuItem("Debug Console", nullptr, consoleOpened))
+        {
+            if (!consoleOpened)
+            {
+                _consolePanel = AddPanel<ConsolePanel>(PanelWindow::Position::None);
+            }
+            else if (consolePtr)
+            {
+                consolePtr->Close();
+            }
+            
         }
 
         ImGui::EndMenu();

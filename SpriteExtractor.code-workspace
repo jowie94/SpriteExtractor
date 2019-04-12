@@ -1,0 +1,23 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+        ,
+        {
+            "path": "lib",
+            "name": "External Libraries"
+        }
+    ],
+    "settings": {
+        "typescript.tsc.autoDetect": "off",
+        "files.exclude": {
+            "lib/": true,
+            "build/": true,
+            ".gitmodules": true,
+            "*.code-workspace": true,
+            "*.gitignore": true,
+            ".vscode": true
+        }
+    }
+}

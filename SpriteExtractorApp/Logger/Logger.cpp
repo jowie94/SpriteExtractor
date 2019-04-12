@@ -8,21 +8,28 @@ namespace Logger
 {
 	namespace detail
 	{
-		std::vector<spdlog::sink_ptr> Sinks =
-		{
-			{std::make_shared<spdlog::sinks::stdout_color_sink_mt>()},
+	    static std::vector<spdlog::sink_ptr>& GetSinks()
+        {
+            static std::vector<spdlog::sink_ptr> sinks =
+            {
+                    {std::make_shared<spdlog::sinks::stdout_color_sink_mt>()},
 #ifdef _WIN32
-			{std::make_shared<spdlog::sinks::msvc_sink_mt>()}
+                    {std::make_shared<spdlog::sinks::msvc_sink_mt>()}
 #endif
-		};
+            };
+
+            return sinks;
+        }
+
 
 		LoggerPtr CreateLogger(const std::string& name)
 		{
 			LoggerPtr logger = std::make_shared<spdlog::logger>(name, spdlog::sinks_init_list());
 
 			std::vector<spdlog::sink_ptr>& sinks = logger->sinks();
-			sinks.reserve(Sinks.size());
-			sinks.insert(sinks.begin(), Sinks.begin(), Sinks.end());
+            const std::vector<spdlog::sink_ptr>& registeredSinks = GetSinks();
+			sinks.reserve(registeredSinks.size());
+			sinks.insert(sinks.begin(), registeredSinks.begin(), registeredSinks.end());
 
 			spdlog::register_logger(logger);
 
@@ -31,7 +38,7 @@ namespace Logger
 
 		void AddSink(spdlog::sink_ptr sink)
 		{
-			Sinks.push_back(sink);
+			GetSinks().push_back(sink);
 
 			auto appendSink = [sink](std::shared_ptr<spdlog::logger> logger)
 			{

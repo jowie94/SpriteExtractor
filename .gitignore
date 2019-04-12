@@ -17,5 +17,11 @@ imgui.ini
 
 # VSCode
 .vscode/launch.json
+.vscode/ipch
+.vscode/settings.json
+
+# InteliJ
+cmake-*
+.idea
 
 build/

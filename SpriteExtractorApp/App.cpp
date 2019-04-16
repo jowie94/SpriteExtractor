@@ -137,7 +137,14 @@ void App::OnSaveFile()
         Serializer::Serialize(outFile, *_foundSprites);
 
         AppConst::ReplaceExtension(outFile, "png");
-        _openedImage->Save(outFile.c_str());
+        if(!_openedImage->Save(outFile.c_str()))
+        {
+            logger->error("Couldn't save {}", outFile);
+        }
+        else
+        {
+            logger->info("Successfully saved {}", outFile);
+        }
     }
 }
 
@@ -162,6 +169,7 @@ void App::OnSearchSprites(const RightPanelActions::SearchSprites& action)
         return static_cast<const IImage*>(image)->GetPixel(x, y);
     };
 
+    Logger::GetLogger("Extract task")->info("Starting extraction");
     _searchSpritesTask.Run(callbacks, action.AlphaColor, static_cast<const void*>(_openedImage.get()));
 }
 
@@ -170,6 +178,7 @@ void App::OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites)
     std::lock_guard<std::mutex> spriteList(_foundSpritesMutex);
     _foundSprites = std::make_shared<SpriteList>(foundSprites);
 
+    Logger::GetLogger("Extract task")->info("Finished searching sprites. {} sprites found", _foundSprites->size());
     MessageBroker::GetInstance().Broadcast(SpriteSearchMessages::SpriteSearchFinished(_foundSprites));
 }
 

@@ -171,5 +171,3 @@ struct BBox
         return X <= x && x <= mX && Y <= y && y <= mY;
     }
 };
-
-using SpriteList = std::vector<BBox>;

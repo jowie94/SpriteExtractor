@@ -1,9 +1,10 @@
 #pragma once
 
 #include <string>
-#include "SpriteExtractor.h"
+
+class SpriteSheet;
 
 namespace Paper2DSerializer
 {
-    void Serialize(const std::string& outputFile, const SpriteExtractor::SpriteList& spriteList);
+    void Serialize(const std::string& outputFile, const SpriteSheet& spriteList);
 }

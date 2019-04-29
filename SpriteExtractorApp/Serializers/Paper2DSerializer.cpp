@@ -2,6 +2,7 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include "Model/SpriteSheet.hpp"
 
 namespace Paper2DSerializer
 {
@@ -41,17 +42,15 @@ namespace Paper2DSerializer
     }
 }
 
-void Paper2DSerializer::Serialize(const std::string& outputFile, const SpriteExtractor::SpriteList& spriteList)
+void Paper2DSerializer::Serialize(const std::string& outputFile, const SpriteSheet& spriteList)
 {
     namespace pt = boost::property_tree;
 
     pt::ptree frames;
 
-    int frame = 0;
-    for (const auto& sprite : spriteList)
+    for (const auto& sprite : spriteList.GetSprites())
     {
-        frames.put_child(std::to_string(frame), CreateFrame(sprite));
-        ++frame;
+        frames.put_child(sprite.Name, CreateFrame(sprite.BoundingBox));
     }
 
     pt::ptree tree;

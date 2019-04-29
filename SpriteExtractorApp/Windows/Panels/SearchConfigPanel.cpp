@@ -88,5 +88,5 @@ void SearchConfigPanel::OnColorPicked(const GenericActions::ColorPicked& colorPi
 
 void SearchConfigPanel::OnSpriteSearchFinished(const SpriteSearchMessages::SpriteSearchFinished& foundSprites)
 {
-    _hasSprites = !foundSprites.FoundSprites.lock()->empty();
+    _hasSprites = foundSprites.spritesFound > 0;
 }

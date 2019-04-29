@@ -1,6 +1,6 @@
 #add_executable(SpriteExtractor WIN32 "main.cpp")
 add_executable(SpriteExtractor "main.cpp")
-target_sources(SpriteExtractor PRIVATE "App.cpp" "SFMLApp.cpp" "imgui-extra.cpp")
+target_sources(SpriteExtractor PRIVATE "App.cpp" "SFMLApp.cpp" "imgui-extra.cpp" "CommandQueue.cpp")
 target_include_directories(SpriteExtractor PRIVATE .)
 
 add_subdirectory(imgui-sfml)
@@ -8,6 +8,7 @@ add_subdirectory(Platform)
 add_subdirectory(Serializers)
 add_subdirectory(Windows)
 add_subdirectory(Logger)
+add_subdirectory(Model)
 
 if(APPLE)
   set(BUILD_SHARED_LIBS TRUE)

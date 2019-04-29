@@ -3,7 +3,6 @@
 #include <unordered_map>
 #include <typeindex>
 #include <functional>
-#include <ctime>
 
 class MessageCallbackBase
 {

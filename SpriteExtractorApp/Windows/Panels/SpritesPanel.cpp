@@ -9,6 +9,8 @@
 #include "Messages/RightPanelActions.hpp"
 #include "Messages/SpriteSearchMessages.hpp"
 
+#include "Model/ModelManager.hpp"
+
 #include "imgui-extra.hpp"
 
 namespace SpritesPanelConst
@@ -81,7 +83,8 @@ void SpritesPanel::OnImageOpened(const GenericActions::ImageOpened& openedImage)
 
 void SpritesPanel::OnSpritesFound(const SpriteSearchMessages::SpriteSearchFinished& spritesFound)
 {
-    _foundSprites = spritesFound.FoundSprites;
+	// TODO;
+	_spriteSheet = ModelManager::GetInstance().Get<SpriteSheet>();
 }
 
 void SpritesPanel::DrawImage()
@@ -111,12 +114,12 @@ void SpritesPanel::DrawImage()
         }
 
         // TODO: This access should be thread safe
-        if (auto sprites = _foundSprites.lock())
+        if (_spriteSheet)
         {
-            for (const auto &sprite : *sprites)
+            for (const auto &sprite : _spriteSheet->GetSprites())
             {
-                ImVec2 rectPos(cursorScreenPos.x + sprite.X * _imageScale, cursorScreenPos.y + sprite.Y * _imageScale);
-                ImVec2 maxRect(rectPos.x + ((sprite.Width + 1.0f) * _imageScale), rectPos.y + (sprite.Height + 1.0f) * _imageScale);
+                ImVec2 rectPos(cursorScreenPos.x + sprite.BoundingBox.X * _imageScale, cursorScreenPos.y + sprite.BoundingBox.Y * _imageScale);
+                ImVec2 maxRect(rectPos.x + ((sprite.BoundingBox.Width + 1.0f) * _imageScale), rectPos.y + (sprite.BoundingBox.Height + 1.0f) * _imageScale);
                 ImGui::GetWindowDrawList()->AddRect(rectPos, maxRect, ImColor(255, 0, 0));
             }
         }

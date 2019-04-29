@@ -1,7 +1,10 @@
 #include "Serializer.hpp"
-#include "Paper2DSerializer.hpp"
 
 #include <unordered_map>
+
+#include "Paper2DSerializer.hpp"
+
+#include "Model/SpriteSheet.hpp"
 
 namespace Serializer
 {
@@ -38,7 +41,7 @@ const std::vector<Platform::FileFilter>& Serializer::GetSerializerFilters()
     return kSerializerFilter;
 }
 
-void Serializer::Serialize(const std::string& outFile, const SpriteExtractor::SpriteList& sprites)
+void Serializer::Serialize(const std::string& outFile, const SpriteSheet& sprites)
 {
     std::string extension = GetFileExtension(outFile);
 

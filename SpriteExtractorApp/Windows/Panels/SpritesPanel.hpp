@@ -5,6 +5,7 @@
 
 #include "UI/PanelWindow.hpp"
 #include "Types.hpp"
+#include "Model/SpriteSheet.hpp"
 
 namespace GenericActions 
 {
@@ -42,7 +43,7 @@ private:
     Color CalculateHoveredColor(const ImVec2& mousePosition, const std::shared_ptr<IImage> image);
 
     std::weak_ptr<IImage> _openedImage;
-    std::weak_ptr<SpriteList> _foundSprites;
+	std::shared_ptr<SpriteSheet> _spriteSheet;
     std::unique_ptr<ITextureResource> _textureResource;
 
     float _imageScale = 1.0f;

@@ -1,6 +1,7 @@
 #include "App.hpp"
 
 #include <algorithm>
+#include <experimental/filesystem>
 
 #include <ImGui/imgui.h>
 
@@ -16,6 +17,8 @@
 #include "Windows/MainWindow.hpp"
 
 #include "Logger/Logger.hpp"
+#include "Model/ModelManager.hpp"
+#include "Model/SpriteSheet.hpp"
 
 namespace AppConst
 {
@@ -94,8 +97,9 @@ void App::Loop()
         MessageBroker::GetInstance().Broadcast(progressUpdate);
     }
 
-    _mainWindow->DoDraw();
+	_commandQueue.Update();
 
+    _mainWindow->DoDraw();
     //ImGui::ShowTestWindow();
 }
 
@@ -106,12 +110,17 @@ void App::OnSelectFile()
     {
         MessageBroker& broker = MessageBroker::GetInstance();
 
-        _foundSprites.reset();
+		// TODO
+		ModelManager& manager = ModelManager::GetInstance();
+		manager.Remove<SpriteSheet>();
 
         _openedImage = OpenImage(_selectedFile);
 
         if (_openedImage)
         {
+			manager.Create<SpriteSheet>();
+			_commandQueue.Clear();
+
             broker.Broadcast(GenericActions::ImageOpened(_selectedFile, _openedImage));
             logger->info("Opened image {}", _selectedFile);
         }
@@ -134,7 +143,8 @@ void App::OnSaveFile()
         auto logger = Logger::GetLogger("App");
         logger->info("Serializing {}", outFile);
 
-        Serializer::Serialize(outFile, *_foundSprites);
+		// TODO
+        Serializer::Serialize(outFile, *ModelManager::GetInstance().Get<SpriteSheet>());
 
         AppConst::ReplaceExtension(outFile, "png");
         if(!_openedImage->Save(outFile.c_str()))
@@ -152,8 +162,10 @@ void App::OnSearchSprites(const RightPanelActions::SearchSprites& action)
 {
     {
         std::lock_guard<std::mutex> spriteList(_foundSpritesMutex);
-        _foundSprites.reset();
+        //_foundSprites.reset();
     }
+
+	_commandQueue.Clear();
 
     SpriteExtractor::ImageAccessor callbacks;
     callbacks.GetWidth = [](const void* image)
@@ -176,10 +188,30 @@ void App::OnSearchSprites(const RightPanelActions::SearchSprites& action)
 void App::OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites)
 {
     std::lock_guard<std::mutex> spriteList(_foundSpritesMutex);
-    _foundSprites = std::make_shared<SpriteList>(foundSprites);
+    //_foundSprites = std::make_shared<SpriteSearchMessages::SpriteList>(foundSprites);
 
-    Logger::GetLogger("Extract task")->info("Finished searching sprites. {} sprites found", _foundSprites->size());
-    MessageBroker::GetInstance().Broadcast(SpriteSearchMessages::SpriteSearchFinished(_foundSprites));
+	// TODO
+	std::vector<Sprite> sprites;
+	sprites.reserve(foundSprites.size());
+
+	std::experimental::filesystem::path filePath(_selectedFile);
+	std::string fileName = filePath.stem().string();
+	size_t last = 0;
+	for (const auto& foundSprite : foundSprites)
+	{
+		Sprite sprite;
+		sprite.BoundingBox = foundSprite;
+		sprite.Name = fileName + "_" + std::to_string(last);
+		++last;
+
+		sprites.emplace_back(std::move(sprite));
+	}
+
+	MessageBroker& broker = MessageBroker::GetInstance();
+	broker.Broadcast(CommandQueue::PushCommandMessage(std::make_shared<SpriteSheet::UpdateSpritesCommand>(sprites)));
+
+    Logger::GetLogger("Extract task")->info("Finished searching sprites. {} sprites found", foundSprites.size());
+    broker.Broadcast(SpriteSearchMessages::SpriteSearchFinished(foundSprites.size()));
 }
 
 void App::OnCancelSearch(const MainWindowActions::CancelSearch& /*cancelSearch*/)

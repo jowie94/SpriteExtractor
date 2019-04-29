@@ -2,6 +2,8 @@
 
 #include "SpriteExtractor.h"
 
+#include "Model/Sprite.hpp"
+
 namespace SpriteSearchMessages
 {
     struct ProgressUpdate
@@ -10,12 +12,13 @@ namespace SpriteSearchMessages
         float Progress = 0.0f;
     };
 
+    using SpriteList = std::vector<Sprite>;
     struct SpriteSearchFinished
     {
-        SpriteSearchFinished(std::weak_ptr<SpriteList> foundSprites)
-        : FoundSprites(foundSprites)
+        SpriteSearchFinished(size_t spritesFound_)
+		: spritesFound(spritesFound_)
         {}
 
-        std::weak_ptr<SpriteList> FoundSprites;
+		size_t spritesFound;
     };
 }

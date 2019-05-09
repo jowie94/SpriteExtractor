@@ -5,7 +5,7 @@
 
 #include "Types.hpp"
 #include "SpriteExtractor.h"
-#include "CommandQueue.hpp"
+#include "CommandQueue/CommandQueue.hpp"
 
 namespace RightPanelActions 
 {
@@ -43,8 +43,6 @@ private:
 
     std::string _selectedFile;
     std::shared_ptr<IImage> _openedImage;
-
-    std::mutex _foundSpritesMutex;
 
     SpriteExtractor::Task _searchSpritesTask;
 

@@ -18,7 +18,7 @@
 
 #include "Logger/Logger.hpp"
 #include "Model/ModelManager.hpp"
-#include "Model/SpriteSheet.hpp"
+#include "Model/SpriteSheet/SpriteSheet.hpp"
 
 namespace AppConst
 {
@@ -160,11 +160,6 @@ void App::OnSaveFile()
 
 void App::OnSearchSprites(const RightPanelActions::SearchSprites& action)
 {
-    {
-        std::lock_guard<std::mutex> spriteList(_foundSpritesMutex);
-        //_foundSprites.reset();
-    }
-
 	_commandQueue.Clear();
 
     SpriteExtractor::ImageAccessor callbacks;
@@ -187,9 +182,6 @@ void App::OnSearchSprites(const RightPanelActions::SearchSprites& action)
 
 void App::OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites)
 {
-    std::lock_guard<std::mutex> spriteList(_foundSpritesMutex);
-    //_foundSprites = std::make_shared<SpriteSearchMessages::SpriteList>(foundSprites);
-
 	// TODO
 	std::vector<Sprite> sprites;
 	sprites.reserve(foundSprites.size());
@@ -208,7 +200,7 @@ void App::OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites)
 	}
 
 	MessageBroker& broker = MessageBroker::GetInstance();
-	broker.Broadcast(CommandQueue::PushCommandMessage(std::make_shared<SpriteSheet::UpdateSpritesCommand>(sprites)));
+	broker.Broadcast(Commands::PushCommandMessage(std::make_shared<SpriteSheet::UpdateSpritesCommand>(sprites)));
 
     Logger::GetLogger("Extract task")->info("Finished searching sprites. {} sprites found", foundSprites.size());
     broker.Broadcast(SpriteSearchMessages::SpriteSearchFinished(foundSprites.size()));

@@ -2,13 +2,13 @@
 
 CommandQueue::CommandQueue()
 {
-	_pushSubscription = MessageBroker::GetInstance().Subscribe<CommandQueue::PushCommandMessage>(
+	_pushSubscription = MessageBroker::GetInstance().Subscribe<Commands::PushCommandMessage>(
 		std::bind(&CommandQueue::OnPushCommand, this, std::placeholders::_1));
 }
 
 CommandQueue::~CommandQueue()
 {
-	MessageBroker::GetInstance().Unsubscribe<CommandQueue::PushCommandMessage>(_pushSubscription);
+	MessageBroker::GetInstance().Unsubscribe<Commands::PushCommandMessage>(_pushSubscription);
 }
 
 void CommandQueue::Undo()
@@ -32,7 +32,7 @@ void CommandQueue::Update()
 	_commandsPending.clear();
 }
 
-void CommandQueue::OnPushCommand(const PushCommandMessage& command)
+void CommandQueue::OnPushCommand(const Commands::PushCommandMessage& command)
 {
 	_commandsPending.push_back(command.command);
 }

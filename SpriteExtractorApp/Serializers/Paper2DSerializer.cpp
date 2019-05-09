@@ -2,7 +2,7 @@
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-#include "Model/SpriteSheet.hpp"
+#include "Model/SpriteSheet/SpriteSheet.hpp"
 
 namespace Paper2DSerializer
 {

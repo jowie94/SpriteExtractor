@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Sprite.hpp"
-#include "ModelActions.hpp"
+#include "Model/ModelActions.hpp"
 
 class SpriteSheet
 {
 public:
-	class UpdateSpritesCommand : public EditModel<SpriteSheet, std::vector<Sprite>>
+	class UpdateSpritesCommand : public Commands::Model::EditModel<SpriteSheet, std::vector<Sprite>>
 	{
 	public:
 		UpdateSpritesCommand(const std::vector<Sprite>& newValue);

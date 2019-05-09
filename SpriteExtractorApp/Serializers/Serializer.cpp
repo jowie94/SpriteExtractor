@@ -4,7 +4,7 @@
 
 #include "Paper2DSerializer.hpp"
 
-#include "Model/SpriteSheet.hpp"
+#include "Model/SpriteSheet/SpriteSheet.hpp"
 
 namespace Serializer
 {

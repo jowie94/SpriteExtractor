@@ -2,7 +2,7 @@
 
 #include "SpriteExtractor.h"
 
-#include "Model/Sprite.hpp"
+#include "Model/SpriteSheet/Sprite.hpp"
 
 namespace SpriteSearchMessages
 {

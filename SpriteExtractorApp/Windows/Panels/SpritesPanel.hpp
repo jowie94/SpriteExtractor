@@ -5,7 +5,8 @@
 
 #include "UI/PanelWindow.hpp"
 #include "Types.hpp"
-#include "Model/SpriteSheet.hpp"
+
+class SpriteSheet;
 
 namespace GenericActions 
 {

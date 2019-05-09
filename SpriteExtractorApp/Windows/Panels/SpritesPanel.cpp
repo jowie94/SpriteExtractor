@@ -10,6 +10,7 @@
 #include "Messages/SpriteSearchMessages.hpp"
 
 #include "Model/ModelManager.hpp"
+#include "Model/SpriteSheet/SpriteSheet.hpp"
 
 #include "imgui-extra.hpp"
 

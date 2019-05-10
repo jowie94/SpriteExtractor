@@ -7,9 +7,7 @@ namespace RightPanelActions
         bool Enabled = false;
     };
 
-    struct SearchSprites
-    {
-        Color AlphaColor;
-    };
+    struct SearchSprites{};
+
     struct SaveFile{};
 }

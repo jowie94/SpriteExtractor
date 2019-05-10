@@ -110,6 +110,8 @@ void App::OnSelectFile()
     {
         MessageBroker& broker = MessageBroker::GetInstance();
 
+		_currentSpriteSheet.reset();
+
 		// TODO
 		ModelManager& manager = ModelManager::GetInstance();
 		manager.Remove<SpriteSheet>();
@@ -118,7 +120,7 @@ void App::OnSelectFile()
 
         if (_openedImage)
         {
-			manager.Create<SpriteSheet>();
+			_currentSpriteSheet = manager.Create<SpriteSheet>();
 			_commandQueue.Clear();
 
             broker.Broadcast(GenericActions::ImageOpened(_selectedFile, _openedImage));
@@ -144,7 +146,7 @@ void App::OnSaveFile()
         logger->info("Serializing {}", outFile);
 
 		// TODO
-        Serializer::Serialize(outFile, *ModelManager::GetInstance().Get<SpriteSheet>());
+        Serializer::Serialize(outFile, *_currentSpriteSheet);
 
         AppConst::ReplaceExtension(outFile, "png");
         if(!_openedImage->Save(outFile.c_str()))
@@ -177,7 +179,7 @@ void App::OnSearchSprites(const RightPanelActions::SearchSprites& action)
     };
 
     Logger::GetLogger("Extract task")->info("Starting extraction");
-    _searchSpritesTask.Run(callbacks, action.AlphaColor, static_cast<const void*>(_openedImage.get()));
+    _searchSpritesTask.Run(callbacks, _currentSpriteSheet->GetAlphaColor(), static_cast<const void*>(_openedImage.get()));
 }
 
 void App::OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites)
@@ -200,7 +202,7 @@ void App::OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites)
 	}
 
 	MessageBroker& broker = MessageBroker::GetInstance();
-	broker.Broadcast(Commands::PushCommandMessage(std::make_shared<SpriteSheet::UpdateSpritesCommand>(sprites)));
+	broker.Broadcast(Commands::PushCommandMessage(std::make_shared<Commands::Model::UpdateSpritesCommand>(sprites)));
 
     Logger::GetLogger("Extract task")->info("Finished searching sprites. {} sprites found", foundSprites.size());
     broker.Broadcast(SpriteSearchMessages::SpriteSearchFinished(foundSprites.size()));

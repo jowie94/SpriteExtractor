@@ -7,6 +7,8 @@
 #include "SpriteExtractor.h"
 #include "CommandQueue/CommandQueue.hpp"
 
+class SpriteSheet;
+
 namespace RightPanelActions 
 {
     struct SearchSprites;
@@ -43,6 +45,7 @@ private:
 
     std::string _selectedFile;
     std::shared_ptr<IImage> _openedImage;
+	std::shared_ptr<SpriteSheet> _currentSpriteSheet;
 
     SpriteExtractor::Task _searchSpritesTask;
 

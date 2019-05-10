@@ -1,21 +1,21 @@
 #pragma once
 
+#include "SpriteSheet.fwd.hpp"
+
 #include "Sprite.hpp"
-#include "Model/ModelActions.hpp"
 
 class SpriteSheet
 {
 public:
-	class UpdateSpritesCommand : public Commands::Model::EditModel<SpriteSheet, std::vector<Sprite>>
-	{
-	public:
-		UpdateSpritesCommand(const std::vector<Sprite>& newValue);
-	};
-
 	SpriteSheet();
 
     const std::vector<Sprite>& GetSprites() const;
+	const Color& GetAlphaColor() const;
 
 private:
+	friend class Commands::Model::UpdateSpritesCommand;
+	friend class Commands::Model::UpdateAlphaColorCommand;
+
     std::vector<Sprite> _sprites;
+	Color _alphaColor;
 };

@@ -14,7 +14,8 @@ public:
         Middle,
         Right,
         Up,
-        Down
+        Down,
+		_Size
     };
 
 	enum class ClosePolicy

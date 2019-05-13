@@ -39,4 +39,5 @@ private:
 
     std::vector<struct PanelContainer> _panels;
     PopupsController _popupsController;
+	ImGuiID _dockIds[static_cast<size_t>(PanelWindow::Position::_Size)];
 };

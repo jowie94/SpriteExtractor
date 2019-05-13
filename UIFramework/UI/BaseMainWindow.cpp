@@ -71,6 +71,12 @@ void BaseMainWindow::DrawPanels()
 
 		if (panelPtr->GetClosePolicy() == PanelWindow::ClosePolicy::NoClose || panelPtr->IsOpened())
 		{
+			if (!panelIt->positioned)
+			{
+				ImGui::SetNextWindowDockID(_dockIds[static_cast<size_t>(panelIt->initialPosition)], ImGuiCond_FirstUseEver);
+				panelIt->positioned = true;
+			}
+
 			panelPtr->DoDraw();
 		}
 
@@ -133,6 +139,13 @@ void BaseMainWindow::SetupLayout()
 
         panel.positioned = true;
     }
+
+	_dockIds[static_cast<size_t>(PanelWindow::Position::None)] = 0;
+	_dockIds[static_cast<size_t>(PanelWindow::Position::Left)] = leftDockId;
+	_dockIds[static_cast<size_t>(PanelWindow::Position::Middle)] = mainDock;
+	_dockIds[static_cast<size_t>(PanelWindow::Position::Right)] = rightDockId;
+	_dockIds[static_cast<size_t>(PanelWindow::Position::Up)] = topDockId;
+	_dockIds[static_cast<size_t>(PanelWindow::Position::Down)] = bottomDockId;
 
     ImGui::DockBuilderFinish(dockId);
 }

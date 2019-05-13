@@ -41,6 +41,6 @@ private:
 
     bool _showMetrics = false;
 
-    std::string _openedFile;
     std::weak_ptr<PanelWindow> _consolePanel;
+    std::weak_ptr<PanelWindow> _infoPanel;
 };

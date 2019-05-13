@@ -12,9 +12,15 @@ add_subdirectory(Model)
 add_subdirectory(CommandQueue)
 
 if(APPLE)
-  set(BUILD_SHARED_LIBS TRUE)
-  set_source_files_properties(${PLATFORM_SOURCES} PROPERTIES COMPILE_FLAGS "-x objective-c++")
-  set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} "-ObjC")
+    set(BUILD_SHARED_LIBS TRUE)
+    set_source_files_properties(${PLATFORM_SOURCES} PROPERTIES COMPILE_FLAGS "-x objective-c++")
+    set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} "-ObjC")
+
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        target_link_libraries(SpriteExtractor stdc++fs)
+    endif()
+
+    add_definitions(-DGL_SILENCE_DEPRECATION)
 endif(APPLE)
 
 if(WIN32)

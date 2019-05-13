@@ -3,7 +3,8 @@
 #include <memory>
 #include <ImGui/imgui.h>
 
-#include "UI/PanelWindow.hpp"
+#include <UI/PanelWindow.hpp>
+
 #include "Types.hpp"
 
 class SpriteSheet;
@@ -36,14 +37,14 @@ protected:
 private:
     void OnToggleColorPicker(const RightPanelActions::ToggleColorPicker& toggle);
     void OnImageOpened(const GenericActions::ImageOpened& openedImage);
-    void OnSpritesFound(const SpriteSearchMessages::SpriteSearchFinished& spritesFound);
 
     void DrawImage();
     void DrawZoom();
 
-    Color CalculateHoveredColor(const ImVec2& mousePosition, const std::shared_ptr<IImage> image);
+	void DrawSpriteBoxes(const ImVec2& cursorScreenPosition);
 
-    std::weak_ptr<IImage> _openedImage;
+    Color CalculateHoveredColor(const ImVec2& mousePosition, std::shared_ptr<const IImage> image);
+
 	std::shared_ptr<SpriteSheet> _spriteSheet;
     std::unique_ptr<ITextureResource> _textureResource;
 

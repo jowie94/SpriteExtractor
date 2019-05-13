@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <mutex>
 
 #include "BaseWindow.hpp"
 #include "PanelWindow.hpp"
@@ -37,6 +38,7 @@ private:
 
     void SetupLayout();
 
+    std::mutex _panelsMutex;
     std::vector<struct PanelContainer> _panels;
     PopupsController _popupsController;
 	ImGuiID _dockIds[static_cast<size_t>(PanelWindow::Position::_Size)];

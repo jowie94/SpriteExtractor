@@ -33,6 +33,9 @@ namespace Logger
 
 			spdlog::register_logger(logger);
 
+            // TODO
+            logger->set_level(spdlog::level::debug);
+
 			return logger;
 		}
 

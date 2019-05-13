@@ -2,7 +2,6 @@
 
 #include <cassert>
 #include <memory>
-#include <functional>
 
 #include "ModelManager.hpp"
 #include "CommandQueue/CommandQueue.fwd.hpp"
@@ -16,19 +15,11 @@ namespace Commands
         {
         public:
             EditModel(FieldType Model::* fieldPtr, FieldType newValue, const std::string& modelName = "")
-                : _fieldPtr(fieldPtr)
-                , _newValue(newValue)
+            : _fieldPtr(fieldPtr)
+            , _newValue(newValue)
+            , _model(GetModel(modelName))
             {
                 assert(_fieldPtr);
-
-                if (modelName.empty())
-                {
-                    _model = ModelManager::GetInstance().Get<Model>();
-                }
-                else
-                {
-                    _model = ModelManager::GetInstance().Get<Model>(modelName);
-                }
 
                 _oldValue = (*_model).*fieldPtr;
             }
@@ -45,12 +36,25 @@ namespace Commands
                 (*_model).*_fieldPtr = _oldValue;
             }
 
+        protected:
+            std::shared_ptr<Model> GetModel(const std::string& modelName)
+            {
+                if (modelName.empty())
+                {
+                    return ModelManager::GetInstance().Get<Model>();
+                }
+                else
+                {
+                    return ModelManager::GetInstance().Get<Model>(modelName);
+                }
+            }
+
+            std::shared_ptr<Model> _model;
+
         private:
             FieldType Model::* _fieldPtr = nullptr;
             FieldType _newValue;
             FieldType _oldValue;
-
-            std::shared_ptr<Model> _model;
         };
     }
 }

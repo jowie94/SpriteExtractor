@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <experimental/filesystem>
+#include <string_view>
 
 #include <ImGui/imgui.h>
 
@@ -45,6 +46,24 @@ namespace AppConst
         {
             path.replace(dotPos+1, path.length(), newExt);
         }
+    }
+
+    std::string_view GetFile(std::string_view path)
+    {
+        std::string_view::size_type pos = path.rfind(std::experimental::filesystem::path::preferred_separator);
+        pos = pos != std::string_view::npos ? pos + 1 : 0;
+
+        return path.substr(pos);
+    }
+
+    std::string_view GetFileName(std::string_view file)
+    {
+        std::string_view fileName = GetFile(file);
+
+        std::string_view::size_type pos = fileName.rfind('.');
+        pos = pos != std::string_view::npos ? pos : fileName.size();
+
+        return fileName.substr(0, pos);
     }
 
     static std::vector<Platform::FileFilter> kImgFilter =
@@ -106,7 +125,8 @@ void App::Loop()
 void App::OnSelectFile()
 {
     auto logger = Logger::GetLogger("App");
-    if (Platform::ShowOpenFileDialogue("Choose an sprite sheet image", _selectedFile, AppConst::kImgFilter))
+	std::string selectedFile;
+    if (Platform::ShowOpenFileDialogue("Choose an sprite sheet image", selectedFile, AppConst::kImgFilter))
     {
         MessageBroker& broker = MessageBroker::GetInstance();
 
@@ -116,19 +136,19 @@ void App::OnSelectFile()
 		ModelManager& manager = ModelManager::GetInstance();
 		manager.Remove<SpriteSheet>();
 
-        _openedImage = OpenImage(_selectedFile);
+        std::shared_ptr<IImage> openedImage = OpenImage(selectedFile);
 
-        if (_openedImage)
+        if (openedImage)
         {
-			_currentSpriteSheet = manager.Create<SpriteSheet>();
+			_currentSpriteSheet = manager.Create<SpriteSheet>(openedImage, selectedFile);
 			_commandQueue.Clear();
 
-            broker.Broadcast(GenericActions::ImageOpened(_selectedFile, _openedImage));
-            logger->info("Opened image {}", _selectedFile);
+            broker.Broadcast(GenericActions::ImageOpened());
+            logger->info("Opened image {}", selectedFile);
         }
         else
         {
-            logger->error("Error opening image {}", _selectedFile);
+            logger->error("Error opening image {}", selectedFile);
         }
     }
     else
@@ -149,14 +169,18 @@ void App::OnSaveFile()
         Serializer::Serialize(outFile, *_currentSpriteSheet);
 
         AppConst::ReplaceExtension(outFile, "png");
-        if(!_openedImage->Save(outFile.c_str()))
-        {
-            logger->error("Couldn't save {}", outFile);
-        }
-        else
-        {
-            logger->info("Successfully saved {}", outFile);
-        }
+
+		if (auto image = _currentSpriteSheet->GetImage().lock())
+		{
+			if (image->Save(outFile.c_str()))
+			{
+				logger->info("Successfully saved {}", outFile);
+			}
+			else
+			{
+				logger->error("Couldn't save {}", outFile);
+			}
+		}
     }
 }
 
@@ -179,23 +203,23 @@ void App::OnSearchSprites(const RightPanelActions::SearchSprites& action)
     };
 
     Logger::GetLogger("Extract task")->info("Starting extraction");
-    _searchSpritesTask.Run(callbacks, _currentSpriteSheet->GetAlphaColor(), static_cast<const void*>(_openedImage.get()));
+    _searchSpritesTask.Run(callbacks, _currentSpriteSheet->GetAlphaColor(), static_cast<const void*>(_currentSpriteSheet->GetImage().lock().get()));
 }
 
 void App::OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites)
 {
 	// TODO
-	std::vector<Sprite> sprites;
+	std::vector<std::shared_ptr<Sprite>> sprites;
 	sprites.reserve(foundSprites.size());
 
-	std::experimental::filesystem::path filePath(_selectedFile);
-	std::string fileName = filePath.stem().string();
+	std::string_view fileName = AppConst::GetFileName(_currentSpriteSheet->GetImageName());
 	size_t last = 0;
 	for (const auto& foundSprite : foundSprites)
 	{
-		Sprite sprite;
-		sprite.BoundingBox = foundSprite;
-		sprite.Name = fileName + "_" + std::to_string(last);
+		std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>();
+        sprite->Idx = last;
+		sprite->BoundingBox = foundSprite;
+		sprite->Name = std::string(fileName) + "_" + std::to_string(last); // TODO: Improve
 		++last;
 
 		sprites.emplace_back(std::move(sprite));

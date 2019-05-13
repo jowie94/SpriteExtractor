@@ -50,7 +50,7 @@ void Paper2DSerializer::Serialize(const std::string& outputFile, const SpriteShe
 
     for (const auto& sprite : spriteList.GetSprites())
     {
-        frames.put_child(sprite.Name, CreateFrame(sprite.BoundingBox));
+        frames.put_child(sprite->Name, CreateFrame(sprite->BoundingBox));
     }
 
     pt::ptree tree;

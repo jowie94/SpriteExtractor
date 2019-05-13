@@ -17,6 +17,8 @@ ModelManager::ModelManager()
 {
 }
 
+ModelManager::~ModelManager() = default;
+
 ModelManager::ModelPtr ModelManager::Get(const std::string& name)
 {
     auto it = _models.find(name);

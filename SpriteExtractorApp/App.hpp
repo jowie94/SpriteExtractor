@@ -43,8 +43,6 @@ private:
     void OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites);
     void OnCancelSearch(const MainWindowActions::CancelSearch& cancelSearch);
 
-    std::string _selectedFile;
-    std::shared_ptr<IImage> _openedImage;
 	std::shared_ptr<SpriteSheet> _currentSpriteSheet;
 
     SpriteExtractor::Task _searchSpritesTask;

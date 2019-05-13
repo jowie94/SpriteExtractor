@@ -5,6 +5,7 @@
 #include "Windows/Panels/SearchConfigPanel.hpp"
 #include "Windows/Panels/SpritesPanel.hpp"
 #include "Windows/Panels/ConsolePanel.hpp"
+#include "Windows/Panels/SpriteInfoPanel.hpp"
 
 #include "Windows/Popups/SearchingPopup.hpp"
 
@@ -34,11 +35,18 @@ void MainWindow::Init()
 
     broker.Subscribe<RightPanelActions::SearchSprites>(std::bind(&MainWindow::OnSearchSprites, this, std::placeholders::_1));
 
-    auto imageOpenedCallback = [this](const GenericActions::ImageOpened& imageOpened)
+    auto imageOpenedCallback = [this](const SpriteSearchMessages::SpriteSearchFinished&)
     {
-        _openedFile = imageOpened.ImageName;
+		if (auto panel = _infoPanel.lock())
+		{
+			panel->RequestFocus();
+		}
+		else
+		{
+			_infoPanel = AddPanel<SpriteInfoPanel>(PanelWindow::Position::Right);
+		}
     };
-    broker.Subscribe<GenericActions::ImageOpened>(imageOpenedCallback);
+    broker.Subscribe<SpriteSearchMessages::SpriteSearchFinished>(imageOpenedCallback);
 }
 
 void MainWindow::BeforeDraw()

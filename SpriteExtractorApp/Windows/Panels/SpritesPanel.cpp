@@ -12,6 +12,8 @@
 #include "Model/ModelManager.hpp"
 #include "Model/SpriteSheet/SpriteSheet.hpp"
 
+#include "Logger/Logger.hpp"
+
 #include "imgui-extra.hpp"
 
 namespace SpritesPanelConst
@@ -32,7 +34,9 @@ namespace SpritesPanelConst
         return std::min(scaleX, scaleY);
     }
 
-    float kZoomFactor = 0.3f;
+    const float kZoomFactor = 0.3f;
+	const float kDefaultBoxThickness = 1.0f;
+	const float kSelectedBoxThickness = 3.0f;
 }
 
 SpritesPanel::SpritesPanel()
@@ -48,7 +52,6 @@ void SpritesPanel::Init()
 
     broker.Subscribe<RightPanelActions::ToggleColorPicker>(std::bind(&SpritesPanel::OnToggleColorPicker, this, std::placeholders::_1));
     broker.Subscribe<GenericActions::ImageOpened>(std::bind(&SpritesPanel::OnImageOpened, this, std::placeholders::_1));
-    broker.Subscribe<SpriteSearchMessages::SpriteSearchFinished>(std::bind(&SpritesPanel::OnSpritesFound, this, std::placeholders::_1));
 }
 
 void SpritesPanel::Draw()
@@ -73,19 +76,14 @@ void SpritesPanel::OnToggleColorPicker(const RightPanelActions::ToggleColorPicke
 
 void SpritesPanel::OnImageOpened(const GenericActions::ImageOpened& openedImage)
 {
-    _openedImage = openedImage.OpenedImage;
+	// TODO
+	_spriteSheet = ModelManager::GetInstance().Get<SpriteSheet>();
 
-    if (auto image = _openedImage.lock())
+    if (auto image = _spriteSheet->GetImage().lock())
     {
         _imageScale = SpritesPanelConst::CalculateImageScale(*image, _imageWindowSize);
         _textureResource = image->GetTextureResource();
     }
-}
-
-void SpritesPanel::OnSpritesFound(const SpriteSearchMessages::SpriteSearchFinished& spritesFound)
-{
-	// TODO;
-	_spriteSheet = ModelManager::GetInstance().Get<SpriteSheet>();
 }
 
 void SpritesPanel::DrawImage()
@@ -93,38 +91,40 @@ void SpritesPanel::DrawImage()
     ImGui::BeginChild("Image", ImVec2(0.0f, 0.0f), false, ImGuiWindowFlags_HorizontalScrollbar);
     _imageWindowSize = ImGui::GetWindowSize();
 
-    if (auto image = _openedImage.lock())
-    {
-        ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
-        ImGui::Image(*_textureResource, ImVec2(_textureResource->Size.X * _imageScale, _textureResource->Size.Y * _imageScale));
+	if (_spriteSheet)
+	{
+		if (auto image = _spriteSheet->GetImage().lock())
+		{
+			ImVec2 cursorScreenPos = ImGui::GetCursorScreenPos();
+			ImGui::Image(*_textureResource, ImVec2(_textureResource->Size.X * _imageScale, _textureResource->Size.Y * _imageScale));
 
-        if (_enableColorPicker && ImGui::IsWindowHovered())
-        {
-            ImVec2 mousePos = ImGui::GetMousePos();
-            ImVec2 relativeMousePos((mousePos.x - cursorScreenPos.x) / _imageScale, (mousePos.y - cursorScreenPos.y) / _imageScale);
-            Color alphaColor = CalculateHoveredColor(relativeMousePos, image);
+            MessageBroker& broker = MessageBroker::GetInstance();
 
-            MessageBroker &broker = MessageBroker::GetInstance();
-            broker.Broadcast(GenericActions::ColorHovered{alphaColor});
-
-            if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0))
+            if (ImGui::IsWindowHovered())
             {
-                _enableColorPicker = false;
-                broker.Broadcast(GenericActions::ColorPicked{alphaColor});
-            }
-        }
+                if (_enableColorPicker)
+                {
+                    ImVec2 mousePos = ImGui::GetMousePos();
+                    ImVec2 relativeMousePos((mousePos.x - cursorScreenPos.x) / _imageScale, (mousePos.y - cursorScreenPos.y) / _imageScale);
+                    Color alphaColor = CalculateHoveredColor(relativeMousePos, image);
 
-        // TODO: This access should be thread safe
-        if (_spriteSheet)
-        {
-            for (const auto &sprite : _spriteSheet->GetSprites())
-            {
-                ImVec2 rectPos(cursorScreenPos.x + sprite.BoundingBox.X * _imageScale, cursorScreenPos.y + sprite.BoundingBox.Y * _imageScale);
-                ImVec2 maxRect(rectPos.x + ((sprite.BoundingBox.Width + 1.0f) * _imageScale), rectPos.y + (sprite.BoundingBox.Height + 1.0f) * _imageScale);
-                ImGui::GetWindowDrawList()->AddRect(rectPos, maxRect, ImColor(255, 0, 0));
+                    broker.Broadcast(GenericActions::ColorHovered{ alphaColor });
+
+                    if (ImGui::IsWindowHovered() && ImGui::IsMouseClicked(0))
+                    {
+                        _enableColorPicker = false;
+                        broker.Broadcast(GenericActions::ColorPicked{ alphaColor });
+                    }
+                }
+                else if (ImGui::IsMouseClicked(0))
+                {
+                    broker.Broadcast(Commands::PushCommandMessage(std::make_shared<Commands::Model::UpdateSelectedSpriteCommand>(-1)));
+                }
             }
-        }
-    }
+
+			DrawSpriteBoxes(cursorScreenPos);
+		}
+	}
     ImGui::EndChild();
 }
 
@@ -142,9 +142,9 @@ void SpritesPanel::DrawZoom()
         _imageScale -= SpritesPanelConst::kZoomFactor;
     }
     ImGui::SameLine();
-    if (ImGui::SmallButton("="))
+    if (ImGui::SmallButton("=") && _spriteSheet)
     {
-        if (auto image = _openedImage.lock())
+        if (auto image = _spriteSheet->GetImage().lock())
         {
             _imageScale = SpritesPanelConst::CalculateImageScale(*image, _imageWindowSize);
         }
@@ -153,7 +153,34 @@ void SpritesPanel::DrawZoom()
     ImGui::PopStyleColor();
 }
 
-Color SpritesPanel::CalculateHoveredColor(const ImVec2& mousePosition, const std::shared_ptr<IImage> image)
+void SpritesPanel::DrawSpriteBoxes(const ImVec2& cursorScreenPosition)
+{
+	MessageBroker& broker = MessageBroker::GetInstance();
+
+	std::shared_ptr<const Sprite> selectedSprite = _spriteSheet->GetSelectedSprite().lock();
+	for (const auto& sprite : _spriteSheet->GetSprites())
+	{
+		ImVec2 scaledBoxOrigin = ImVec2(sprite->BoundingBox.X * _imageScale, sprite->BoundingBox.Y * _imageScale);
+		ImVec2 scaledBoxSize = ImVec2((sprite->BoundingBox.Width + 1.0f) * _imageScale, (sprite->BoundingBox.Height + 1.0f) * _imageScale);
+
+		ImVec2 rectPos(cursorScreenPosition.x + scaledBoxOrigin.x, cursorScreenPosition.y + scaledBoxOrigin.y);
+		ImVec2 maxRect(rectPos.x + scaledBoxSize.x, rectPos.y + scaledBoxSize.y);
+
+		float thickness = selectedSprite && selectedSprite->Idx == sprite->Idx ? SpritesPanelConst::kSelectedBoxThickness : SpritesPanelConst::kDefaultBoxThickness;
+		ImGui::GetWindowDrawList()->AddRect(rectPos, maxRect, ImColor(255, 0, 0), 1.0f, ImDrawCornerFlags_All, thickness);
+
+		ImGui::SetCursorScreenPos(rectPos);
+		//if (ImGui::ColorButton(sprite->Name.c_str(), ImColor(255, 0, 0), 0, ImVec2(scaledBox.Width + _imageScale, scaledBox.Height + _imageScale)))
+		if (!_enableColorPicker && ImGui::InvisibleButton(sprite->Name.c_str(), scaledBoxSize))
+		{
+			Logger::GetLogger("Spritesheet")->debug("Tapped {}", sprite->Name);
+
+			broker.Broadcast(Commands::PushCommandMessage(std::make_shared<Commands::Model::UpdateSelectedSpriteCommand>(sprite->Idx)));
+		}
+	}
+}
+
+Color SpritesPanel::CalculateHoveredColor(const ImVec2& mousePosition, std::shared_ptr<const IImage> image)
 {
     if (mousePosition.x >= 0 && mousePosition.x <= image->Size().X && mousePosition.y >= 0 && mousePosition.y <= image->Size().Y)
     {

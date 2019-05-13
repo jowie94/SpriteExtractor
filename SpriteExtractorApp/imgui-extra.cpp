@@ -4,7 +4,12 @@
 
 void ImGui::Image(const ITextureResource& image, const ImVec2& imageSize)
 {
-    Image((void*)(intptr_t)image.ResourceId, imageSize);
+    Image(image, imageSize, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f));
+}
+
+void ImGui::Image(const ITextureResource& image, const ImVec2& imageSize, const ImVec2& uv0, const ImVec2& uv1)
+{
+    Image((void*)(intptr_t)image.ResourceId, imageSize, uv0, uv1);
 }
 
 bool ImGui::Button(const char* label, bool enabled)

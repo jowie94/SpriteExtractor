@@ -76,6 +76,39 @@ struct ITextureResource
     ImageSize Size;
 };
 
+struct BBox
+{
+    using bbox_t = int;
+
+    bool ContainsPoint(bbox_t x, bbox_t y) const
+    {
+        bbox_t mX = X + Width;
+        bbox_t mY = Y + Height;
+        return X <= x && x <= mX && Y <= y && y <= mY;
+    }
+
+    template <typename Scalar>
+    BBox operator*(Scalar scalar) const
+    {
+        static_assert(std::is_arithmetic<Scalar>::value, "Scalar must be arithmetic");
+
+        BBox newBox;
+
+        newBox.X = static_cast<bbox_t>(X * scalar);
+        newBox.Y = static_cast<bbox_t>(Y * scalar);
+        newBox.Width = static_cast<bbox_t>(Width * scalar);
+        newBox.Height = static_cast<bbox_t>(Height * scalar);
+
+        return newBox;
+
+    }
+
+    bbox_t X = 0;
+    bbox_t Y = 0;
+    bbox_t Width = 0;
+    bbox_t Height = 0;
+};
+
 using ImageSize = Vec2<unsigned int>;
 class IImage
 {
@@ -155,19 +188,4 @@ public:
 private:
     MatrixSize _size;
     T* _data;
-};
-
-struct BBox
-{
-    int X = 0;
-    int Y = 0;
-    int Width = 0;
-    int Height = 0;
-
-    bool ContainsPoint(int x, int y) const
-    {
-        int mX = X + Width;
-        int mY = Y + Height;
-        return X <= x && x <= mX && Y <= y && y <= mY;
-    }
 };

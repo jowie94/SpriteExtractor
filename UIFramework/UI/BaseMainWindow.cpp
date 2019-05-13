@@ -46,6 +46,7 @@ void BaseMainWindow::AddPanelInt(PanelWindow::Position initialPosition, std::sha
 {
     panel->Init();
 
+    std::lock_guard<std::mutex> lock(_panelsMutex);
     _panels.emplace_back(PanelContainer{ std::move(panel), false, initialPosition });
 }
 
@@ -64,6 +65,8 @@ void BaseMainWindow::EndWidget(bool wasDrawn)
 
 void BaseMainWindow::DrawPanels()
 {
+    std::lock_guard<std::mutex> lock(_panelsMutex);
+
 	auto panelIt = _panels.begin();
 	while (panelIt != _panels.end())
 	{
@@ -105,6 +108,7 @@ void BaseMainWindow::SetupLayout()
     ImGuiID rightDockId = ImGui::DockBuilderSplitNode(mainDock, ImGuiDir_Right, 0.20f, NULL, &mainDock);
     ImGuiID leftDockId = ImGui::DockBuilderSplitNode(mainDock, ImGuiDir_Left, 0.20f, NULL, &mainDock);
 
+    std::lock_guard<std::mutex> lock(_panelsMutex);
     for (auto& panel : _panels)
     {
         const char* panelName = panel.panel->GetName();

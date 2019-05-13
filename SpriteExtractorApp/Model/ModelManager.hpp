@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <memory>
 #include <typeindex>
+#include <string>
 
 class ModelManager
 {
@@ -22,18 +23,18 @@ public:
 		return Get<T>(typeid(T).name());
 	}
 
-	template<typename T>
-	std::shared_ptr<T> Create(const std::string& name)
+	template<typename T, typename... Args>
+	std::shared_ptr<T> CreateWithName(const std::string& name, Args&&... args)
 	{
-		auto model = std::make_shared<T>();
+		auto model = std::make_shared<T>(std::forward<Args>(args)...);
 		Add(name, model);
 		return model;
 	}
 
-	template<typename T>
-	std::shared_ptr<T> Create()
+	template<typename T, typename... Args>
+	std::shared_ptr<T> Create(Args&&... args)
 	{
-		return Create<T>(typeid(T).name());
+		return CreateWithName<T, Args...>(typeid(T).name(), std::forward<Args>(args)...);
 	}
 
 	template<typename T>
@@ -54,6 +55,7 @@ private:
     using ModelPtr = std::shared_ptr<void>;
 
     ModelManager();
+    ~ModelManager();
 
     ModelPtr Get(const std::string& name);
 

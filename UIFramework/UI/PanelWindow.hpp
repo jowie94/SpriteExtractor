@@ -27,6 +27,8 @@ public:
 
     PanelWindow(const char* name, const ImVec2& initialSize, ImGuiWindowFlags flags = ImGuiWindowFlags_None);
 
+	void RequestFocus();
+
 	ClosePolicy GetClosePolicy() const;
     bool IsOpened() const;
     void Close();
@@ -42,4 +44,5 @@ private:
 
     ImVec2 _initialSize;
 	ClosePolicy _closePolicy = ClosePolicy::NoClose;
+	bool _requestFocus = false;
 };

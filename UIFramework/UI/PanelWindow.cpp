@@ -6,6 +6,11 @@ PanelWindow::PanelWindow(const char* name, const ImVec2& initialSize, ImGuiWindo
 {
 }
 
+void PanelWindow::RequestFocus()
+{
+	_requestFocus = true;
+}
+
 PanelWindow::ClosePolicy PanelWindow::GetClosePolicy() const
 {
 	return _closePolicy;
@@ -31,6 +36,13 @@ bool PanelWindow::BeginWidget()
 {
 	bool* opened = _closePolicy != ClosePolicy::NoClose ? &_opened : nullptr;
     ImGui::SetNextWindowSize(_initialSize, ImGuiCond_FirstUseEver);
+
+	if (_requestFocus)
+	{
+		ImGui::SetNextWindowFocus();
+		_requestFocus = false;
+	}
+
     return ImGui::Begin(GetName(), opened, _flags);
 }
 

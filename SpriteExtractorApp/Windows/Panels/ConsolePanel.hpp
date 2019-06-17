@@ -9,4 +9,6 @@ public:
 
 private:
     void Draw() override;
+
+    bool _autoScroll = true;
 };

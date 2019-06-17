@@ -7,6 +7,8 @@
 
 #include <spdlog/sinks/base_sink.h>
 
+#include "imgui-sfml/imgui-SFML.h"
+
 #include "Logger/Logger.hpp"
 
 template<typename Mutex>
@@ -88,7 +90,10 @@ namespace ConsolePanelConst
 
 ConsolePanel::ConsolePanel()
 : PanelWindow("Console", ImVec2(300.0f, 100.0f), ImGuiWindowFlags_HorizontalScrollbar)
+, _font(ImGui::GetIO().Fonts->AddFontFromFileTTF("resources/noto-mono.ttf", 16.0f))
 {
+    // TODO: Improve
+    ImGui::SFML::UpdateFontTexture();
     SetClosePolicy(PanelWindow::ClosePolicy::Close);
 }
 
@@ -96,6 +101,7 @@ void ConsolePanel::Draw()
 {
     PanelWindow::Draw();
 
+    ImGui::PushFont(_font);
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4,1));
     ConsoleSinkPtr::MessageList messages = autoRegisterSink.GetSink()->GetMessageList();
     for (const auto& msg : messages)
@@ -113,4 +119,6 @@ void ConsolePanel::Draw()
     {
         ImGui::SetScrollHereY(1.0f);
     }
+
+    ImGui::PopFont();
 }

@@ -20,13 +20,22 @@ void SFMLApp::Run()
     float scale = 1.0f;
 #endif
 
-    sf::RenderWindow window(sf::VideoMode(static_cast<unsigned int>(1366.0f * scale), static_cast<unsigned int>(768.0f * scale)), "Sprite Extractor");
+    sf::ContextSettings settings;
+    settings.antialiasingLevel = 5;
+    sf::RenderWindow window(sf::VideoMode(static_cast<unsigned int>(1366.0f * scale), static_cast<unsigned int>(768.0f * scale)), "Sprite Extractor",
+                            sf::Style::Default, settings);
 
     ImGui::SFML::Init(window);
 
-    ImGui::GetIO().DisplayFramebufferScale = ImVec2(scale, scale);
-    ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    ImGui::GetIO().IniFilename = nullptr;
+    ImGuiIO& io = ImGui::GetIO();
+    io.DisplayFramebufferScale = ImVec2(scale, scale);
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.IniFilename = nullptr;
+
+    ImFont* noto = io.Fonts->AddFontFromFileTTF("resources/noto-sans-bold.ttf", 18.0f);
+    ImGui::SFML::UpdateFontTexture();
+
+    io.FontDefault = noto;
 
 	Init();
 

@@ -101,6 +101,7 @@ void MainWindow::DrawFileMenu()
 
 void MainWindow::DrawDebugMenu()
 {
+    ImGui::Text("%f", ImGui::GetIO().MouseWheel);
     if (ImGui::BeginMenu("Debug"))
     {        
         if (ImGui::MenuItem("Show Metrics", nullptr, _showMetrics))

@@ -9,6 +9,11 @@
 
 #include "imgui-extra.hpp"
 
+namespace SpriteInfoPanelConst
+{
+    std::shared_ptr<const Sprite> kEmptySprite = std::make_shared<Sprite>();
+}
+
 SpriteInfoPanel::SpriteInfoPanel()
 : PanelWindow("Sprite Info", ImVec2(100.0f, 300.0f))
 {
@@ -38,11 +43,15 @@ void SpriteInfoPanel::Draw()
 
     if (_spriteSheet)
     {
-        if (auto sprite = _spriteSheet->GetSelectedSprite().lock())
+        std::shared_ptr<const Sprite> sprite = _spriteSheet->GetSelectedSprite().lock();
+        
+        if (!sprite)
         {
-			DrawSprite(sprite->BoundingBox);
-            ImGui::LabelText("", "Name: %s", sprite->Name.c_str());
+            sprite = SpriteInfoPanelConst::kEmptySprite;
         }
+
+        DrawSprite(sprite->BoundingBox);
+        ImGui::LabelText("", "Name: %s", sprite->Name.c_str());
     }
     else
     {

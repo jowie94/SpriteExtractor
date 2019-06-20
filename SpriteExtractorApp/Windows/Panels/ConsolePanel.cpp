@@ -111,14 +111,16 @@ void ConsolePanel::Draw()
     ImGui::PopStyleVar();
 
     float currentScroll = ImGui::GetScrollY();
-    float currentMaxScroll = ImGui::GetScrollMaxY() - 7.0f;
+    float currentMaxScroll = ImGui::GetScrollMaxY();
 
-    _autoScroll = currentScroll >= currentMaxScroll && ImGui::GetIO().MouseWheel == 0.0f;
+    bool atBottom = currentScroll >= currentMaxScroll;
 
-    if (_autoScroll)
+    if (atBottom && _lastMessageCount != messages.size())
     {
         ImGui::SetScrollHereY(1.0f);
     }
+
+    _lastMessageCount = messages.size();
 
     ImGui::PopFont();
 }

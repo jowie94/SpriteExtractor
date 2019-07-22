@@ -7,6 +7,8 @@
 #include "Model/ModelManager.hpp"
 #include "Model/SpriteSheet/SpriteSheet.hpp"
 
+#include "Logger/Logger.hpp"
+
 #include "imgui-extra.hpp"
 
 namespace SpriteInfoPanelConst
@@ -26,7 +28,7 @@ SpriteInfoPanel::~SpriteInfoPanel()
 
 void SpriteInfoPanel::Init()
 {
-	PanelWindow::Init();
+    PanelWindow::Init();
 
     _openImageSubscription = MessageBroker::GetInstance().Subscribe<GenericActions::ImageOpened>(std::bind(&SpriteInfoPanel::OnImageOpened, this, std::placeholders::_1));
     SetupSpriteSheet();
@@ -39,19 +41,37 @@ void SpriteInfoPanel::OnImageOpened(const GenericActions::ImageOpened& /*imageOp
 
 void SpriteInfoPanel::Draw()
 {
-	PanelWindow::Draw();
+    PanelWindow::Draw();
 
     if (_spriteSheet)
     {
         std::shared_ptr<const Sprite> sprite = _spriteSheet->GetSelectedSprite().lock();
-        
-        if (!sprite)
+
+        bool editable = sprite != nullptr;
+        if (!editable)
         {
             sprite = SpriteInfoPanelConst::kEmptySprite;
         }
 
         DrawSprite(sprite->BoundingBox);
-        ImGui::LabelText("", "Name: %s", sprite->Name.c_str());
+
+        if (_currentSpriteName != sprite->Name)
+        {
+            _currentSpriteName = sprite->Name;
+            _tmpSpriteName = sprite->Name;
+        }
+
+        ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll;
+
+        if (!editable)
+        {
+            inputFlags |= ImGuiInputTextFlags_ReadOnly;
+        }
+
+        if (ImGui::InputTextWithHint("Sprite Name", "Name", _tmpSpriteName, inputFlags) && !_tmpSpriteName.empty())
+        {
+            Logger::GetLogger("Info Panel")->debug("New name: {} -> {}", _currentSpriteName, _tmpSpriteName);
+        }
     }
     else
     {

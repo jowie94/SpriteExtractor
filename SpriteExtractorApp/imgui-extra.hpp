@@ -1,7 +1,10 @@
 #pragma once
 
+#include <string>
+
+#include <ImGui/imgui.h>
+
 struct ITextureResource;
-struct ImVec2;
 
 namespace ImGui
 {
@@ -10,4 +13,6 @@ namespace ImGui
 
     bool Button(const char* label, bool enabled);
     bool Button(const char* label, bool enabled, const ImVec2& size);
+
+    bool InputTextWithHint(const char* label, const char* hint, std::string& str, ImGuiInputTextFlags flags = ImGuiInputTextFlags_None, ImGuiInputTextCallback callback = nullptr, void* user_data = nullptr);
 }

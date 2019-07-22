@@ -68,7 +68,11 @@ void SpriteInfoPanel::Draw()
             inputFlags |= ImGuiInputTextFlags_ReadOnly;
         }
 
-        if (ImGui::InputTextWithHint("Sprite Name", "Name", _tmpSpriteName, inputFlags) && !_tmpSpriteName.empty())
+        ImGui::AlignTextToFramePadding();
+        ImGui::Text("Sprite Name");
+        ImGui::SameLine();
+
+        if (ImGui::InputTextWithHint("##SpriteName", "Name", _tmpSpriteName, inputFlags) && !_tmpSpriteName.empty())
         {
             Logger::GetLogger("Info Panel")->debug("New name: {} -> {}", _currentSpriteName, _tmpSpriteName);
         }

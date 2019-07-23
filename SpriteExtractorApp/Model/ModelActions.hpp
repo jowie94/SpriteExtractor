@@ -4,57 +4,65 @@
 #include <memory>
 
 #include "ModelManager.hpp"
+#include "ModelPolicies.hpp"
 #include "CommandQueue/CommandQueue.fwd.hpp"
 
 namespace Commands
 {
     namespace Model
     {
-        template<typename Model, typename FieldType>
+        template<typename Model, typename FieldType, typename GetModelPolicy = ::Model::Policy::DefaultPolicy<Model>>
         class EditModel : public ICommand
         {
         public:
-            EditModel(FieldType Model::* fieldPtr, FieldType newValue, const std::string& modelName = "")
+            EditModel(FieldType Model::* fieldPtr, FieldType newValue, GetModelPolicy getModelPolicy = GetModelPolicy())
             : _fieldPtr(fieldPtr)
             , _newValue(newValue)
-            , _model(GetModel(modelName))
+            , _getModelPolicy(getModelPolicy)
             {
                 assert(_fieldPtr);
 
-                _oldValue = (*_model).*fieldPtr;
+                _oldValue = (*GetModel()).*fieldPtr;
             }
 
             ~EditModel() override = default;
 
             void redo() override
             {
-                (*_model).*_fieldPtr = _newValue;
+                (*GetModel()).*_fieldPtr = _newValue;
             }
 
             void undo() override
             {
-                (*_model).*_fieldPtr = _oldValue;
+                (*GetModel()).*_fieldPtr = _oldValue;
             }
 
         protected:
-            std::shared_ptr<Model> GetModel(const std::string& modelName)
+            std::shared_ptr<Model> GetModel()
             {
-                if (modelName.empty())
+                if (!_model)
                 {
-                    return ModelManager::GetInstance().Get<Model>();
+                    _model = _getModelPolicy();
                 }
-                else
-                {
-                    return ModelManager::GetInstance().Get<Model>(modelName);
-                }
+
+                return _model;
             }
 
-            std::shared_ptr<Model> _model;
-
         private:
+            std::shared_ptr<Model> _model;
             FieldType Model::* _fieldPtr = nullptr;
             FieldType _newValue;
             FieldType _oldValue;
+            GetModelPolicy _getModelPolicy;
+        };
+
+        template<typename Container, typename Model, typename FieldType>
+        class EditMapModel : public EditModel<Model, FieldType, ::Model::Policy::MapPolicy<Container, Model>>
+        {
+        public:
+            EditMapModel(FieldType Model::* fieldPtr, FieldType newValue, const std::string& key, const std::string& modelName = "")
+            : EditModel(fieldPtr, newValue, ::Model::Policy::MapPolicy<Container, Model>(key, modelName))
+            {}
         };
     }
 }

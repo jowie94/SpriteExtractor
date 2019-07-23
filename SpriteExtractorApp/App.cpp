@@ -20,6 +20,7 @@
 #include "Logger/Logger.hpp"
 #include "Model/ModelManager.hpp"
 #include "Model/SpriteSheet/SpriteSheet.hpp"
+#include "Model/SpriteSheet/SpriteSheetActions.hpp"
 
 namespace AppConst
 {
@@ -116,7 +117,7 @@ void App::Loop()
         MessageBroker::GetInstance().Broadcast(progressUpdate);
     }
 
-	_commandQueue.Update();
+    _commandQueue.Update();
 
     _mainWindow->DoDraw();
     //ImGui::ShowTestWindow();
@@ -125,23 +126,23 @@ void App::Loop()
 void App::OnSelectFile()
 {
     auto logger = Logger::GetLogger("App");
-	std::string selectedFile;
+    std::string selectedFile;
     if (Platform::ShowOpenFileDialogue("Choose an sprite sheet image", selectedFile, AppConst::kImgFilter))
     {
         MessageBroker& broker = MessageBroker::GetInstance();
 
-		_currentSpriteSheet.reset();
+        _currentSpriteSheet.reset();
 
-		// TODO
-		ModelManager& manager = ModelManager::GetInstance();
-		manager.Remove<SpriteSheet>();
+        // TODO
+        ModelManager& manager = ModelManager::GetInstance();
+        manager.Remove<SpriteSheet>();
 
         std::shared_ptr<IImage> openedImage = OpenImage(selectedFile);
 
         if (openedImage)
         {
-			_currentSpriteSheet = manager.Create<SpriteSheet>(openedImage, selectedFile);
-			_commandQueue.Clear();
+            _currentSpriteSheet = manager.Create<SpriteSheet>(openedImage, selectedFile);
+            _commandQueue.Clear();
 
             broker.Broadcast(GenericActions::ImageOpened());
             logger->info("Opened image {}", selectedFile);
@@ -165,28 +166,28 @@ void App::OnSaveFile()
         auto logger = Logger::GetLogger("App");
         logger->info("Serializing {}", outFile);
 
-		// TODO
+        // TODO
         Serializer::Serialize(outFile, *_currentSpriteSheet);
 
         AppConst::ReplaceExtension(outFile, "png");
 
-		if (auto image = _currentSpriteSheet->GetImage().lock())
-		{
-			if (image->Save(outFile.c_str()))
-			{
-				logger->info("Successfully saved {}", outFile);
-			}
-			else
-			{
-				logger->error("Couldn't save {}", outFile);
-			}
-		}
+        if (auto image = _currentSpriteSheet->GetImage().lock())
+        {
+            if (image->Save(outFile.c_str()))
+            {
+                logger->info("Successfully saved {}", outFile);
+            }
+            else
+            {
+                logger->error("Couldn't save {}", outFile);
+            }
+        }
     }
 }
 
 void App::OnSearchSprites(const RightPanelActions::SearchSprites& action)
 {
-	_commandQueue.Clear();
+    _commandQueue.Clear();
 
     SpriteExtractor::ImageAccessor callbacks;
     callbacks.GetWidth = [](const void* image)
@@ -208,25 +209,25 @@ void App::OnSearchSprites(const RightPanelActions::SearchSprites& action)
 
 void App::OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites)
 {
-	// TODO
-	std::vector<std::shared_ptr<Sprite>> sprites;
-	sprites.reserve(foundSprites.size());
+    // TODO
+    std::vector<std::shared_ptr<Sprite>> sprites;
+    sprites.reserve(foundSprites.size());
 
-	std::string_view fileName = AppConst::GetFileName(_currentSpriteSheet->GetImageName());
-	size_t last = 0;
-	for (const auto& foundSprite : foundSprites)
-	{
-		std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>();
+    std::string_view fileName = AppConst::GetFileName(_currentSpriteSheet->GetImageName());
+    size_t last = 0;
+    for (const auto& foundSprite : foundSprites)
+    {
+        std::shared_ptr<Sprite> sprite = std::make_shared<Sprite>();
         sprite->Idx = last;
-		sprite->BoundingBox = foundSprite;
-		sprite->Name = std::string(fileName) + "_" + std::to_string(last); // TODO: Improve
-		++last;
+        sprite->BoundingBox = foundSprite;
+        sprite->Name = std::string(fileName) + "_" + std::to_string(last); // TODO: Improve
+        ++last;
 
-		sprites.emplace_back(std::move(sprite));
-	}
+        sprites.emplace_back(std::move(sprite));
+    }
 
-	MessageBroker& broker = MessageBroker::GetInstance();
-	broker.Broadcast(Commands::PushCommandMessage(std::make_shared<Commands::Model::UpdateSpritesCommand>(sprites)));
+    MessageBroker& broker = MessageBroker::GetInstance();
+    broker.Broadcast(Commands::PushCommandMessage(std::make_shared<Commands::Model::UpdateSpritesCommand>(sprites)));
 
     Logger::GetLogger("Extract task")->info("Finished searching sprites. {} sprites found", foundSprites.size());
     broker.Broadcast(SpriteSearchMessages::SpriteSearchFinished(foundSprites.size()));

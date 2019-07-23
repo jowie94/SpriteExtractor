@@ -8,7 +8,7 @@
 #include "Messages/SpriteSearchMessages.hpp"
 
 #include "imgui-extra.hpp"
-#include "Model/SpriteSheet/SpriteSheet.fwd.hpp"
+#include "Model/SpriteSheet/SpriteSheetActions.hpp"
 
 SearchConfigPanel::SearchConfigPanel()
 : PanelWindow("Search Configuration", ImVec2(30.0f, 30.0f))
@@ -31,15 +31,15 @@ void SearchConfigPanel::Draw()
 {
     PanelWindow::Draw();
 
-	MessageBroker& broker = MessageBroker::GetInstance();
+    MessageBroker& broker = MessageBroker::GetInstance();
 
     float col4[4];
     _alphaColor.ToFloat(col4);
     if (ImGui::ColorPicker4("Alpha Color", col4))
     {
         _alphaColor = col4;
-		MessageBroker::GetInstance().Broadcast(
-			Commands::PushCommandMessage(std::make_shared<Commands::Model::UpdateAlphaColorCommand>(_alphaColor)));
+        MessageBroker::GetInstance().Broadcast(
+            Commands::PushCommandMessage(std::make_shared<Commands::Model::UpdateAlphaColorCommand>(_alphaColor)));
     }
 
     bool colorPickerEnabled = _enableColorPicker;
@@ -84,8 +84,8 @@ void SearchConfigPanel::OnColorHovered(const GenericActions::ColorHovered& color
 void SearchConfigPanel::OnColorPicked(const GenericActions::ColorPicked& colorPicked)
 {
     _alphaColor = colorPicked.PickedColor;
-	MessageBroker::GetInstance().Broadcast(
-		Commands::PushCommandMessage(std::make_shared<Commands::Model::UpdateAlphaColorCommand>(_alphaColor)));
+    MessageBroker::GetInstance().Broadcast(
+        Commands::PushCommandMessage(std::make_shared<Commands::Model::UpdateAlphaColorCommand>(_alphaColor)));
     _enableColorPicker = false;
 }
 

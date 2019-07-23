@@ -1,1 +1,4 @@
-﻿target_sources(SpriteExtractor PRIVATE "${CMAKE_CURRENT_LIST_DIR}/SpriteSheet.cpp")
+﻿set(SPRITESHEET_SOURCES ${SPRITESHEET_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/SpriteSheet.cpp")
+set(SPRITESHEET_SOURCES ${SPRITESHEET_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/SpriteSheetActions.cpp")
+
+target_sources(SpriteExtractor PRIVATE ${SPRITESHEET_SOURCES})

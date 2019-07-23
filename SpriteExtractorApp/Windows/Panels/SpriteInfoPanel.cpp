@@ -6,6 +6,7 @@
 
 #include "Model/ModelManager.hpp"
 #include "Model/SpriteSheet/SpriteSheet.hpp"
+#include "Model/SpriteSheet/SpriteSheetActions.hpp"
 
 #include "Logger/Logger.hpp"
 
@@ -74,7 +75,9 @@ void SpriteInfoPanel::Draw()
 
         if (ImGui::InputTextWithHint("##SpriteName", "Name", _tmpSpriteName, inputFlags) && !_tmpSpriteName.empty())
         {
+            // TODO: Validate
             Logger::GetLogger("Info Panel")->debug("New name: {} -> {}", _currentSpriteName, _tmpSpriteName);
+            MessageBroker::GetInstance().Broadcast(Commands::PushCommandMessage(std::make_shared<Commands::Model::EditSpriteName>(_currentSpriteName, _tmpSpriteName)));
         }
     }
     else

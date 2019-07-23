@@ -17,39 +17,39 @@ public:
         return std::static_pointer_cast<T>(model);
     }
 
-	template<typename T>
-	std::shared_ptr<T> Get()
-	{
-		return Get<T>(typeid(T).name());
-	}
-
-	template<typename T, typename... Args>
-	std::shared_ptr<T> CreateWithName(const std::string& name, Args&&... args)
-	{
-		auto model = std::make_shared<T>(std::forward<Args>(args)...);
-		Add(name, model);
-		return model;
-	}
-
-	template<typename T, typename... Args>
-	std::shared_ptr<T> Create(Args&&... args)
-	{
-		return CreateWithName<T, Args...>(typeid(T).name(), std::forward<Args>(args)...);
-	}
-
-	template<typename T>
-	void Add(const std::string& name, std::shared_ptr<T> model)
+    template<typename T>
+    std::shared_ptr<T> Get()
     {
-		_models.emplace(name, model);
+        return Get<T>(typeid(T).name());
     }
 
-	template<typename T>
-	void Remove()
+    template<typename T, typename... Args>
+    std::shared_ptr<T> CreateWithName(const std::string& name, Args&&... args)
     {
-		Remove(typeid(T).name());
+        auto model = std::make_shared<T>(std::forward<Args>(args)...);
+        Add(name, model);
+        return model;
     }
 
-	void Remove(const std::string& name);
+    template<typename T, typename... Args>
+    std::shared_ptr<T> Create(Args&&... args)
+    {
+        return CreateWithName<T, Args...>(typeid(T).name(), std::forward<Args>(args)...);
+    }
+
+    template<typename T>
+    void Add(const std::string& name, std::shared_ptr<T> model)
+    {
+        _models.emplace(name, model);
+    }
+
+    template<typename T>
+    void Remove()
+    {
+        Remove(typeid(T).name());
+    }
+
+    void Remove(const std::string& name);
 
 private:
     using ModelPtr = std::shared_ptr<void>;

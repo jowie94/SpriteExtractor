@@ -1,62 +1,48 @@
 #include "SpriteSheet.hpp"
 
-Commands::Model::UpdateSpritesCommand::UpdateSpritesCommand(const std::vector<std::shared_ptr<Sprite>>& newValue)
-: EditModel(&SpriteSheet::_sprites, newValue)
-{
-}
-
-void Commands::Model::UpdateSpritesCommand::redo()
-{
-    EditModel::redo();
-
-    _model->_selectedSpriteIdx = -1;
-}
-
-void Commands::Model::UpdateSpritesCommand::undo()
-{
-    EditModel:undo();
-
-    _model->_selectedSpriteIdx = -1;
-}
-
-Commands::Model::UpdateAlphaColorCommand::UpdateAlphaColorCommand(const Color& newValue)
-: EditModel(&SpriteSheet::_alphaColor, newValue)
-{
-}
-
-Commands::Model::UpdateSelectedSpriteCommand::UpdateSelectedSpriteCommand(int spriteIdx)
-: EditModel(&SpriteSheet::_selectedSpriteIdx, spriteIdx)
-{
-
-}
-
-SpriteSheet::SpriteSheet(std::shared_ptr<IImage> image, const std::string& imageName)
-: _image(std::move(image))
-, _imageName(imageName)
-{
-}
+#include <algorithm>
 
 std::weak_ptr<const IImage> SpriteSheet::GetImage() const
 {
-	return _image;
+    return _image;
 }
 
 const std::string& SpriteSheet::GetImageName() const
 {
-	return _imageName;
+    return _imageName;
 }
 
 std::weak_ptr<const Sprite> SpriteSheet::GetSelectedSprite() const
 {
-	return _selectedSpriteIdx >= 0 ? _sprites.at(_selectedSpriteIdx) : nullptr;
+    return _selectedSpriteIdx >= 0 ? _sprites.at(_selectedSpriteIdx) : nullptr;
 }
 
 const std::vector<std::shared_ptr<Sprite>>& SpriteSheet::GetSprites() const
 {
-	return _sprites;
+    return _sprites;
 }
 
 const Color& SpriteSheet::GetAlphaColor() const
 {
-	return _alphaColor;
+    return _alphaColor;
+}
+
+std::shared_ptr<Sprite> SpriteSheet::operator[](const std::string& spriteName)
+{
+    auto it = std::find_if(_sprites.begin(), _sprites.end(), [&spriteName](const std::shared_ptr<Sprite>& sprite)
+    {
+        return sprite->Name == spriteName;
+    });
+
+    return it == _sprites.end() ? nullptr : *it;
+}
+
+std::shared_ptr<const Sprite> SpriteSheet::operator[](const std::string& spriteName) const
+{
+    auto it = std::find_if(_sprites.begin(), _sprites.end(), [&spriteName](const std::shared_ptr<Sprite>& sprite)
+        {
+            return sprite->Name == spriteName;
+        });
+
+    return it == _sprites.end() ? nullptr : *it;
 }

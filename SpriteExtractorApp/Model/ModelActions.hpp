@@ -61,7 +61,7 @@ namespace Commands
         {
         public:
             EditMapModel(FieldType Model::* fieldPtr, FieldType newValue, const std::string& key, const std::string& modelName = "")
-            : EditModel(fieldPtr, newValue, ::Model::Policy::MapPolicy<Container, Model>(key, modelName))
+            : EditModel<Model, FieldType, ::Model::Policy::MapPolicy<Container, Model>>(fieldPtr, newValue, ::Model::Policy::MapPolicy<Container, Model>(key, modelName))
             {}
         };
     }

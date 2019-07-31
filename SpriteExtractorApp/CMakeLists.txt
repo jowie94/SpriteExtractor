@@ -49,3 +49,6 @@ target_include_directories(SpriteExtractor PRIVATE ${OPENGL_INCLUDE_DIRS} ${Boos
 target_link_libraries(SpriteExtractor ${OPENGL_LIBRARIES} ${Boost_LIBRARIES})
 
 target_link_libraries(SpriteExtractor SpriteExtractorLib)
+
+include(LinkResources)
+folder_symlink(SpriteExtractor "resources")

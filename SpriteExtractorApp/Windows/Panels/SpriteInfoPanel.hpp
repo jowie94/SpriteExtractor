@@ -28,6 +28,9 @@ protected:
     void Draw() override;
 
 private:
+    template<typename T>
+    struct ChangeState;
+
     void SetupSpriteSheet();
 
     void DrawSprite(const BBox& spriteRect);
@@ -35,8 +38,8 @@ private:
     std::shared_ptr<const SpriteSheet> _spriteSheet;
     std::unique_ptr<ITextureResource> _texture;
 
-    std::string _currentSpriteName;
-    std::string _tmpSpriteName;
+    std::unique_ptr<ChangeState<std::string>> _spriteName;
+    bool _validationError = false;
 
     MessageBroker::SubscriptionId _openImageSubscription = -1;
 };

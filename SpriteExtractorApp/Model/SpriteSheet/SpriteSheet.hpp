@@ -23,6 +23,8 @@ public:
     const std::vector<std::shared_ptr<Sprite>>& GetSprites() const;
     const Color& GetAlphaColor() const;
 
+    bool HasSprite(const std::string& spriteName) const;
+
     std::shared_ptr<Sprite> operator[](const std::string& spriteName);
     std::shared_ptr<const Sprite> operator[](const std::string& spriteName) const;
 

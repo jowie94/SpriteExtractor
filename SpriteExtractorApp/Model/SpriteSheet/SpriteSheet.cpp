@@ -27,6 +27,11 @@ const Color& SpriteSheet::GetAlphaColor() const
     return _alphaColor;
 }
 
+bool SpriteSheet::HasSprite(const std::string& spriteName) const
+{
+    return operator[](spriteName) != nullptr;
+}
+
 std::shared_ptr<Sprite> SpriteSheet::operator[](const std::string& spriteName)
 {
     auto it = std::find_if(_sprites.begin(), _sprites.end(), [&spriteName](const std::shared_ptr<Sprite>& sprite)

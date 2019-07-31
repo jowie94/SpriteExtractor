@@ -17,8 +17,32 @@ namespace SpriteInfoPanelConst
     std::shared_ptr<const Sprite> kEmptySprite = std::make_shared<Sprite>();
 }
 
+template<typename T>
+struct SpriteInfoPanel::ChangeState
+{
+    T Current;
+    T Edited;
+    T Committed;
+
+    void Initialize(const T& value)
+    {
+        Current = Edited = Committed = value;
+    }
+
+    void Commit()
+    {
+        Committed = Edited;
+    }
+
+    void Confirm()
+    {
+        Current = Edited = Committed;
+    }
+};
+
 SpriteInfoPanel::SpriteInfoPanel()
 : PanelWindow("Sprite Info", ImVec2(100.0f, 300.0f))
+, _spriteName(new ChangeState<std::string>)
 {
 }
 
@@ -56,10 +80,10 @@ void SpriteInfoPanel::Draw()
 
         DrawSprite(sprite->BoundingBox);
 
-        if (_currentSpriteName != sprite->Name)
+        if (_spriteName->Current != sprite->Name)
         {
-            _currentSpriteName = sprite->Name;
-            _tmpSpriteName = sprite->Name;
+            _spriteName->Initialize(sprite->Name);
+            _validationError = false;
         }
 
         ImGuiInputTextFlags inputFlags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_AutoSelectAll;
@@ -73,11 +97,24 @@ void SpriteInfoPanel::Draw()
         ImGui::Text("Sprite Name");
         ImGui::SameLine();
 
-        if (ImGui::InputTextWithHint("##SpriteName", "Name", _tmpSpriteName, inputFlags) && !_tmpSpriteName.empty())
+        if (ImGui::InputTextWithHint("##SpriteName", "Name", _spriteName->Edited, inputFlags) && !_spriteName->Edited.empty())
         {
-            // TODO: Validate
-            Logger::GetLogger("Info Panel")->debug("New name: {} -> {}", _currentSpriteName, _tmpSpriteName);
-            MessageBroker::GetInstance().Broadcast(Commands::PushCommandMessage(std::make_shared<Commands::Model::EditSpriteName>(_currentSpriteName, _tmpSpriteName)));
+            _spriteName->Commit();
+            _validationError = ModelManager::GetInstance().Get<SpriteSheet>()->HasSprite(_spriteName->Committed);
+
+            if (!_validationError)
+            {
+                Logger::GetLogger("Info Panel")->debug("New name: {} -> {}", _spriteName->Current, _spriteName->Committed);
+                MessageBroker::GetInstance().Broadcast(Commands::PushCommandMessage::Create<Commands::Model::EditSpriteName>(_spriteName->Current, _spriteName->Committed));
+                _spriteName->Confirm();
+            }
+        }
+
+        if (ImGui::IsItemHovered() && _validationError && _spriteName->Committed != _spriteName->Current)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, static_cast<ImVec4>(ImColor(255, 0, 0)));
+            ImGui::SetTooltip("Name %s is used by another sprite", _spriteName->Committed.c_str());
+            ImGui::PopStyleColor();
         }
     }
     else
@@ -94,6 +131,7 @@ void SpriteInfoPanel::SetupSpriteSheet()
     {
         _texture = image->GetTextureResource();
     }
+    _validationError = false;
 }
 
 void SpriteInfoPanel::DrawSprite(const BBox& spriteRect)

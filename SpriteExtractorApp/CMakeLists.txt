@@ -10,6 +10,7 @@ add_subdirectory(Windows)
 add_subdirectory(Logger)
 add_subdirectory(Model)
 add_subdirectory(CommandQueue)
+add_subdirectory(Services)
 
 if(APPLE)
     set(BUILD_SHARED_LIBS TRUE)

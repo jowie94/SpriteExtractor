@@ -1,0 +1,3 @@
+set(ASSET_MANAGER_SOURCES ${ASSET_MANAGER_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/AssetManager.cpp")
+
+target_sources(SpriteExtractor PRIVATE ${ASSET_MANAGER_SOURCES})

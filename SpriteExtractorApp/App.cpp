@@ -21,6 +21,9 @@
 #include "Model/ModelManager.hpp"
 #include "Model/SpriteSheet/SpriteSheet.hpp"
 #include "Model/SpriteSheet/SpriteSheetActions.hpp"
+#include "Services/Services.hpp"
+#include "Services/AssetManager/AssetManager.hpp"
+#include "AssetTypes/FontAsset.hpp"
 
 namespace AppConst
 {
@@ -103,6 +106,14 @@ void App::Init()
     broker.Subscribe<MainWindowActions::SelectFile>(selectFileCB);
 
     broker.Subscribe<MainWindowActions::CancelSearch>(std::bind(&App::OnCancelSearch, this, std::placeholders::_1));
+
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.IniFilename = nullptr;
+
+    AssetPtr<FontAsset> noto = Services::GetInstance().Get<AssetManager>()->GetAsset<FontAsset>("resources/noto-sans-bold.ttf");
+    noto->SetFontSize(18.0f);
+    io.FontDefault = noto->GetFont();
 }
 
 void App::Loop()

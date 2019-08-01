@@ -10,6 +10,8 @@
 #include "imgui-sfml/imgui-SFML.h"
 
 #include "Logger/Logger.hpp"
+#include "Services/Services.hpp"
+#include "Services/AssetManager/AssetManager.hpp"
 
 template<typename Mutex>
 class ConsoleSink : public spdlog::sinks::base_sink<Mutex>
@@ -90,10 +92,11 @@ namespace ConsolePanelConst
 
 ConsolePanel::ConsolePanel()
 : PanelWindow("Console", ImVec2(300.0f, 100.0f), ImGuiWindowFlags_HorizontalScrollbar)
-, _font(ImGui::GetIO().Fonts->AddFontFromFileTTF("resources/noto-mono.ttf", 16.0f))
 {
     // TODO: Improve
-    ImGui::SFML::UpdateFontTexture();
+    _font = Services::GetInstance().Get<AssetManager>()->GetAsset<FontAsset>("resources/noto-mono.ttf");
+    _font->SetFontSize(16.0f);
+
     SetClosePolicy(PanelWindow::ClosePolicy::Close);
 }
 
@@ -101,7 +104,7 @@ void ConsolePanel::Draw()
 {
     PanelWindow::Draw();
 
-    ImGui::PushFont(_font);
+    ImGui::PushFont(_font->GetFont());
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(4,1));
     ConsoleSinkPtr::MessageList messages = autoRegisterSink.GetSink()->GetMessageList();
     for (const auto& msg : messages)

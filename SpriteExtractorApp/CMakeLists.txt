@@ -11,6 +11,7 @@ add_subdirectory(Logger)
 add_subdirectory(Model)
 add_subdirectory(CommandQueue)
 add_subdirectory(Services)
+add_subdirectory(AssetTypes)
 
 if(APPLE)
     set(BUILD_SHARED_LIBS TRUE)

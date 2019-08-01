@@ -27,17 +27,9 @@ void SFMLApp::Run()
 
     ImGui::SFML::Init(window);
 
-    ImGuiIO& io = ImGui::GetIO();
-    io.DisplayFramebufferScale = ImVec2(scale, scale);
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.IniFilename = nullptr;
+    ImGui::GetIO().DisplayFramebufferScale = ImVec2(scale, scale);
 
-    ImFont* noto = io.Fonts->AddFontFromFileTTF("resources/noto-sans-bold.ttf", 18.0f);
-    ImGui::SFML::UpdateFontTexture();
-
-    io.FontDefault = noto;
-
-	Init();
+    Init();
 
     Logger::GetLogger("SFML")->info("Beginning App Loop");
     sf::Clock deltaClock;

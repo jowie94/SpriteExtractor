@@ -1,0 +1,3 @@
+set(SCHEDULER_SOURCES ${SCHEDULER_SOURCES} "${CMAKE_CURRENT_LIST_DIR}/Scheduler.cpp")
+
+target_sources(SpriteExtractor PRIVATE ${SCHEDULER_SOURCES})

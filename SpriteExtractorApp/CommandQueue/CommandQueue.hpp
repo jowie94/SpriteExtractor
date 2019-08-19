@@ -9,19 +9,19 @@
 class CommandQueue
 {
 public:
-	CommandQueue();
-	~CommandQueue();
-
-	void Undo();
-	void Clear();
-
-	void Update();
+    CommandQueue();
+    ~CommandQueue();
+    
+    void Undo();
+    void Clear();
 
 private:
-	void OnPushCommand(const Commands::PushCommandMessage& command);
+    void OnPushCommand(const Commands::PushCommandMessage& command);
 
-	std::vector<std::shared_ptr<Commands::ICommand>> _commandsPending;
-	std::vector<std::shared_ptr<Commands::ICommand>> _commandList;
+    void Update();
 
-	MessageBroker::SubscriptionId _pushSubscription;
+    std::vector<std::shared_ptr<Commands::ICommand>> _commandsPending;
+    std::vector<std::shared_ptr<Commands::ICommand>> _commandList;
+
+    MessageBroker::SubscriptionId _pushSubscription;
 };

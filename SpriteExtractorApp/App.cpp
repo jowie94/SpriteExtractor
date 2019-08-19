@@ -21,8 +21,11 @@
 #include "Model/ModelManager.hpp"
 #include "Model/SpriteSheet/SpriteSheet.hpp"
 #include "Model/SpriteSheet/SpriteSheetActions.hpp"
+
 #include "Services/Services.hpp"
 #include "Services/AssetManager/AssetManager.hpp"
+#include "Services/Scheduler/Scheduler.hpp"
+
 #include "AssetTypes/FontAsset.hpp"
 
 namespace AppConst
@@ -128,7 +131,7 @@ void App::Loop()
         MessageBroker::GetInstance().Broadcast(progressUpdate);
     }
 
-    _commandQueue.Update();
+    Services::GetInstance().Get<Scheduler>()->Update();
 
     _mainWindow->DoDraw();
     //ImGui::ShowTestWindow();

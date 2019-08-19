@@ -89,6 +89,9 @@ App::~App() = default;
 void App::Init()
 {
     Logger::GetLogger("App")->info("Initializing App");
+
+    Services::GetInstance().InitServices();
+
     _mainWindow = std::make_unique<MainWindow>();
     _mainWindow->Init();
 

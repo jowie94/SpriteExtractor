@@ -9,7 +9,17 @@ Services& Services::GetInstance()
     return services;
 }
 
-void Services::AddService(const std::string& name, MapPtr&& ptr)
+void Services::InitServices()
+{
+    for (const auto& service : _servicesToInit)
+    {
+        service();
+    }
+
+    _servicesToInit.clear();
+}
+
+void Services::AddService(const std::string& name, MapPtr ptr)
 {
     _services.emplace(name, std::move(ptr));
 }

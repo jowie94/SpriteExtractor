@@ -7,4 +7,4 @@ class SFMLImGuiManager : public ImGuiManager
     
 };
 
-REGISTER_SERVICE(SFMLImGuiManager, ImGuiManager);
+REGISTER_SERVICE_INTERFACE(SFMLImGuiManager, ImGuiManager);

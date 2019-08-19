@@ -1,7 +1,9 @@
 #pragma once
 
+#include <string>
 #include <unordered_map>
 #include <functional>
+#include <vector>
 
 #include "Services.fwd.hpp"
 
@@ -60,7 +62,10 @@ private:
     std::vector<std::function<void()>> _servicesToInit;
 };
 
-#define REGISTER_SERVICE(Service, ...) \
+#define REGISTER_SERVICE(Service) \
+    ServiceRegisterer<Service> __g_##Service
+
+#define REGISTER_SERVICE_INTERFACE(Service, ...) \
     ServiceRegisterer<Service, __VA_ARGS__> __g_##Service
 
 template<typename T, typename... Interfaces>

@@ -90,7 +90,9 @@ void App::Init()
 {
     Logger::GetLogger("App")->info("Initializing App");
 
-    Services::GetInstance().InitServices();
+    Services& services = Services::GetInstance();
+
+    services.InitServices();
 
     _mainWindow = std::make_unique<MainWindow>();
     _mainWindow->Init();
@@ -117,9 +119,11 @@ void App::Init()
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.IniFilename = nullptr;
 
-    AssetPtr<FontAsset> noto = Services::GetInstance().Get<AssetManager>()->GetAsset<FontAsset>("resources/noto-sans-bold.ttf");
+    AssetPtr<FontAsset> noto = services.Get<AssetManager>()->GetAsset<FontAsset>("resources/noto-sans-bold.ttf");
     noto->SetFontSize(18.0f);
     io.FontDefault = noto->GetFont();
+
+    _scheduler = services.Get<Scheduler>();
 }
 
 void App::Loop()
@@ -134,7 +138,7 @@ void App::Loop()
         MessageBroker::GetInstance().Broadcast(progressUpdate);
     }
 
-    Services::GetInstance().Get<Scheduler>()->Update();
+    _scheduler->Update();
 
     _mainWindow->DoDraw();
     //ImGui::ShowTestWindow();

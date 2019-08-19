@@ -30,7 +30,7 @@ public:
     virtual void Run() = 0;
 
 protected:
-	void Init();
+    void Init();
     void Loop();
 
     virtual std::shared_ptr<IImage> OpenImage(const std::string& path) = 0;
@@ -43,11 +43,13 @@ private:
     void OnSpritesFound(const SpriteExtractor::SpriteList& foundSprites);
     void OnCancelSearch(const MainWindowActions::CancelSearch& cancelSearch);
 
-	std::shared_ptr<SpriteSheet> _currentSpriteSheet;
+    std::shared_ptr<SpriteSheet> _currentSpriteSheet;
 
     SpriteExtractor::Task _searchSpritesTask;
 
     std::unique_ptr<BaseWindow> _mainWindow;
 
-	CommandQueue _commandQueue;
+    std::shared_ptr<class Scheduler> _scheduler;
+
+    CommandQueue _commandQueue;
 };

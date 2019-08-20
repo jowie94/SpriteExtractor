@@ -29,6 +29,11 @@ if(WIN32)
   set_target_properties(SpriteExtractor PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 endif()
 
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    # Remove when fmt is updated
+    add_definitions(-D_SILENCE_CXX17_RESULT_OF_DEPRECATION_WARNING)
+endif()
+
 find_package(Freetype REQUIRED)
 
 find_package(SFML 2 REQUIRED COMPONENTS graphics window system)

@@ -114,6 +114,10 @@ void BaseMainWindow::SetupLayout()
         const char* panelName = panel.panel->GetName();
         switch (panel.initialPosition)
         {
+            case PanelWindow::Position::None:
+            {
+                break;
+            }
             case PanelWindow::Position::Right:
             {
                 ImGui::DockBuilderDockWindow(panelName, rightDockId);
@@ -137,6 +141,10 @@ void BaseMainWindow::SetupLayout()
             case PanelWindow::Position::Middle:
             {
                 ImGui::DockBuilderDockWindow(panelName, mainDock);
+                break;
+            }
+            default:
+            {
                 break;
             }
         }

@@ -8,7 +8,7 @@ class Scheduler
 public:
     using Callback = std::function<void()>;
 
-    void Schedule(void* ptr, Callback callback);
+    void Schedule(void* ptr, const Callback& callback);
     void Unschedule(void* ptr);
 
     void Update();

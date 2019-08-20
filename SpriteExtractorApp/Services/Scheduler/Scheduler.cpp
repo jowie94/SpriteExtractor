@@ -4,7 +4,7 @@
 
 REGISTER_SERVICE(Scheduler);
 
-void Scheduler::Schedule(void* ptr, Callback callback)
+void Scheduler::Schedule(void* ptr, const Callback& callback)
 {
     _schedules.emplace(ptr, callback);
 }

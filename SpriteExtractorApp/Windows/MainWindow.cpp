@@ -37,14 +37,14 @@ void MainWindow::Init()
 
     auto imageOpenedCallback = [this](const SpriteSearchMessages::SpriteSearchFinished&)
     {
-		if (auto panel = _infoPanel.lock())
-		{
-			panel->RequestFocus();
-		}
-		else
-		{
-			_infoPanel = AddPanel<SpriteInfoPanel>(PanelWindow::Position::Right);
-		}
+        if (auto panel = _infoPanel.lock())
+        {
+            panel->RequestFocus();
+        }
+        else
+        {
+            _infoPanel = AddPanel<SpriteInfoPanel>(PanelWindow::Position::Right);
+        }
     };
     broker.Subscribe<SpriteSearchMessages::SpriteSearchFinished>(imageOpenedCallback);
 }

@@ -54,6 +54,8 @@ void SFMLApp::Run()
         ImGui::SFML::Render(window);
         window.display();
     }
+
+    Shutdown();
 }
 
 template<typename T>

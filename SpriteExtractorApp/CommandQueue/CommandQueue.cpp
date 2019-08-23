@@ -14,7 +14,12 @@ CommandQueue::CommandQueue()
 CommandQueue::~CommandQueue()
 {
     MessageBroker::GetInstance().Unsubscribe<Commands::PushCommandMessage>(_pushSubscription);
-    Services::GetInstance().Get<Scheduler>()->Unschedule(this);
+
+    ServicePtr<Scheduler> scheduler = Services::GetInstance().Get<Scheduler>();
+    if (scheduler)
+    {
+        scheduler->Unschedule(this);
+    }
 }
 
 void CommandQueue::Undo()

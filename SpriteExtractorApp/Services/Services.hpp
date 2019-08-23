@@ -28,6 +28,7 @@ public:
     }
 
     void InitServices();
+    void ShutdownServices();
 
 private:
     using MapPtr = ServicePtr<void>;
@@ -43,6 +44,17 @@ private:
         _servicesToInit.emplace_back([service] { service->Init(); });
     }
 
+    template<typename T>
+    typename std::enable_if<!Traits::service_has_shutdown_v<T>, void>::type RegisterShutdown(ServicePtr<T> service)
+    {
+    }
+
+    template<typename T>
+    typename std::enable_if<Traits::service_has_shutdown_v<T>, void>::type RegisterShutdown(ServicePtr<T> service)
+    {
+        _servicesToShutdown.emplace_back([service] { service->Shutdown(); });
+    }
+
     template<int N, typename T, typename... Interfaces>
     void RegisterService(ServicePtr<void> service)
     {
@@ -56,10 +68,11 @@ private:
     }
 
     void AddService(const std::string& name, MapPtr ptr);
-    MapPtr FindService(const std::string& name);
+    MapPtr FindService(const std::string& name) const;
 
     std::unordered_map<std::string, MapPtr> _services;
     std::vector<std::function<void()>> _servicesToInit;
+    std::vector<std::function<void()>> _servicesToShutdown;
 };
 
 #define REGISTER_SERVICE(Service) \

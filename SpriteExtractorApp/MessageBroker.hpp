@@ -91,6 +91,11 @@ public:
         return instance;
     }
 
+    ~MessageBroker()
+    {
+        _messageCallbacks.clear();
+    }
+
     template<typename U, typename T>
     SubscriptionId Subscribe(const std::function<void(U::*)(const T&)>& function)
     {

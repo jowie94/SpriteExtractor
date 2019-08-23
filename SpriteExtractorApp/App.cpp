@@ -4,8 +4,6 @@
 #include <experimental/filesystem>
 #include <string_view>
 
-#include <ImGui/imgui.h>
-
 #include "Platform/GenericPlatform.h"
 #include "Serializers/Serializer.hpp"
 
@@ -25,6 +23,7 @@
 #include "Services/Services.hpp"
 #include "Services/AssetManager/AssetManager.hpp"
 #include "Services/Scheduler/Scheduler.hpp"
+#include "Services/ImGuiManager/ImGuiManager.hpp"
 
 #include "AssetTypes/FontAsset.hpp"
 
@@ -94,8 +93,7 @@ void App::Init()
 
     services.InitServices();
 
-    _mainWindow = std::make_unique<MainWindow>();
-    _mainWindow->Init();
+    services.Get<ImGuiManager>()->SetMainWindow<MainWindow>();
 
     MessageBroker& broker = MessageBroker::GetInstance();
 
@@ -139,9 +137,11 @@ void App::Loop()
     }
 
     _scheduler->Update();
+}
 
-    _mainWindow->DoDraw();
-    //ImGui::ShowTestWindow();
+void App::Shutdown()
+{
+    Services::GetInstance().ShutdownServices();
 }
 
 void App::OnSelectFile()

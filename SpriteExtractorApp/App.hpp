@@ -19,8 +19,6 @@ namespace MainWindowActions
     struct CancelSearch;
 }
 
-class BaseWindow;
-
 class App
 {
 public:
@@ -32,6 +30,7 @@ public:
 protected:
     void Init();
     void Loop();
+    void Shutdown();
 
     virtual std::shared_ptr<IImage> OpenImage(const std::string& path) = 0;
 
@@ -46,8 +45,6 @@ private:
     std::shared_ptr<SpriteSheet> _currentSpriteSheet;
 
     SpriteExtractor::Task _searchSpritesTask;
-
-    std::unique_ptr<BaseWindow> _mainWindow;
 
     std::shared_ptr<class Scheduler> _scheduler;
 

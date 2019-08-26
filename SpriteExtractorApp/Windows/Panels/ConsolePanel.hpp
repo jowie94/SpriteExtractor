@@ -2,7 +2,7 @@
 
 #include <UI/PanelWindow.hpp>
 
-#include "AssetTypes/FontAsset.hpp"
+#include "AssetTypes/ImFontAsset.hpp"
 
 class ConsolePanel : public PanelWindow
 {
@@ -12,6 +12,6 @@ public:
 private:
     void Draw() override;
 
-    AssetPtr<FontAsset> _font;
+    AssetPtr<ImFontAsset> _font;
     size_t _lastMessageCount = 0;
 };

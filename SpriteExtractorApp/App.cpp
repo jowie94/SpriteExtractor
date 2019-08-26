@@ -25,7 +25,7 @@
 #include "Services/Scheduler/Scheduler.hpp"
 #include "Services/ImGuiManager/ImGuiManager.hpp"
 
-#include "AssetTypes/FontAsset.hpp"
+#include "AssetTypes/ImFontAsset.hpp"
 
 namespace AppConst
 {
@@ -117,8 +117,7 @@ void App::Init()
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     io.IniFilename = nullptr;
 
-    AssetPtr<FontAsset> noto = services.Get<AssetManager>()->GetAsset<FontAsset>("resources/noto-sans-bold.ttf");
-    noto->SetFontSize(18.0f);
+    AssetPtr<ImFontAsset> noto = services.Get<AssetManager>()->GetAsset<ImFontAsset>("resources/noto-sans-bold.ttf,18");
     io.FontDefault = noto->GetFont();
 
     _scheduler = services.Get<Scheduler>();

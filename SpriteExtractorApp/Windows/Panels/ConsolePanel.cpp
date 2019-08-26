@@ -94,8 +94,7 @@ ConsolePanel::ConsolePanel()
 : PanelWindow("Console", ImVec2(300.0f, 100.0f), ImGuiWindowFlags_HorizontalScrollbar)
 {
     // TODO: Improve
-    _font = Services::GetInstance().Get<AssetManager>()->GetAsset<FontAsset>("resources/noto-mono.ttf");
-    _font->SetFontSize(16.0f);
+    _font = Services::GetInstance().Get<AssetManager>()->GetAsset<ImFontAsset>("resources/noto-mono.ttf,16");
 
     SetClosePolicy(PanelWindow::ClosePolicy::Close);
 }

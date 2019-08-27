@@ -19,6 +19,7 @@ public:
         RegisterService<0, T, Interfaces...>(service);
 
         RegisterInit(service);
+        RegisterShutdown(service);
     }
 
     template<typename T>

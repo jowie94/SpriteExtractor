@@ -12,6 +12,9 @@
 
 #include "Logger/Logger.hpp"
 
+#include "Services/Services.hpp"
+#include "Services/ImGuiManager/SFMLImGuiManager.hpp"
+
 void SFMLApp::Run()
 {
 #ifdef __APPLE__
@@ -22,37 +25,35 @@ void SFMLApp::Run()
 
     sf::ContextSettings settings;
     settings.antialiasingLevel = 5;
-    sf::RenderWindow window(sf::VideoMode(static_cast<unsigned int>(1366.0f * scale), static_cast<unsigned int>(768.0f * scale)), "Sprite Extractor",
-                            sf::Style::Default, settings);
+    std::shared_ptr<sf::RenderWindow> window = std::make_shared<sf::RenderWindow>(sf::VideoMode(static_cast<unsigned int>(1366.0f * scale), 
+        static_cast<unsigned int>(768.0f * scale)), "Sprite Extractor", sf::Style::Default, settings);
 
-    ImGui::SFML::Init(window);
-
-    ImGui::GetIO().DisplayFramebufferScale = ImVec2(scale, scale);
+    Services::GetInstance().Get<SFMLImGuiManager>()->SetWindow(window);
 
     Init();
 
+    ImGui::GetIO().DisplayFramebufferScale = ImVec2(scale, scale);
+
     Logger::GetLogger("SFML")->info("Beginning App Loop");
     sf::Clock deltaClock;
-    while (window.isOpen())
+    while (window->isOpen())
     {
         sf::Event event{};
-        while (window.pollEvent(event))
+        while (window->pollEvent(event))
         {
             ImGui::SFML::ProcessEvent(event);
 
             if (event.type == sf::Event::Closed)
             {
-                window.close();
+                window->close();
             }
         }
 
-        ImGui::SFML::Update(window, deltaClock.restart());
+        window->clear();
 
         Loop();
 
-        window.clear();
-        ImGui::SFML::Render(window);
-        window.display();
+        window->display();
     }
 
     Shutdown();

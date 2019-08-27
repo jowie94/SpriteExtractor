@@ -10,7 +10,7 @@ public:
     ImGuiManager();
     virtual ~ImGuiManager();
 
-    void Init();
+    virtual void Init();
     virtual void Update();
     void Shutdown();
 

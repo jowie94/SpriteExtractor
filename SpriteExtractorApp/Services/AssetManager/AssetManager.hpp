@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <memory>
 #include <string>
+#include <functional>
 
 #include "AssetLoader.hpp"
 
@@ -16,7 +17,8 @@ public:
 
         if (!asset)
         {
-            asset = GenericPtr(AssetLoader<Asset>::LoadAsset(assetName.c_str()));
+            std::function<void(Asset*)> deleter = std::bind(&AssetManager::DeleteAsset<Asset>, this, assetName, std::placeholders::_1);
+            asset = GenericPtr(AssetLoader<Asset>::LoadAsset(assetName.c_str()), deleter);
             _cache.emplace(assetName, asset);
         }
 
@@ -24,9 +26,17 @@ public:
     }
 
 private:
-    using GenericPtr = AssetPtr<void>;
+    using GenericWeakPtr = std::weak_ptr<void>;
+    using GenericPtr = std::shared_ptr<void>;
+
+    template<typename Asset>
+    void DeleteAsset(std::string name, Asset* ptr)
+    {
+        delete ptr;
+        _cache.erase(name);
+    }
 
     GenericPtr FindAsset(const std::string& assetName);
 
-    std::unordered_map<std::string, GenericPtr> _cache;
+    std::unordered_map<std::string, GenericWeakPtr> _cache;
 };

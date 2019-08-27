@@ -8,5 +8,5 @@ AssetManager::GenericPtr AssetManager::FindAsset(const std::string& assetName)
 {
     auto it = _cache.find(assetName);
 
-    return it != _cache.end() ? it->second : nullptr;
+    return it != _cache.end() ? it->second.lock() : nullptr;
 }

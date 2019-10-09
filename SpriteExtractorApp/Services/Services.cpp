@@ -2,6 +2,11 @@
 
 #include "Logger/Logger.hpp"
 
+namespace ServicesConst
+{
+    constexpr const std::hash<std::string_view> kServiceHash{};
+}
+
 Services& Services::GetInstance()
 {
     static Services services;
@@ -39,14 +44,14 @@ void Services::ShutdownServices()
     _services.clear();
 }
 
-void Services::AddService(const std::string& name, MapPtr ptr)
+void Services::AddService(const std::string_view name, MapPtr ptr)
 {
-    _services.emplace(name, std::move(ptr));
+    _services.emplace(ServicesConst::kServiceHash(name), std::move(ptr));
 }
 
-Services::MapPtr Services::FindService(const std::string& name) const
+Services::MapPtr Services::FindService(const std::string_view name) const
 {
-    auto it = _services.find(name);
+    auto it = _services.find(ServicesConst::kServiceHash(name));
 
     if (it != _services.end())
     {

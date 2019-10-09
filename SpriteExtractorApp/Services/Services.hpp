@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <string_view>
 #include <unordered_map>
 #include <functional>
 #include <vector>
@@ -68,10 +68,10 @@ private:
     {
     }
 
-    void AddService(const std::string& name, MapPtr ptr);
-    MapPtr FindService(const std::string& name) const;
+    void AddService(const std::string_view name, MapPtr ptr);
+    MapPtr FindService(const std::string_view name) const;
 
-    std::unordered_map<std::string, MapPtr> _services;
+    std::unordered_map<size_t, MapPtr> _services;
     std::vector<std::function<void()>> _servicesToInit;
     std::vector<std::function<void()>> _servicesToShutdown;
 };

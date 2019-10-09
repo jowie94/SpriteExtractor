@@ -1,7 +1,7 @@
 #include "App.hpp"
 
 #include <algorithm>
-#include <experimental/filesystem>
+#include <filesystem>
 #include <string_view>
 
 #include "Platform/GenericPlatform.h"
@@ -56,7 +56,7 @@ namespace AppConst
 
     std::string_view GetFile(std::string_view path)
     {
-        std::string_view::size_type pos = path.rfind(std::experimental::filesystem::path::preferred_separator);
+        std::string_view::size_type pos = path.rfind(std::filesystem::path::preferred_separator);
         pos = pos != std::string_view::npos ? pos + 1 : 0;
 
         return path.substr(pos);

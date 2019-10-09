@@ -6,9 +6,9 @@
 
 namespace Logger
 {
-	namespace detail
-	{
-	    static std::vector<spdlog::sink_ptr>& GetSinks()
+    namespace detail
+    {
+        static std::vector<spdlog::sink_ptr>& GetSinks()
         {
             static std::vector<spdlog::sink_ptr> sinks =
             {
@@ -22,49 +22,49 @@ namespace Logger
         }
 
 
-		LoggerPtr CreateLogger(const std::string& name)
-		{
-			LoggerPtr logger = std::make_shared<spdlog::logger>(name, spdlog::sinks_init_list());
+        LoggerPtr CreateLogger(const std::string& name)
+        {
+            LoggerPtr logger = std::make_shared<spdlog::logger>(name, spdlog::sinks_init_list());
 
-			std::vector<spdlog::sink_ptr>& sinks = logger->sinks();
+            std::vector<spdlog::sink_ptr>& sinks = logger->sinks();
             const std::vector<spdlog::sink_ptr>& registeredSinks = GetSinks();
-			sinks.reserve(registeredSinks.size());
-			sinks.insert(sinks.begin(), registeredSinks.begin(), registeredSinks.end());
+            sinks.reserve(registeredSinks.size());
+            sinks.insert(sinks.begin(), registeredSinks.begin(), registeredSinks.end());
 
-			spdlog::register_logger(logger);
+            spdlog::register_logger(logger);
 
             // TODO
             logger->set_level(spdlog::level::debug);
 
-			return logger;
-		}
+            return logger;
+        }
 
-		void AddSink(spdlog::sink_ptr sink)
-		{
-			GetSinks().push_back(sink);
+        void AddSink(spdlog::sink_ptr sink)
+        {
+            GetSinks().push_back(sink);
 
-			auto appendSink = [sink](std::shared_ptr<spdlog::logger> logger)
-			{
-				logger->sinks().emplace_back(sink);
-			};
-			spdlog::apply_all(appendSink);
-		}
-	}
+            auto appendSink = [sink](std::shared_ptr<spdlog::logger> logger)
+            {
+                logger->sinks().emplace_back(sink);
+            };
+            spdlog::apply_all(appendSink);
+        }
+    }
 }
 
 Logger::LoggerPtr Logger::GetLogger(const std::string& name)
 {
-	auto logger = spdlog::get(name);
+    auto logger = spdlog::get(name);
 
-	if (logger == nullptr)
-	{
-		logger = detail::CreateLogger(name);
-	}
+    if (logger == nullptr)
+    {
+        logger = detail::CreateLogger(name);
+    }
 
-	return logger;
+    return logger;
 }
 
 void Logger::RegisterSink(spdlog::sink_ptr sink)
 {
-	detail::AddSink(sink);
+    detail::AddSink(sink);
 }

@@ -34,12 +34,12 @@ private:
     bool BeginWidget() override final;
     void EndWidget(bool wasDrawn) override final;
 
-	void DrawPanels();
+    void DrawPanels();
 
     void SetupLayout();
 
     std::mutex _panelsMutex;
     std::vector<struct PanelContainer> _panels;
     PopupsController _popupsController;
-	ImGuiID _dockIds[static_cast<size_t>(PanelWindow::Position::_Size)];
+    ImGuiID _dockIds[static_cast<size_t>(PanelWindow::Position::_Size)];
 };

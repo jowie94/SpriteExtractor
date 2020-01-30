@@ -1,12 +1,14 @@
 #pragma once
 
 #include "Sprite.hpp"
+#include "Animation.hpp"
 
 namespace Commands {
     namespace Model {
         class UpdateSelectedSpriteCommand;
         class UpdateAlphaColorCommand;
         class UpdateSpritesCommand;
+        class CreateAnimationCommand;
     }
 }
 
@@ -25,6 +27,9 @@ public:
 
     bool HasSprite(const std::string& spriteName) const;
 
+	bool HasAnimation(const std::string& animationName) const;
+	std::shared_ptr<const Animation> GetAnimation(const std::string& animationName) const;
+
     std::shared_ptr<Sprite> operator[](const std::string& spriteName);
     std::shared_ptr<const Sprite> operator[](const std::string& spriteName) const;
 
@@ -32,6 +37,7 @@ private:
     friend class Commands::Model::UpdateSpritesCommand;
     friend class Commands::Model::UpdateAlphaColorCommand;
     friend class Commands::Model::UpdateSelectedSpriteCommand;
+    friend class Commands::Model::CreateAnimationCommand;
 
     std::shared_ptr<IImage> _image;
     std::string _imageName;
@@ -39,5 +45,6 @@ private:
     int _selectedSpriteIdx = -1;
 
     std::vector<std::shared_ptr<Sprite>> _sprites;
+    std::vector<std::shared_ptr<Animation>> _animations;
     Color _alphaColor;
 };

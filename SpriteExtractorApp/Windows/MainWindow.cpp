@@ -8,6 +8,7 @@
 #include "Windows/Panels/SpriteInfoPanel.hpp"
 
 #include "Windows/Popups/SearchingPopup.hpp"
+#include "Windows/Popups/NewAnimationPopup.hpp"
 
 #include "SpriteExtractor.h"
 
@@ -81,6 +82,7 @@ void MainWindow::DrawMenuBar()
     if (ImGui::BeginMenuBar())
     {
         DrawFileMenu();
+		DrawAnimationMenu();
         DrawDebugMenu();
         ImGui::EndMenuBar();
     }
@@ -97,6 +99,23 @@ void MainWindow::DrawFileMenu()
 
         ImGui::EndMenu();
     }
+}
+
+void MainWindow::DrawAnimationMenu()
+{
+	if (ImGui::BeginMenu("Animation"))
+	{
+		if (ImGui::MenuItem("New Animation", nullptr, false))
+		{
+			auto popup = std::make_shared<NewAnimationPopup>();
+			popup->Init();
+			GetPopupsController().ShowPopup(popup);
+
+			_newAnimationPopup = popup;
+		}
+
+		ImGui::EndMenu();
+	}
 }
 
 void MainWindow::DrawDebugMenu()

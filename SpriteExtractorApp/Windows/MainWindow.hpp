@@ -35,6 +35,7 @@ private:
     // Panels
     void DrawMenuBar();
     void DrawFileMenu();
+	void DrawAnimationMenu();
     void DrawDebugMenu();
 
     void OnSearchSprites(const RightPanelActions::SearchSprites& searchSprites);
@@ -43,4 +44,5 @@ private:
 
     std::weak_ptr<PanelWindow> _consolePanel;
     std::weak_ptr<PanelWindow> _infoPanel;
+	std::weak_ptr<PopupWindow> _newAnimationPopup;
 };

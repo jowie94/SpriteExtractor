@@ -6,37 +6,42 @@
 #include "SpriteSheet.hpp"
 
 Commands::Model::UpdateSpritesCommand::UpdateSpritesCommand(const std::vector<std::shared_ptr<Sprite>>& newValue)
-: EditModel(&SpriteSheet::_sprites, newValue)
+: EditModelField(&SpriteSheet::_sprites, newValue)
 {
 }
 
 void Commands::Model::UpdateSpritesCommand::redo()
 {
-    EditModel::redo();
+    EditModelField::redo();
 
     GetModel()->_selectedSpriteIdx = -1;
 }
 
 void Commands::Model::UpdateSpritesCommand::undo()
 {
-    EditModel::undo();
+    EditModelField::undo();
 
     GetModel()->_selectedSpriteIdx = -1;
 }
 
 Commands::Model::UpdateAlphaColorCommand::UpdateAlphaColorCommand(const Color& newValue)
-: EditModel(&SpriteSheet::_alphaColor, newValue)
+: EditModelField(&SpriteSheet::_alphaColor, newValue)
 {
 }
 
 Commands::Model::UpdateSelectedSpriteCommand::UpdateSelectedSpriteCommand(int spriteIdx)
-: EditModel(&SpriteSheet::_selectedSpriteIdx, spriteIdx)
+: EditModelField(&SpriteSheet::_selectedSpriteIdx, spriteIdx)
 {
 
 }
 
 Commands::Model::EditSpriteName::EditSpriteName(const std::string& spriteName, const std::string& newSpriteName)
 : EditMapModel(&Sprite::Name, newSpriteName, spriteName)
+{
+}
+
+Commands::Model::CreateAnimationCommand::CreateAnimationCommand(const std::string& animationName)
+: InsertElement(&SpriteSheet::_animations, std::make_shared<Animation>(Animation{animationName, {}}))
 {
 }
 

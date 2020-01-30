@@ -32,6 +32,21 @@ bool SpriteSheet::HasSprite(const std::string& spriteName) const
     return operator[](spriteName) != nullptr;
 }
 
+bool SpriteSheet::HasAnimation(const std::string& animationName) const
+{
+	return GetAnimation(animationName) != nullptr;
+}
+
+std::shared_ptr<const Animation> SpriteSheet::GetAnimation(const std::string& animationName) const
+{
+	auto it = std::find_if(_animations.begin(), _animations.end(), [&animationName](const std::shared_ptr<const Animation>& animation)
+	{
+		return animation->Name == animationName;
+	});
+
+	return it == _animations.end() ? nullptr : *it;
+}
+
 std::shared_ptr<Sprite> SpriteSheet::operator[](const std::string& spriteName)
 {
     auto it = std::find_if(_sprites.begin(), _sprites.end(), [&spriteName](const std::shared_ptr<Sprite>& sprite)

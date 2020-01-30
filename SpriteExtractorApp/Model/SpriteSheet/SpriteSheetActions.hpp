@@ -9,7 +9,7 @@ namespace Commands
 {
     namespace Model
     {
-        class UpdateSpritesCommand : public EditModel<SpriteSheet, std::vector<std::shared_ptr<Sprite>>>
+        class UpdateSpritesCommand : public EditModelField<SpriteSheet, std::vector<std::shared_ptr<Sprite>>>
         {
         public:
             UpdateSpritesCommand(const std::vector<std::shared_ptr<Sprite>>& newValue);
@@ -19,13 +19,13 @@ namespace Commands
             void undo() override;
         };
 
-        class UpdateAlphaColorCommand : public EditModel<SpriteSheet, Color>
+        class UpdateAlphaColorCommand : public EditModelField<SpriteSheet, Color>
         {
         public:
             UpdateAlphaColorCommand(const Color& newValue);
         };
 
-        class UpdateSelectedSpriteCommand : public EditModel<SpriteSheet, int>
+        class UpdateSelectedSpriteCommand : public EditModelField<SpriteSheet, int>
         {
         public:
             UpdateSelectedSpriteCommand(int spriteIdx);
@@ -36,5 +36,11 @@ namespace Commands
         public:
             EditSpriteName(const std::string& spriteName, const std::string& newSpriteName);
         };
+
+    	class CreateAnimationCommand : public InsertElement<SpriteSheet, std::shared_ptr<Animation>>
+    	{
+    	public:
+			CreateAnimationCommand(const std::string& animationName);
+    	};
     }
 }

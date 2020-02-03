@@ -35,12 +35,16 @@ namespace Commands
         {
         public:
             EditSpriteName(const std::string& spriteName, const std::string& newSpriteName);
+
+        private:
+            void redo() override;
+            void undo() override;
         };
 
-    	class CreateAnimationCommand : public InsertElement<SpriteSheet, std::shared_ptr<Animation>>
-    	{
-    	public:
-			CreateAnimationCommand(const std::string& animationName);
-    	};
+        /*class CreateAnimationCommand : public InsertElement<SpriteSheet, std::shared_ptr<Animation>>
+        {
+        public:
+            CreateAnimationCommand(const std::string& animationName);
+        };*/
     }
 }

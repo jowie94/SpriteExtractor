@@ -15,6 +15,7 @@ void Commands::Model::UpdateSpritesCommand::redo()
     EditModelField::redo();
 
     GetModel()->_selectedSpriteIdx = -1;
+    GetModel()->GenerateAnimationsCache();
 }
 
 void Commands::Model::UpdateSpritesCommand::undo()
@@ -22,6 +23,7 @@ void Commands::Model::UpdateSpritesCommand::undo()
     EditModelField::undo();
 
     GetModel()->_selectedSpriteIdx = -1;
+    GetModel()->GenerateAnimationsCache();
 }
 
 Commands::Model::UpdateAlphaColorCommand::UpdateAlphaColorCommand(const Color& newValue)
@@ -40,10 +42,24 @@ Commands::Model::EditSpriteName::EditSpriteName(const std::string& spriteName, c
 {
 }
 
-Commands::Model::CreateAnimationCommand::CreateAnimationCommand(const std::string& animationName)
-: InsertElement(&SpriteSheet::_animations, std::make_shared<Animation>(Animation{animationName, {}}))
+void Commands::Model::EditSpriteName::redo()
 {
+    EditMapModel::redo();
+
+    GetContainerModel()->GenerateAnimationsCache();
 }
+
+void Commands::Model::EditSpriteName::undo()
+{
+    EditMapModel::undo();
+
+    GetContainerModel()->GenerateAnimationsCache();
+}
+
+//Commands::Model::CreateAnimationCommand::CreateAnimationCommand(const std::string& animationName)
+//: (&SpriteSheet::_animations, std::make_shared<Animation>(Animation{animationName, {}}))
+//{
+//}
 
 SpriteSheet::SpriteSheet(std::shared_ptr<IImage> image, const std::string& imageName)
     : _image(std::move(image))

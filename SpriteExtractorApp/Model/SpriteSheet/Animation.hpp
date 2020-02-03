@@ -1,10 +1,10 @@
 #pragma once
 
-#include <string>
+#include <string_view>
 #include <vector>
 
 struct Animation
 {
-	std::string Name;
-	std::vector<int> SpriteIds;
+    std::string_view Name;
+    std::vector<int> SpriteIds;
 };

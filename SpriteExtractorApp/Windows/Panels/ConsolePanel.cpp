@@ -33,8 +33,8 @@ public:
 protected:
     void sink_it_(const spdlog::details::log_msg& msg) override
     {
-        fmt::memory_buffer formatted;
-        spdlog::sinks::sink::formatter_->format(msg, formatted);
+        spdlog::memory_buf_t formatted;
+        this->formatter_->format(msg, formatted);
 
         Log log = {msg.level, fmt::to_string(formatted)};
         _messageList.emplace_back(std::move(log));

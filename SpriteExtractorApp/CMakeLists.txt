@@ -36,7 +36,7 @@ endif()
 
 find_package(Freetype REQUIRED)
 
-find_package(SFML 2 REQUIRED COMPONENTS graphics window system)
+find_package(SFML 2.5 REQUIRED COMPONENTS graphics window system)
 if(SFML_FOUND)
     target_link_libraries(SpriteExtractor sfml-graphics sfml-window sfml-system)
 endif()
@@ -46,10 +46,9 @@ target_link_libraries(SpriteExtractor UIFramework)
 
 find_package(OpenGL REQUIRED)
 
-find_package(Boost 1.70 REQUIRED)
+find_package(Boost 1.72 REQUIRED)
 
-add_definitions(-DFMT_HEADER_ONLY)
-find_package(spdlog REQUIRED)
+find_package(spdlog 1.4.2 REQUIRED)
 target_link_libraries(SpriteExtractor spdlog::spdlog)
 
 target_include_directories(SpriteExtractor PRIVATE ${OPENGL_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})

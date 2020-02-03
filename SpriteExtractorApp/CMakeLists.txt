@@ -46,7 +46,7 @@ target_link_libraries(SpriteExtractor UIFramework)
 
 find_package(OpenGL REQUIRED)
 
-find_package(Boost REQUIRED)
+find_package(Boost 1.70 REQUIRED)
 
 add_definitions(-DFMT_HEADER_ONLY)
 find_package(spdlog REQUIRED)

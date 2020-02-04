@@ -5,6 +5,6 @@
 
 struct Animation
 {
-    std::string_view Name;
+    std::string Name;
     std::vector<int> SpriteIds;
 };

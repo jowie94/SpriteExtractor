@@ -41,6 +41,7 @@ private:
     friend class Commands::Model::UpdateAlphaColorCommand;
     friend class Commands::Model::UpdateSelectedSpriteCommand;
     friend class Commands::Model::EditSpriteName;
+    friend class Commands::Model::CreateAnimationCommand;
 
     void GenerateAnimationsCache();
 

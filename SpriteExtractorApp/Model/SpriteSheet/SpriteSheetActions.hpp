@@ -34,17 +34,23 @@ namespace Commands
         class EditSpriteName : public EditMapModel<SpriteSheet, Sprite, std::string>
         {
         public:
-            EditSpriteName(const std::string& spriteName, const std::string& newSpriteName);
+            EditSpriteName(const std::string& spriteName, const std::string& newSpriteName, bool updateAnimations = true);
 
         private:
             void redo() override;
             void undo() override;
+
+            bool _updateAnimations;
         };
 
-        /*class CreateAnimationCommand : public InsertElement<SpriteSheet, std::shared_ptr<Animation>>
+        class CreateAnimationCommand : public NestedCommand
         {
         public:
-            CreateAnimationCommand(const std::string& animationName);
-        };*/
+            CreateAnimationCommand(const std::string& animationName, std::vector<std::string> sprites);
+
+        private:
+        	void redo() override;
+        	void undo() override;
+        };
     }
 }

@@ -13,6 +13,38 @@ namespace Commands
         virtual void undo() = 0;
     };
 
+	class NestedCommand : public ICommand
+	{
+	public:
+		NestedCommand()
+        {}
+
+		template<typename Command, typename... Args>
+		void AddCommand(Args&&... args)
+		{
+			_commands.emplace_back(std::make_unique<Command>(std::forward<Args>(args)...));
+		}
+		
+		void redo() override
+		{
+			for (auto& command : _commands)
+			{
+	            command->redo();
+			}
+		}
+
+		void undo() override
+		{
+			for (auto it = _commands.rbegin(); it != _commands.rend(); ++it)
+			{
+	            (*it)->undo();
+			}
+		}
+
+	private:
+        std::vector<std::unique_ptr<ICommand>> _commands;
+	};
+
     struct PushCommandMessage
     {
         PushCommandMessage(const std::shared_ptr<ICommand> command_)

@@ -48,8 +48,8 @@ find_package(OpenGL REQUIRED)
 
 find_package(Boost 1.72 REQUIRED)
 
+add_definitions(-DFMT_HEADER_ONLY)
 find_package(spdlog 1.4.2 REQUIRED)
-target_link_libraries(SpriteExtractor spdlog::spdlog)
 
 target_include_directories(SpriteExtractor PRIVATE ${OPENGL_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 target_link_libraries(SpriteExtractor ${OPENGL_LIBRARIES} ${Boost_LIBRARIES})

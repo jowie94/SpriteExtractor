@@ -136,35 +136,5 @@ void SpriteInfoPanel::SetupSpriteSheet()
 
 void SpriteInfoPanel::DrawSprite(const BBox& spriteRect)
 {
-    if (ImGui::BeginChild("Sprite View", ImVec2(0, 300), true))
-    {
-        auto image = _spriteSheet->GetImage().lock();
-        if (_texture && image)
-        {
-            ImageSize imageSize = image->Size();
-            ImVec2 origin = ImVec2(static_cast<float>(spriteRect.X) / imageSize.X, static_cast<float>(spriteRect.Y) / imageSize.Y);
-            ImVec2 end = ImVec2(static_cast<float>(spriteRect.X + spriteRect.Width + 1) / imageSize.X, static_cast<float>(spriteRect.Y + spriteRect.Height + 1) / imageSize.Y);
-
-            float ratio = static_cast<float>(spriteRect.Height) / spriteRect.Width;
-            ImVec2 imageWindowSize;
-
-            float maxWidth = ImGui::GetWindowContentRegionWidth();
-            float maxHeight = ImGui::GetWindowContentRegionMax().y - ImGui::GetWindowContentRegionMin().y;
-
-            imageWindowSize.x = std::min(maxHeight / ratio, maxWidth);
-            imageWindowSize.y = std::min(maxWidth * ratio, maxHeight);
-
-            ImVec2 windowSize = ImGui::GetWindowSize();
-            float leftSpace = (windowSize.x - imageWindowSize.x) * 0.5f;
-            float topSpace = (windowSize.y - imageWindowSize.y) * 0.5f;
-            ImGui::SetCursorPos(ImVec2(leftSpace, topSpace));
-
-            ImGui::Image(*_texture, imageWindowSize, origin, end);
-        }
-        else
-        {
-            ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 0.0f), "Error loading texture");
-        }
-    }
-    ImGui::EndChild();
+    ImGui::SpriteFrame("Sprite View", _texture, spriteRect, ImVec2(0, 300), true);
 }

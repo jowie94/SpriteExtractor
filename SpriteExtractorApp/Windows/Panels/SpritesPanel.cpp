@@ -83,6 +83,10 @@ void SpritesPanel::OnImageOpened(const GenericActions::ImageOpened& openedImage)
     if (auto image = _spriteSheet->GetImage().lock())
     {
         _imageScale = SpritesPanelConst::CalculateImageScale(*image, _imageWindowSize);
+    	if (_imageScale == 0.0f)
+    	{
+            _imageScale = 1.0f;
+    	}
         _textureResource = image->GetTextureResource();
     }
 }

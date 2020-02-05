@@ -136,6 +136,23 @@ void App::Loop()
     }
 
     _scheduler->Update();
+
+    static bool firstRun = true; // TODO: Debug
+	if (firstRun)
+	{
+        std::shared_ptr<IImage> openedImage = OpenImage("resources/test.png");
+
+        if (openedImage)
+        {
+            _currentSpriteSheet = ModelManager::GetInstance().Create<SpriteSheet>(openedImage, "test");
+            _commandQueue.Clear();
+
+            MessageBroker::GetInstance().Broadcast(GenericActions::ImageOpened());
+            MessageBroker::GetInstance().Broadcast(GenericActions::ColorPicked{ Color(128, 0, 255) });
+        }
+
+        firstRun = false;
+	}
 }
 
 void App::Shutdown()

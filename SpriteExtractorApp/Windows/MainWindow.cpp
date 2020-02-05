@@ -82,7 +82,7 @@ void MainWindow::DrawMenuBar()
     if (ImGui::BeginMenuBar())
     {
         DrawFileMenu();
-		DrawAnimationMenu();
+        DrawAnimationMenu();
         DrawDebugMenu();
         ImGui::EndMenuBar();
     }
@@ -103,19 +103,19 @@ void MainWindow::DrawFileMenu()
 
 void MainWindow::DrawAnimationMenu()
 {
-	if (ImGui::BeginMenu("Animation"))
-	{
-		if (ImGui::MenuItem("New Animation", nullptr, false))
-		{
-			auto popup = std::make_shared<NewAnimationPopup>();
-			popup->Init();
-			GetPopupsController().ShowPopup(popup);
+    if (ImGui::BeginMenu("Animation"))
+    {
+        if (ImGui::MenuItem("New Animation", nullptr, false))
+        {
+            auto popup = std::make_shared<NewAnimationPopup>();
+            popup->Init();
+            GetPopupsController().ShowPopup(popup);
 
-			_newAnimationPopup = popup;
-		}
+            _newAnimationPopup = popup;
+        }
 
-		ImGui::EndMenu();
-	}
+        ImGui::EndMenu();
+    }
 }
 
 void MainWindow::DrawDebugMenu()

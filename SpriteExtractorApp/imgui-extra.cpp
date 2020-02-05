@@ -1,5 +1,9 @@
 #include "imgui-extra.hpp"
+
+#include <algorithm>
+
 #include <ImGui/imgui.h>
+
 #include "Types.hpp"
 
 namespace ImGui
@@ -42,9 +46,53 @@ void ImGui::Image(const ITextureResource& image, const ImVec2& imageSize)
     Image(image, imageSize, ImVec2(0.0f, 0.0f), ImVec2(1.0f, 1.0f));
 }
 
+void ImGui::Image(const ITextureResource& image, const ImVec2& imageSize, const BBox& box)
+{
+    ImVec2 origin = ImVec2(static_cast<float>(box.X) / image.Size.X, static_cast<float>(box.Y) / image.Size.Y);
+    ImVec2 end = ImVec2(static_cast<float>(box.X + box.Width + 1) / image.Size.X, static_cast<float>(box.Y + box.Height + 1) / image.Size.Y);
+
+    Image(image, imageSize, origin, end);
+}
+
 void ImGui::Image(const ITextureResource& image, const ImVec2& imageSize, const ImVec2& uv0, const ImVec2& uv1)
 {
     Image((void*)(intptr_t)image.ResourceId, imageSize, uv0, uv1);
+}
+
+void ImGui::SpriteFrame(const char* name, const std::unique_ptr<ITextureResource>& spriteSheet, const BBox& spriteRect,
+	const ImVec2& size, bool border)
+{
+    if (BeginChild(name, size, border))
+    {
+        if (spriteSheet)
+        {
+
+            float ratio = static_cast<float>(spriteRect.Height) / spriteRect.Width;
+            ImVec2 imageWindowSize;
+
+            float maxWidth = GetWindowContentRegionWidth();
+            float maxHeight = GetWindowContentRegionMax().y - GetWindowContentRegionMin().y;
+
+            imageWindowSize.x = std::min(maxHeight / ratio, maxWidth);
+            imageWindowSize.y = std::min(maxWidth * ratio, maxHeight);
+
+            ImVec2 currentPosition = GetCursorPos();
+        	
+            ImVec2 windowSize = GetWindowSize();
+            float leftSpace = (windowSize.x - imageWindowSize.x) * 0.5f;
+            float topSpace = (windowSize.y - imageWindowSize.y) * 0.5f;
+            SetCursorPos(ImVec2(leftSpace, topSpace));
+
+            Image(*spriteSheet, imageWindowSize, spriteRect);
+
+            SetCursorPos(currentPosition);
+        }
+        else
+        {
+            TextColored(ImVec4(1.0f, 0.0f, 0.0f, 0.0f), "Error loading texture");
+        }
+    }
+    EndChild();
 }
 
 bool ImGui::Button(const char* label, bool enabled)

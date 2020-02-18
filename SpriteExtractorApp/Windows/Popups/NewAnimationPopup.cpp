@@ -6,6 +6,8 @@
 #include "Model/SpriteSheet/SpriteSheetActions.hpp"
 
 #include "imgui-extra.hpp"
+#include "Services/Services.hpp"
+#include "Services/Scheduler/Scheduler.hpp"
 
 namespace NewAnimationPopupConst
 {
@@ -58,10 +60,30 @@ void NewAnimationPopup::Draw()
 				spritesDrawn = 0;
 			}
 
-			ImGui::SpriteFrame(sprite->Name.c_str(), _texture, sprite->BoundingBox, kSpriteSize, true);
+			std::optional<ImColor> borderColor;
+			auto animationIt = std::find(_animation.SpriteIds.begin(), _animation.SpriteIds.end(), sprite->Idx);
+			bool isSelected = animationIt != _animation.SpriteIds.end();
+			if (isSelected)
+			{
+				borderColor = ImColor(255.0f, 0.0f, 0.0f);
+			}
+			
+			ImGui::SpriteFrame(sprite->Name.c_str(), _texture, sprite->BoundingBox, kSpriteSize, true, borderColor);
 			if(ImGui::IsItemClicked())
 			{
 				Logger::GetLogger("Test")->info("Clicked {}", sprite->Name);
+				
+
+				if(isSelected)
+				{
+					_animation.SpriteIds.erase(animationIt);
+				}
+				else
+				{
+					_animation.SpriteIds.push_back(sprite->Idx);
+				}
+
+				_currentFrame = 0LL;
 			}
 			++spritesDrawn;
 		}
@@ -69,6 +91,8 @@ void NewAnimationPopup::Draw()
 	}
 	ImGui::EndChild();
 	ImGui::SameLine();
+	DrawAnimation();
+		
 	if (ImGui::Button("Test"))
 	{
 		std::vector<std::string> names = { "test_1", "test_2", "test_5" };
@@ -76,4 +100,23 @@ void NewAnimationPopup::Draw()
 		Commands::PushCommandMessage message(command);
 		MessageBroker::GetInstance().Broadcast(message);
 	}
+}
+
+void NewAnimationPopup::DrawAnimation()
+{
+	constexpr float kSpF = 0.15f; // TODO: Parameter
+
+	if (_animation.SpriteIds.empty())
+	{
+		return;
+	}
+	
+	_elapsed += Services::GetInstance().Get<Scheduler>()->DeltaTime();
+	size_t currentFrame = static_cast<size_t>(std::floor(_elapsed / kSpF)) % _animation.SpriteIds.size();
+
+	int idx = _animation.SpriteIds.at(currentFrame);
+	// TODO: Sprite idx != sprite position
+	const std::vector<std::shared_ptr<Sprite>>& sprites = ModelManager::GetInstance().Get<SpriteSheet>()->GetSprites();
+	const std::shared_ptr<Sprite> sprite = sprites.at(idx);
+	ImGui::SpriteFrame(sprite->Name.c_str(), _texture, sprite->BoundingBox, ImVec2(100.0f, 100.0f), true);
 }

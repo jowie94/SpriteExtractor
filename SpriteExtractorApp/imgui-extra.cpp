@@ -60,8 +60,13 @@ void ImGui::Image(const ITextureResource& image, const ImVec2& imageSize, const 
 }
 
 void ImGui::SpriteFrame(const char* name, const std::unique_ptr<ITextureResource>& spriteSheet, const BBox& spriteRect,
-	const ImVec2& size, bool border)
+	const ImVec2& size, bool border, std::optional<ImColor> borderColor)
 {
+    if (borderColor)
+    {
+        PushStyleColor(ImGuiCol_Border, borderColor.value().Value);
+    }
+	
     if (BeginChild(name, size, border))
     {
         if (spriteSheet)
@@ -93,6 +98,11 @@ void ImGui::SpriteFrame(const char* name, const std::unique_ptr<ITextureResource
         }
     }
     EndChild();
+
+	if (borderColor)
+	{
+        PopStyleColor();
+	}
 }
 
 bool ImGui::Button(const char* label, bool enabled)

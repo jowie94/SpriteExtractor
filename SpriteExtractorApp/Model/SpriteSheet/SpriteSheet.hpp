@@ -5,8 +5,10 @@
 #include "Sprite.hpp"
 #include "Animation.hpp"
 
-namespace Commands {
-    namespace Model {
+namespace Commands
+{
+    namespace Model
+	{
         class UpdateSelectedSpriteCommand;
         class UpdateAlphaColorCommand;
         class UpdateSpritesCommand;

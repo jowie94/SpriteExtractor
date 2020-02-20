@@ -7,6 +7,8 @@ set(CMAKE_MODULE_PATH
   "${PROJECT_SOURCE_DIR}/CMake"
 )
 
+add_compile_options(-Werror)
+
 # Include sub-projects.
 add_subdirectory("SpriteExtractorLib")
 add_subdirectory("lib")

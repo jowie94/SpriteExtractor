@@ -13,7 +13,7 @@
 #include "Messages/MainWindowActions.hpp"
 #include "Messages/SpriteSearchMessages.hpp"
 
-#include "Windows/MainWindow.hpp"
+//#include "Windows/MainWindow.hpp"
 
 #include "Logger/Logger.hpp"
 #include "Model/ModelManager.hpp"
@@ -26,6 +26,7 @@
 #include "Services/ImGuiManager/ImGuiManager.hpp"
 
 #include "AssetTypes/ImFontAsset.hpp"
+#include "ImGui/imgui.h"
 
 namespace AppConst
 {
@@ -93,7 +94,7 @@ void App::Init()
 
     services.InitServices();
 
-    services.Get<ImGuiManager>()->SetMainWindow<MainWindow>();
+    //services.Get<ImGuiManager>()->SetMainWindow<MainWindow>();
 
     MessageBroker& broker = MessageBroker::GetInstance();
 

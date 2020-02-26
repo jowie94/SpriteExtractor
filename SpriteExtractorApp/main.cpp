@@ -1,8 +1,8 @@
-#include "SFMLApp.hpp"
+#include "QtApp.hpp"
 
 int main()
 {
-    std::unique_ptr<App> app = std::make_unique<SFMLApp>();
+    std::unique_ptr<App> app = std::make_unique<QtApp>();
 
     app->Run();
 

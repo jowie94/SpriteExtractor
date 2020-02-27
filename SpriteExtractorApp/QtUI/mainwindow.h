@@ -11,13 +11,16 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-   public:
-    explicit MainWindow(QWidget *parent = 0);
+public:
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-   private slots:
+private slots:
     void on_actionExit_triggered();
+    void OnNewProject();
 
-   private:
+private:
+    void setupConnections();
+
     Ui::MainWindow *ui;
 };

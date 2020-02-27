@@ -1,4 +1,3 @@
-﻿#add_subdirectory(Popups)
-#add_subdirectory(Panels)
+﻿add_subdirectory(Dialogs)
 
 target_sources(SpriteExtractor PRIVATE "mainwindow.cpp" "mainwindow.ui")

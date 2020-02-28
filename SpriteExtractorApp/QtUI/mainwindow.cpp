@@ -2,12 +2,12 @@
 
 #include <QFileDialog>
 
-#include "ui_mainwindow.h"
 #include "Dialogs/NewProjectDialog/newprojectdialog.h"
+#include "ui_mainwindow.h"
 
 #include "Logger/Logger.hpp"
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow::MainWindow(QWidget* parent)
 : QMainWindow(parent)
 , ui(new Ui::MainWindow)
 {
@@ -29,7 +29,6 @@ void MainWindow::on_actionExit_triggered()
 void MainWindow::OnNewProject()
 {
     Logger::GetLogger("Main Window")->debug("Import Clicked");
-    
 
     NewProjectDialog projectDialog(this);
     projectDialog.exec();

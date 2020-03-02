@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>590</width>
-    <height>300</height>
+    <width>1031</width>
+    <height>798</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,8 +22,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>250</y>
+     <x>670</x>
+     <y>740</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -40,11 +40,14 @@
     <rect>
      <x>0</x>
      <y>20</y>
-     <width>591</width>
+     <width>651</width>
      <height>71</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetDefaultConstraint</enum>
+    </property>
     <item>
      <spacer name="horizontalSpacer">
       <property name="orientation">
@@ -93,7 +96,25 @@
     </item>
    </layout>
   </widget>
+  <widget class="QtUI::SpriteViewer" name="widget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>100</y>
+     <width>281</width>
+     <height>441</height>
+    </rect>
+   </property>
+  </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QtUI::SpriteViewer</class>
+   <extends>QWidget</extends>
+   <header>QtUI/Widgets/SpriteViewer/spriteviewer.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

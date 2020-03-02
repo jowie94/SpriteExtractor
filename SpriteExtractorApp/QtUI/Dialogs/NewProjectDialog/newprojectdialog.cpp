@@ -2,7 +2,12 @@
 
 #include <QFileDialog>
 
+#include "QtUI/Assets/QPixmapLoader.hpp"
+
 #include "Logger/Logger.hpp"
+#include "Services/AssetManager/AssetManager.hpp"
+#include "Services/Services.hpp"
+
 #include "ui_newprojectdialog.h"
 
 NewProjectDialog::NewProjectDialog(QWidget* parent)
@@ -24,4 +29,7 @@ void NewProjectDialog::OnBrowse()
     Logger::GetLogger("NewProject")->debug("File selected {}", file.toStdString());
 
     ui->filePath->setText(file);
+
+    AssetPtr<QPixmap> pixmap = Services::GetInstance().Get<AssetManager>()->GetAsset<QPixmap>(file.toStdString());
+    ui->SpriteViewer->SetPixmap(pixmap);
 }

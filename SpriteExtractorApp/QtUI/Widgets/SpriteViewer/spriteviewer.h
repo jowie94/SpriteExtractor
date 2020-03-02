@@ -2,6 +2,8 @@
 
 #include <QWidget>
 
+#include "Services/AssetManager/AssetLoader.hpp"
+
 namespace QtUI
 {
     namespace Ui
@@ -15,13 +17,15 @@ namespace QtUI
 
     public:
         explicit SpriteViewer(QWidget* parent = nullptr);
-        ~SpriteViewer();
+        ~SpriteViewer() = default;
+
+        void SetPixmap(AssetPtr<QPixmap> pixmap);
 
     protected:
         void paintEvent(QPaintEvent* event) override;
 
     private:
-        class QPixmap* _pixmap = nullptr;
+        AssetPtr<QPixmap> _pixmap;
     };
 
 }  // namespace QtUI

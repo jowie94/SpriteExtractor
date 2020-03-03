@@ -15,6 +15,7 @@ NewProjectDialog::NewProjectDialog(QWidget* parent)
 , ui(new Ui::NewProjectDialog)
 {
     ui->setupUi(this);
+    connect(ui->SpriteViewer, &QtUI::SpriteViewer::HoveredColor, this, &NewProjectDialog::OnColorHovered);
 }
 
 NewProjectDialog::~NewProjectDialog()
@@ -33,4 +34,12 @@ void NewProjectDialog::OnBrowse()
     AssetPtr<QPixmap> pixmap = Services::GetInstance().Get<AssetManager>()->GetAsset<QPixmap>(file.toStdString());
     ui->SpriteViewer->SetPixmap(pixmap);
     ui->SpriteViewer->repaint();
+}
+
+void NewProjectDialog::OnColorHovered(QColor color)
+{
+    QPalette palette;
+    palette.setColor(QPalette::Window, color);
+    ui->Color->setAutoFillBackground(true);
+    ui->Color->setPalette(palette);
 }

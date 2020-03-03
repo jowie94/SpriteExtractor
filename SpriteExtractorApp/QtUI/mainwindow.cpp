@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget* parent)
     ui->setupUi(this);
 
     setupConnections();
+    OnNewProject(); // TODO: TMP
 }
 
 MainWindow::~MainWindow()

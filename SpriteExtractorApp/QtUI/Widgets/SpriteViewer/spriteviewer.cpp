@@ -1,5 +1,7 @@
 #include "spriteviewer.h"
 
+#include <cmath>
+
 #include <QLabel>
 #include <QPainter>
 #include <QPixmap>
@@ -24,22 +26,13 @@ namespace QtUI
         {
             QRect pixRect = _pixmap->rect();
             QRect widgetRect = rect();
-            float ratio = static_cast<float>(pixRect.width()) / static_cast<float>(pixRect.height());
-            if (pixRect.width() > pixRect.height())
-            {
-                float width = std::min(pixRect.width(), widgetRect.width());
-                float height = width / ratio;
-                pixRect.setWidth(static_cast<int>(std::floor(width)));
-                pixRect.setHeight(static_cast<int>(std::floor(height)));
-            }
-            else
-            {
-                float height = std::min(pixRect.height(), widgetRect.height());
-                float width = height * ratio;
-                pixRect.setWidth(static_cast<int>(std::floor(width)));
-                pixRect.setHeight(static_cast<int>(std::floor(height)));
-            }
-
+            float scaleX = static_cast<float>(widgetRect.width()) / static_cast<float>(pixRect.width());
+            float scaleY = static_cast<float>(widgetRect.height()) / static_cast<float>(pixRect.height());
+            float scale = std::min(scaleX, scaleY);
+            float width = static_cast<float>(pixRect.width()) * scale;
+            float height = static_cast<float>(pixRect.height()) * scale;
+            pixRect.setWidth(static_cast<int>(std::floor(static_cast<float>(width))));
+            pixRect.setHeight(static_cast<int>(std::floor(static_cast<float>(height))));
             painter.drawPixmap(pixRect, *_pixmap);
         }
 

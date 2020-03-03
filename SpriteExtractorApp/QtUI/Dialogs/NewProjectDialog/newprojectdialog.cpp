@@ -32,4 +32,5 @@ void NewProjectDialog::OnBrowse()
 
     AssetPtr<QPixmap> pixmap = Services::GetInstance().Get<AssetManager>()->GetAsset<QPixmap>(file.toStdString());
     ui->SpriteViewer->SetPixmap(pixmap);
+    ui->SpriteViewer->repaint();
 }

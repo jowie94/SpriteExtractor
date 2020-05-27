@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>680</width>
+    <width>954</width>
     <height>792</height>
    </rect>
   </property>
@@ -103,11 +103,76 @@
       <number>0</number>
      </property>
      <item>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <item row="0" column="0">
-        <widget class="QWidget" name="Color" native="true"/>
+      <layout class="QGridLayout" name="gridLayout">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetDefaultConstraint</enum>
+       </property>
+       <item row="0" column="1">
+        <widget class="QWidget" name="Color" native="true">
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="baseSize">
+          <size>
+           <width>10</width>
+           <height>10</height>
+          </size>
+         </property>
+        </widget>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item alignment="Qt::AlignTop">
+          <widget class="QPushButton" name="TogglePickerButton">
+           <property name="text">
+            <string>Enable Picker</string>
+           </property>
+           <property name="checkable">
+            <bool>true</bool>
+           </property>
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item alignment="Qt::AlignTop">
+          <widget class="QPushButton" name="SelectColorButton">
+           <property name="text">
+            <string>Select Color</string>
+           </property>
+           <property name="checkable">
+            <bool>false</bool>
+           </property>
+           <property name="autoDefault">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="2">
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Maximum</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="1">
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -118,7 +183,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>30</height>
+           <height>20</height>
           </size>
          </property>
         </spacer>
@@ -174,8 +239,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>257</x>
+     <y>782</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -190,8 +255,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>325</x>
+     <y>782</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -206,8 +271,8 @@
    <slot>OnBrowse()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>534</x>
-     <y>64</y>
+     <x>927</x>
+     <y>32</y>
     </hint>
     <hint type="destinationlabel">
      <x>427</x>
@@ -215,8 +280,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>SelectColorButton</sender>
+   <signal>clicked()</signal>
+   <receiver>NewProjectDialog</receiver>
+   <slot>OnSelectColor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>341</x>
+     <y>106</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>476</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>OnBrowse()</slot>
+  <slot>OnSelectColor()</slot>
  </slots>
 </ui>

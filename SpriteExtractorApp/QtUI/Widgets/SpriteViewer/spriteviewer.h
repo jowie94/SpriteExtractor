@@ -23,13 +23,16 @@ namespace QtUI
 
     signals:
         void HoveredColor(QColor color);
+        void SelectedColor(QColor color);
 
     protected:
         void mouseMoveEvent(QMouseEvent* event) override;
+        void mousePressEvent(QMouseEvent* event) override;
         void paintEvent(QPaintEvent* event) override;
 
     private:
         AssetPtr<QPixmap> _pixmap;
+        QColor _hoveredColor;
 
         float _scale = 0.0f;
     };

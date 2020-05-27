@@ -1,6 +1,8 @@
 #include "newprojectdialog.h"
 
 #include <QFileDialog>
+#include <QPushButton>
+#include <QColorDialog>
 
 #include "QtUI/Assets/QPixmapLoader.hpp"
 
@@ -16,6 +18,7 @@ NewProjectDialog::NewProjectDialog(QWidget* parent)
 {
     ui->setupUi(this);
     connect(ui->SpriteViewer, &QtUI::SpriteViewer::HoveredColor, this, &NewProjectDialog::OnColorHovered);
+    connect(ui->SpriteViewer, &QtUI::SpriteViewer::SelectedColor, this, &NewProjectDialog::OnColorSelected);
 }
 
 NewProjectDialog::~NewProjectDialog()
@@ -36,10 +39,38 @@ void NewProjectDialog::OnBrowse()
     ui->SpriteViewer->repaint();
 }
 
+void NewProjectDialog::OnSelectColor()
+{
+    ui->TogglePickerButton->setChecked(false);
+
+    QColor result = QColorDialog::getColor(_selectedColor, this);
+    if (result.isValid())
+    {
+        UpdateSelectedColor(result);
+    }
+}
+
 void NewProjectDialog::OnColorHovered(QColor color)
 {
+    if (ui->TogglePickerButton->isChecked())
+    {   
+        UpdateSelectedColor(color);
+    }
+}
+
+void NewProjectDialog::OnColorSelected(QColor color)
+{
+    ui->TogglePickerButton->setChecked(false);
+
+    UpdateSelectedColor(color);
+}
+
+void NewProjectDialog::UpdateSelectedColor(QColor color)
+{
+    _selectedColor = std::move(color);
+
     QPalette palette;
-    palette.setColor(QPalette::Window, color);
+    palette.setColor(QPalette::Window, _selectedColor);
     ui->Color->setAutoFillBackground(true);
     ui->Color->setPalette(palette);
 }

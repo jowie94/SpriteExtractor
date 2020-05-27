@@ -17,8 +17,15 @@ public:
 
 private slots:
     void OnBrowse();
+    void OnSelectColor();
+
     void OnColorHovered(QColor color);
+    void OnColorSelected(QColor color);
+
+    void UpdateSelectedColor(QColor color);
 
 private:
     Ui::NewProjectDialog* ui;
+
+    QColor _selectedColor;
 };

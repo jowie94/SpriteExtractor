@@ -29,10 +29,15 @@ namespace QtUI
         QPoint pos = (event->localPos() / _scale).toPoint();
         if (_pixmap && pos.y() < _pixmap->size().height() && pos.x() < _pixmap->size().width())
         {
-            Logger::GetLogger("SpriteViewer")->debug("Mouse over {},{}", pos.x(), pos.y());
-            QColor color = _pixmap->toImage().pixel(pos);
-            emit HoveredColor(color);
+            //Logger::GetLogger("SpriteViewer")->debug("Mouse over {},{}", pos.x(), pos.y());
+            _hoveredColor = _pixmap->toImage().pixel(pos);
+            emit HoveredColor(_hoveredColor);
         }
+    }
+
+    void SpriteViewer::mousePressEvent(QMouseEvent* /*event*/)
+    {
+        emit SelectedColor(_hoveredColor);
     }
 
     void SpriteViewer::paintEvent(QPaintEvent* event)

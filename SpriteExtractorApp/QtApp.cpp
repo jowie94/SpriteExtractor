@@ -18,7 +18,7 @@ void QtApp::Run()
     MainWindow mainWindow;
     mainWindow.show();
 
-    app.exec();
+    QApplication::exec();
 }
 
 std::shared_ptr<IImage> QtApp::OpenImage(const std::string& path)

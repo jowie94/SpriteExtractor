@@ -6,6 +6,7 @@
 #include <functional>
 
 #include "AssetLoader.hpp"
+#include "AssetPtr.hpp"
 
 class AssetManager
 {

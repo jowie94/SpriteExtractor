@@ -1,14 +1,6 @@
 #pragma once
 
-#include <memory>
-
 #include <Utils/Traits.hpp>
-
-template<typename T>
-using AssetPtr = std::shared_ptr<T>;
-
-template<typename T>
-using WeakAssetPtr = std::weak_ptr<T>;
 
 template<typename Asset>
 struct AssetLoader

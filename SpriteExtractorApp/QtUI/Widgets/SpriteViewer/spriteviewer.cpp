@@ -14,12 +14,28 @@ namespace QtUI
     SpriteViewer::SpriteViewer(QWidget* parent)
     : QWidget(parent)
     {
-        setMouseTracking(true);
+        //setMouseTracking(true);
     }
 
     void SpriteViewer::SetPixmap(AssetPtr<QPixmap> pixmap)
     {
         _pixmap = std::move(pixmap);
+    }
+
+    void SpriteViewer::SetPickColorEnabled(bool enabled)
+    {
+        _pickColor = enabled;
+
+        setMouseTracking(_pickColor);
+
+        if (_pickColor)
+        {
+            setCursor(Qt::CrossCursor);
+        }
+        else
+        {
+            setCursor(Qt::ArrowCursor);
+        }
     }
 
     void SpriteViewer::mouseMoveEvent(QMouseEvent* event)
@@ -37,7 +53,7 @@ namespace QtUI
 
     void SpriteViewer::mousePressEvent(QMouseEvent* /*event*/)
     {
-        emit SelectedColor(_hoveredColor);
+        emit PickedColor(_hoveredColor);
     }
 
     void SpriteViewer::paintEvent(QPaintEvent* event)

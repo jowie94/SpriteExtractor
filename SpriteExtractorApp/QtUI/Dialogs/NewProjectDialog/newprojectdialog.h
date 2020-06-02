@@ -18,14 +18,15 @@ public:
 private slots:
     void OnBrowse();
     void OnSelectColor();
+    void OnPickerToggled(bool enabled);
 
-    void OnColorHovered(QColor color);
+    void OnColorPicked(QColor color);
+
     void OnColorSelected(QColor color);
-
-    void UpdateSelectedColor(QColor color);
 
 private:
     Ui::NewProjectDialog* ui;
 
+    QColor _originalColor;
     QColor _selectedColor;
 };

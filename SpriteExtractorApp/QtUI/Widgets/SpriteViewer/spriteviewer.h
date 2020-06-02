@@ -2,7 +2,7 @@
 
 #include <QWidget>
 
-#include "Services/AssetManager/AssetLoader.hpp"
+#include "Services/AssetManager/AssetPtr.hpp"
 
 namespace QtUI
 {
@@ -21,9 +21,11 @@ namespace QtUI
 
         void SetPixmap(AssetPtr<QPixmap> pixmap);
 
+        void SetPickColorEnabled(bool enabled);
+
     signals:
         void HoveredColor(QColor color);
-        void SelectedColor(QColor color);
+        void PickedColor(QColor color);
 
     protected:
         void mouseMoveEvent(QMouseEvent* event) override;
@@ -35,6 +37,7 @@ namespace QtUI
         QColor _hoveredColor;
 
         float _scale = 0.0f;
+        bool _pickColor = false;
     };
 
 }  // namespace QtUI

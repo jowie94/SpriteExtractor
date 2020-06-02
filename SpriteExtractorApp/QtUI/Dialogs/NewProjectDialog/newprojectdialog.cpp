@@ -17,8 +17,9 @@ NewProjectDialog::NewProjectDialog(QWidget* parent)
 , ui(new Ui::NewProjectDialog)
 {
     ui->setupUi(this);
-    connect(ui->SpriteViewer, &QtUI::SpriteViewer::HoveredColor, this, &NewProjectDialog::OnColorHovered);
-    connect(ui->SpriteViewer, &QtUI::SpriteViewer::SelectedColor, this, &NewProjectDialog::OnColorSelected);
+    ui->Color->setColor(_selectedColor);
+    connect(ui->SpriteViewer, &QtUI::SpriteViewer::HoveredColor, this, &NewProjectDialog::OnColorSelected);
+    connect(ui->SpriteViewer, &QtUI::SpriteViewer::PickedColor, this, &NewProjectDialog::OnColorPicked);
 }
 
 NewProjectDialog::~NewProjectDialog()
@@ -43,34 +44,29 @@ void NewProjectDialog::OnSelectColor()
 {
     ui->TogglePickerButton->setChecked(false);
 
-    QColor result = QColorDialog::getColor(_selectedColor, this);
-    if (result.isValid())
-    {
-        UpdateSelectedColor(result);
-    }
+    _originalColor = _selectedColor;
+
+    // TODO: Custom color dialog?
+    QColorDialog colorDialog(_selectedColor, this);
+    connect(&colorDialog, &QColorDialog::colorSelected, this, &NewProjectDialog::OnColorSelected);
+    colorDialog.exec();
 }
 
-void NewProjectDialog::OnColorHovered(QColor color)
+void NewProjectDialog::OnPickerToggled(bool enabled)
 {
-    if (ui->TogglePickerButton->isChecked())
-    {   
-        UpdateSelectedColor(color);
-    }
+    ui->SpriteViewer->SetPickColorEnabled(enabled);
+}
+
+void NewProjectDialog::OnColorPicked(QColor color)
+{
+    ui->TogglePickerButton->setChecked(false);
+
+    OnColorSelected(color);
 }
 
 void NewProjectDialog::OnColorSelected(QColor color)
 {
-    ui->TogglePickerButton->setChecked(false);
-
-    UpdateSelectedColor(color);
-}
-
-void NewProjectDialog::UpdateSelectedColor(QColor color)
-{
     _selectedColor = std::move(color);
-
-    QPalette palette;
-    palette.setColor(QPalette::Window, _selectedColor);
-    ui->Color->setAutoFillBackground(true);
-    ui->Color->setPalette(palette);
+    ui->Color->setColor(_selectedColor);
+    update();
 }

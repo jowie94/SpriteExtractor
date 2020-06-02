@@ -32,12 +32,17 @@ namespace QtUI
         void mousePressEvent(QMouseEvent* event) override;
         void paintEvent(QPaintEvent* event) override;
 
+        void resizeEvent(QResizeEvent *event) override;
+
     private:
+        void CalculateScale();
+
         AssetPtr<QPixmap> _pixmap;
         QColor _hoveredColor;
 
         float _scale = 0.0f;
         bool _pickColor = false;
+        QRect _pixmapRect;
     };
 
 }  // namespace QtUI

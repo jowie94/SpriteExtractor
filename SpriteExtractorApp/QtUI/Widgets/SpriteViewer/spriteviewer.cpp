@@ -20,6 +20,7 @@ namespace QtUI
     void SpriteViewer::SetPixmap(AssetPtr<QPixmap> pixmap)
     {
         _pixmap = std::move(pixmap);
+        CalculateScale();
     }
 
     void SpriteViewer::SetPickColorEnabled(bool enabled)
@@ -63,18 +64,31 @@ namespace QtUI
 
         if (_pixmap)
         {
-            QRect pixRect = _pixmap->rect();
-            QRect widgetRect = rect();
-            float scaleX = static_cast<float>(widgetRect.width()) / static_cast<float>(pixRect.width());
-            float scaleY = static_cast<float>(widgetRect.height()) / static_cast<float>(pixRect.height());
-            _scale = std::min(scaleX, scaleY); // TODO: Only calculate on resize
-            float width = static_cast<float>(pixRect.width()) * _scale;
-            float height = static_cast<float>(pixRect.height()) * _scale;
-            pixRect.setWidth(static_cast<int>(std::floor(static_cast<float>(width))));
-            pixRect.setHeight(static_cast<int>(std::floor(static_cast<float>(height))));
-            painter.drawPixmap(pixRect, *_pixmap);
+            painter.drawPixmap(_pixmapRect, *_pixmap);
         }
 
         // painter.drawLine(1, 5, 1, 10);
+    }
+
+    void SpriteViewer::resizeEvent(QResizeEvent *event)
+    {
+        QWidget::resizeEvent(event);
+
+        CalculateScale();
+    }
+
+    void SpriteViewer::CalculateScale()
+    {
+        if (_pixmap)
+        {
+            _pixmapRect = _pixmap->rect();
+            QRect widgetRect = rect();
+            float scaleX = static_cast<float>(widgetRect.width()) / static_cast<float>(_pixmapRect.width());
+            float scaleY = static_cast<float>(widgetRect.height()) / static_cast<float>(_pixmapRect.height());
+            _scale = std::min(scaleX, scaleY);
+
+            _pixmapRect.setWidth(static_cast<int>(std::floor(static_cast<float>(_pixmapRect.width()) * _scale)));
+            _pixmapRect.setHeight(static_cast<int>(std::floor(static_cast<float>(_pixmapRect.height()) * _scale)));
+        }
     }
 }  // namespace QtUI

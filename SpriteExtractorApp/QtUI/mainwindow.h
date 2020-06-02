@@ -17,6 +17,7 @@ public:
 
 private slots:
     void on_actionExit_triggered();
+    void OnOpenNewProject();
     void OnNewProject();
 
 private:

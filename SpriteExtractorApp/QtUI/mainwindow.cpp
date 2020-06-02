@@ -14,7 +14,7 @@ MainWindow::MainWindow(QWidget* parent)
     ui->setupUi(this);
 
     setupConnections();
-    OnNewProject(); // TODO: TMP
+    OnOpenNewProject(); // TODO: TMP
 }
 
 MainWindow::~MainWindow()
@@ -27,15 +27,21 @@ void MainWindow::on_actionExit_triggered()
     this->close();
 }
 
-void MainWindow::OnNewProject()
+void MainWindow::OnOpenNewProject()
 {
     Logger::GetLogger("Main Window")->debug("Import Clicked");
 
     NewProjectDialog projectDialog(this);
+    connect(&projectDialog, &QDialog::accepted, this, &MainWindow::OnNewProject);
     projectDialog.exec();
+}
+
+void MainWindow::OnNewProject()
+{
+    Logger::GetLogger("Main Window")->debug("New Project");
 }
 
 void MainWindow::setupConnections()
 {
-    connect(ui->actionNewProject, &QAction::triggered, this, &MainWindow::OnNewProject);
+    connect(ui->actionNewProject, &QAction::triggered, this, &MainWindow::OnOpenNewProject);
 }
